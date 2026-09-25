@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bnos Menachem Portal — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,560&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C2B45;
+    --ink-soft:#5B6579;
+    --ink-faint:#8891A1;
+    --paper:#EDEFE9;
+    --surface:#FFFFFF;
+    --brass:#A8791F;
+    --brass-soft:#F3E7CB;
+    --brick:#A34331;
+    --brick-soft:#F4DED8;
+    --moss:#3E6B4D;
+    --moss-soft:#DCE9DE;
+    --line:#DCDBCE;
+    --line-soft:#E9E8DE;
+    --sidebar-ink:#16223A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'IBM Plex Sans', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:560;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .app{display:flex;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:240px;
+    flex-shrink:0;
+    background:var(--sidebar-ink);
+    color:#D8DCE6;
+    display:flex;
+    flex-direction:column;
+    padding:20px 14px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:560;
+    font-size:17px;
+    color:#F2EFE4;
+    padding:6px 10px 4px;
+    line-height:1.25;
+  }
+  .brand-sub{
+    font-size:11.5px;
+    color:#8C93A8;
+    padding:0 10px 18px;
+  }
+  .year-select{
+    margin:0 4px 22px;
+    padding:9px 12px;
+    background:#1F2E4A;
+    border:1px solid #2C3B5B;
+    border-radius:6px;
+    font-size:13px;
+    color:#D8DCE6;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+  }
+  .year-select svg{width:13px;height:13px;opacity:0.7;}
+  .nav-label{
+    font-size:11px;
+    color:#6C7690;
+    padding:0 14px 8px;
+  }
+  nav.primary-nav{display:flex;flex-direction:column;gap:2px;}
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:9px 12px;
+    border-radius:6px;
+    font-size:13.5px;
+    color:#C4C9D6;
+    cursor:pointer;
+    border:none;
+    background:none;
+    text-align:left;
+    width:100%;
+    font-family:inherit;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:0.85;}
+  .nav-item:hover{background:#1F2E4A;color:#F2EFE4;}
+  .nav-item.active{background:#2A3B5C;color:#F2EFE4;}
+  .nav-item.active svg{opacity:1;}
+  .sidebar-foot{margin-top:auto;padding:12px 14px 4px;font-size:11.5px;color:#5C647A;border-top:1px solid #263151;}
+
+  /* ---------- Main / Topbar ---------- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .topbar{
+    height:60px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    flex-shrink:0;
+  }
+  .breadcrumb{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;}
+  .breadcrumb .crumb-current{color:var(--ink);font-weight:500;}
+  .topbar-right{display:flex;align-items:center;gap:16px;}
+  .role-toggle{display:flex;background:var(--line-soft);border-radius:7px;padding:3px;}
+  .role-btn{
+    border:none;background:none;font-family:inherit;font-size:12.5px;
+    padding:6px 13px;border-radius:5px;cursor:pointer;color:var(--ink-soft);
+  }
+  .role-btn.active{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(28,43,69,0.1);}
+  .avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:var(--brass-soft);color:var(--brass);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12.5px;font-weight:600;font-family:'IBM Plex Sans';
+    cursor:pointer;
+  }
+  .content{padding:34px 40px 60px;overflow-y:auto;flex:1;}
+  .screen{display:none;max-width:1180px;margin:0 auto;}
+  .screen.active{display:block;animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .page-head{margin-bottom:26px;}
+  .page-head h1{font-size:27px;color:var(--ink);}
+  .page-head p{margin:6px 0 0;font-size:14px;color:var(--ink-soft);}
+
+  /* ---------- Components ---------- */
+  .btn{
+    font-family:inherit;font-size:13px;font-weight:500;
+    padding:8px 15px;border-radius:6px;cursor:pointer;border:1px solid transparent;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn-primary{background:var(--ink);color:#F2EFE4;}
+  .btn-primary:hover{background:#28395A;}
+  .btn-secondary{background:var(--surface);color:var(--ink);border-color:var(--line);}
+  .btn-secondary:hover{border-color:var(--ink-faint);}
+  .btn-text{background:none;color:var(--ink-soft);padding:8px 6px;}
+  .btn-text:hover{color:var(--ink);}
+  .btn-sm{padding:5px 11px;font-size:12px;}
+
+  .badge{
+    font-size:11.5px;font-weight:500;padding:3px 9px;border-radius:20px;display:inline-block;
+  }
+  .badge-moss{background:var(--moss-soft);color:var(--moss);}
+  .badge-brass{background:var(--brass-soft);color:var(--brass);}
+  .badge-brick{background:var(--brick-soft);color:var(--brick);}
+  .badge-neutral{background:var(--line-soft);color:var(--ink-soft);}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  .stat-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;
+    padding:16px 18px;border-top:2px solid var(--ink);
+  }
+  .stat-card.flag{border-top-color:var(--brick);}
+  .stat-card .stat-label{font-size:12px;color:var(--ink-soft);}
+  .stat-card .stat-num{font-family:'Fraunces';font-size:26px;font-weight:560;margin:5px 0 2px;}
+  .stat-card .stat-note{font-size:11.5px;color:var(--ink-faint);}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;}
+  .panel-head{padding:15px 20px;border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head h3{font-size:15px;font-family:'IBM Plex Sans';font-weight:600;}
+  .panel-body{padding:16px 20px;}
+  .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+
+  .task-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+  .task-row:last-child{border-bottom:none;}
+  .task-row .task-label{font-size:13.5px;}
+  .task-row .task-sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .activity-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:13px;}
+  .activity-row:last-child{border-bottom:none;}
+  .activity-dot{width:6px;height:6px;border-radius:50%;background:var(--brass);margin-top:6px;flex-shrink:0;}
+  .activity-time{font-size:11.5px;color:var(--ink-faint);white-space:nowrap;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;}
+  .toolbar-left{display:flex;gap:8px;align-items:center;flex:1;}
+  .search-input{
+    border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:13px;
+    font-family:inherit;width:240px;background:var(--surface);
+  }
+  .search-input:focus{outline:none;border-color:var(--ink-faint);}
+
+  table{width:100%;border-collapse:collapse;}
+  thead th{
+    text-align:left;font-size:11.5px;font-weight:500;color:var(--ink-soft);
+    padding:10px 16px;border-bottom:1px solid var(--line);background:var(--line-soft);
+  }
+  thead th:first-child{border-top-left-radius:8px;}
+  thead th:last-child{border-top-right-radius:8px;}
+  tbody td{padding:12px 16px;font-size:13.5px;border-bottom:1px solid var(--line-soft);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.clickable{cursor:pointer;}
+  tbody tr.clickable:hover{background:#FAFAF6;}
+  .name-cell{display:flex;align-items:center;gap:10px;}
+  .mini-avatar{
+    width:28px;height:28px;border-radius:50%;background:var(--line-soft);
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ink-soft);flex-shrink:0;
+  }
+  .cell-sub{font-size:11.5px;color:var(--ink-faint);}
+
+  .empty-state{
+    padding:44px 20px;text-align:center;color:var(--ink-soft);
+  }
+  .empty-state h4{font-family:'IBM Plex Sans';font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+  .empty-state p{font-size:13px;max-width:340px;margin:0 auto 16px;line-height:1.5;}
+
+  .subtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .subtab{
+    padding:9px 14px;font-size:13px;color:var(--ink-soft);cursor:pointer;
+    border-bottom:2px solid transparent;margin-bottom:-1px;
+  }
+  .subtab.active{color:var(--ink);border-bottom-color:var(--brass);font-weight:500;}
+
+  .week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .day-col{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:230px;}
+  .day-col .day-label{font-size:11.5px;font-weight:600;color:var(--ink-soft);padding-bottom:8px;border-bottom:1px solid var(--line-soft);margin-bottom:8px;}
+  .shift-block{
+    background:var(--moss-soft);color:var(--moss);border-radius:5px;padding:7px 8px;font-size:11.5px;margin-bottom:6px;line-height:1.4;
+  }
+  .shift-block.open{background:var(--brick-soft);color:var(--brick);}
+  .shift-block strong{display:block;font-size:12px;}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+  .field{margin-bottom:2px;}
+  .field label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:5px;}
+  .field .value{
+    font-size:13.5px;padding:9px 12px;background:#FAFAF7;border:1px solid var(--line-soft);border-radius:6px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .reveal{font-size:11px;color:var(--ink-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+  .section-label{font-size:12.5px;font-weight:600;color:var(--ink);margin:26px 0 12px;}
+  .section-label:first-child{margin-top:0;}
+
+  .locked-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+  }
+  .locked-card .lock-icon{
+    width:42px;height:42px;border-radius:50%;background:var(--brass-soft);color:var(--brass);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .locked-card .lock-icon svg{width:19px;height:19px;}
+  .locked-card h4{font-family:'IBM Plex Sans';font-size:14.5px;font-weight:600;margin-bottom:4px;}
+  .locked-card p{font-size:13px;color:var(--ink-soft);margin:0;max-width:420px;}
+
+  .home-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .home-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;}
+  .home-card .hc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .home-card h4{font-family:'IBM Plex Sans';font-size:14px;font-weight:600;}
+  .home-card p{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.5;}
+
+  .pto-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .pto-stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;text-align:center;}
+  .pto-stat .n{font-family:'Fraunces';font-size:24px;font-weight:560;}
+  .pto-stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .drawer-overlay{
+    position:fixed;inset:0;background:rgba(22,34,58,0.32);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:10;
+  }
+  .drawer-overlay.open{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:-440px;width:420px;height:100vh;background:var(--surface);
+    box-shadow:-8px 0 24px rgba(22,34,58,0.14);z-index:11;transition:right .25s ease;
+    display:flex;flex-direction:column;
+  }
+  .drawer.open{right:0;}
+  .drawer-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;}
+  .drawer-head .who{display:flex;gap:12px;align-items:center;}
+  .drawer-head .who .mini-avatar{width:38px;height:38px;font-size:13px;}
+  .drawer-head h3{font-size:16px;font-family:'IBM Plex Sans';font-weight:600;}
+  .drawer-head .role{font-size:12px;color:var(--ink-soft);}
+  .drawer-close{background:none;border:none;cursor:pointer;color:var(--ink-soft);padding:4px;}
+  .drawer-close svg{width:18px;height:18px;}
+  .drawer-tabs{display:flex;gap:2px;padding:0 22px;border-bottom:1px solid var(--line);}
+  .drawer-body{padding:20px 22px;overflow-y:auto;flex:1;}
+  .drawer-doc-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line-soft);}
+  .drawer-doc-row:last-child{border-bottom:none;}
+  .drawer-doc-row .doc-name{font-size:13px;}
+  .drawer-doc-row .doc-sub{font-size:11px;color:var(--ink-faint);margin-top:2px;}
+
+  .chart-row{display:flex;align-items:flex-end;gap:16px;height:150px;padding:6px 6px 0;}
+  .chart-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .chart-bar .fill{width:100%;background:var(--ink);border-radius:4px 4px 0 0;}
+  .chart-bar .fill.flag{background:var(--brass);}
+  .chart-bar .val{font-size:10.5px;color:var(--ink-faint);margin-bottom:5px;}
+  .chart-bar .lbl{font-size:11px;color:var(--ink-soft);margin-top:7px;}
+
+  .report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+  .report-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;}
+  .report-card .rc-icon{width:34px;height:34px;border-radius:7px;background:var(--line-soft);color:var(--ink-soft);display:flex;align-items:center;justify-content:center;}
+  .report-card .rc-icon svg{width:17px;height:17px;}
+  .report-card h4{font-family:'IBM Plex Sans';font-size:14px;font-weight:600;}
+  .report-card p{font-size:12.5px;color:var(--ink-soft);margin:0;line-height:1.5;flex:1;}
+  .report-card .rc-meta{font-size:11px;color:var(--ink-faint);}
+  .report-card .rc-actions{display:flex;gap:8px;margin-top:2px;}
+
+  /* ---------- Toasts ---------- */
+  .toast-stack{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:8px;z-index:40;}
+  .toast{
+    background:var(--ink);color:#F2EFE4;font-size:13px;padding:11px 16px;border-radius:7px;
+    box-shadow:0 6px 18px rgba(22,34,58,0.22);display:flex;align-items:center;gap:9px;
+    opacity:0;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease;max-width:320px;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+  .toast svg{width:15px;height:15px;color:var(--moss-soft);flex-shrink:0;}
+  .toast.brick svg{color:var(--brick-soft);}
+
+  /* ---------- Small dropdowns ---------- */
+  .mini-dropdown{
+    display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);
+    border:1px solid var(--line);border-radius:7px;box-shadow:0 8px 20px rgba(22,34,58,0.12);
+    padding:8px;z-index:15;min-width:170px;
+  }
+  .mini-dropdown.open{display:block;}
+  .mini-dd-item{padding:6px 8px;font-size:12.5px;border-radius:5px;}
+  .mini-dd-item:hover{background:var(--line-soft);}
+  .mini-dd-item label{display:flex;align-items:center;gap:8px;cursor:pointer;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(22,34,58,0.36);opacity:0;pointer-events:none;
+    transition:opacity .18s ease;z-index:20;display:flex;align-items:center;justify-content:center;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal-box{
+    background:var(--surface);border-radius:10px;width:440px;max-width:92vw;
+    box-shadow:0 20px 50px rgba(22,34,58,0.28);transform:translateY(10px);transition:transform .18s ease;
+  }
+  .modal-overlay.open .modal-box{transform:translateY(0);}
+  .modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{font-size:16px;font-family:'IBM Plex Sans';font-weight:600;}
+  .modal-body{padding:20px 22px;}
+  .modal-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;}
+  .modal-body .field{margin-bottom:14px;}
+  .modal-body input[type=text], .modal-body select{
+    width:100%;font-family:inherit;font-size:13.5px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:#FAFAF7;
+  }
+  .modal-body input:focus, .modal-body select:focus{outline:none;border-color:var(--ink-faint);}
+
+  .field select, .field input[type=date]{
+    width:100%;font-family:inherit;font-size:13.5px;font-weight:500;padding:9px 12px;
+    background:var(--surface);color:var(--ink);border:1.5px solid var(--ink-faint);border-radius:6px;
+    box-shadow:0 1px 2px rgba(28,43,69,0.05);
+  }
+  .field select:hover, .field input[type=date]:hover{border-color:var(--brass);}
+  .field select:focus, .field input[type=date]:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px var(--brass-soft);}
+  .field select{appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6579' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat;background-position:right 10px center;background-size:14px;padding-right:32px;
+  }
+
+  @media (max-width:920px){
+    .report-grid{grid-template-columns:1fr;}
+    .chart-row{overflow-x:auto;}
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .two-col{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .week-grid{grid-template-columns:1fr;}
+    .home-cards{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">Bnos Menachem</div>
+    <div class="brand-sub">Staff &amp; Department Portal</div>
+    <div class="year-select">
+      <span>2026 – 2027</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+
+    <div class="nav-label">ADMIN VIEW</div>
+    <nav class="primary-nav" id="nav-admin">
+      <button class="nav-item" data-screen="a-dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard</button>
+      <button class="nav-item" data-screen="a-employees"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Employees</button>
+      <button class="nav-item" data-screen="a-scheduling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Scheduling</button>
+      <button class="nav-item" data-screen="a-contracts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>Contracts</button>
+      <button class="nav-item" data-screen="a-payroll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2 2 0 0 1 0 4H12a2 2 0 0 0 0 4h.5a2.5 2.5 0 0 0 2.5-1"/></svg>Payroll</button>
+      <button class="nav-item" data-screen="a-absences"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Absences</button>
+      <button class="nav-item" data-screen="a-reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>Reports</button>
+    </nav>
+
+    <div class="nav-label" style="display:none;">STAFF VIEW</div>
+    <nav class="primary-nav" id="nav-staff" style="display:none;">
+      <button class="nav-item" data-screen="s-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+      <button class="nav-item" data-screen="s-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 16 0v1"/></svg>My info</button>
+      <button class="nav-item" data-screen="s-docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Documents</button>
+      <button class="nav-item" data-screen="s-schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>My schedule</button>
+      <button class="nav-item" data-screen="s-pay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2 2 0 0 1 0 4H12a2 2 0 0 0 0 4h.5a2.5 2.5 0 0 0 2.5-1"/></svg>My pay</button>
+    </nav>
+
+    <div class="sidebar-foot">Preview build — sample data only</div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div class="breadcrumb" id="breadcrumb"><span class="crumb-current">Dashboard</span></div>
+      <div class="topbar-right">
+        <div class="role-toggle">
+          <button class="role-btn active" id="role-admin-btn" onclick="setRole('admin')">Admin view</button>
+          <button class="role-btn" id="role-staff-btn" onclick="setRole('staff')">Staff view</button>
+        </div>
+        <div class="avatar">JR</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ============ ADMIN: DASHBOARD ============ -->
+      <section class="screen" id="a-dashboard" data-crumb="Dashboard">
+        <div class="page-head">
+          <h1>Dashboard</h1>
+          <p>Fall term, 2026 – 2027</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">Employees</div><div class="stat-num">128</div><div class="stat-note">across 6 departments</div></div>
+          <div class="stat-card flag"><div class="stat-label">Contracts awaiting signature</div><div class="stat-num">7</div><div class="stat-note">2 sent over a week ago</div></div>
+          <div class="stat-card"><div class="stat-label">Open shifts this week</div><div class="stat-num">14</div><div class="stat-note">across 4 departments</div></div>
+          <div class="stat-card flag"><div class="stat-label">Payroll run due</div><div class="stat-num">3 days</div><div class="stat-note">Sep 1 – 15 pay period</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head"><h3>Needs attention</h3></div>
+            <div class="panel-body">
+              <div class="task-row"><div><div class="task-label">7 contracts unsigned</div><div class="task-sub">Blocking payroll for those employees</div></div><button class="btn btn-secondary btn-sm" onclick="go('a-contracts')">Review</button></div>
+              <div class="task-row"><div><div class="task-label">2 documents past due</div><div class="task-sub">I‑9 forms, Elementary dept.</div></div><button class="btn btn-secondary btn-sm" onclick="go('a-employees')">Review</button></div>
+              <div class="task-row"><div><div class="task-label">4 open shifts, this week</div><div class="task-sub">Unfilled — start Tuesday</div></div><button class="btn btn-secondary btn-sm" onclick="go('a-scheduling')">Fill shifts</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Recent activity</h3></div>
+            <div class="panel-body">
+              <div class="activity-row"><div class="activity-dot"></div><div style="flex:1;">Alex M. submitted a W‑4</div><div class="activity-time">2h ago</div></div>
+              <div class="activity-row"><div class="activity-dot"></div><div style="flex:1;">New shift added — Math dept., Tue 8am</div><div class="activity-time">5h ago</div></div>
+              <div class="activity-row"><div class="activity-dot"></div><div style="flex:1;">Contract signed — M. Ellis</div><div class="activity-time">Yesterday</div></div>
+              <div class="activity-row"><div class="activity-dot"></div><div style="flex:1;">Absence posted — C. Lin, Sep 4</div><div class="activity-time">Yesterday</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: EMPLOYEES ============ -->
+      <section class="screen" id="a-employees" data-crumb="Employees">
+        <div class="page-head"><h1>Employees</h1><p><span id="employee-count">128</span> people across 6 departments</p></div>
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input class="search-input" id="employee-search" placeholder="Search employees" oninput="filterEmployees(this.value)">
+            <div style="position:relative;">
+              <button class="btn btn-secondary btn-sm" onclick="toggleDropdown('filters-dd')">Filters</button>
+              <div class="mini-dropdown" id="filters-dd">
+                <div class="mini-dd-item"><label><input type="checkbox" checked> Signed</label></div>
+                <div class="mini-dd-item"><label><input type="checkbox" checked> Pending</label></div>
+                <div class="mini-dd-item"><label><input type="checkbox" checked> Missing</label></div>
+              </div>
+            </div>
+            <div style="position:relative;">
+              <button class="btn btn-secondary btn-sm" onclick="toggleDropdown('columns-dd')">Columns</button>
+              <div class="mini-dropdown" id="columns-dd">
+                <div class="mini-dd-item"><label><input type="checkbox" checked onchange="toggleColumn(1,this.checked)"> Department</label></div>
+                <div class="mini-dd-item"><label><input type="checkbox" checked onchange="toggleColumn(2,this.checked)"> Position</label></div>
+                <div class="mini-dd-item"><label><input type="checkbox" checked onchange="toggleColumn(3,this.checked)"> Contact</label></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="openAddEmployee()">Add employee</button>
+        </div>
+        <div class="panel">
+          <table id="employees-table">
+            <thead><tr><th>Name</th><th>Department</th><th>Position</th><th>Contact</th><th>Contract</th></tr></thead>
+            <tbody id="employees-tbody">
+              <tr class="clickable" data-name="Alex Morgan" onclick="openDrawer('Alex Morgan','Judaic Studies')"><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>Teacher</td><td>amorgan@example.org</td><td><span class="badge badge-moss">Signed</span></td></tr>
+              <tr class="clickable" data-name="Jordan Reyes" onclick="openDrawer('Jordan Reyes','Administration')"><td><div class="name-cell"><div class="mini-avatar">JR</div>Jordan Reyes</div></td><td>Administration</td><td>Office Manager</td><td>jreyes@example.org</td><td><span class="badge badge-moss">Signed</span></td></tr>
+              <tr class="clickable" data-name="Taylor Brooks" onclick="openDrawer('Taylor Brooks','Elementary')"><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>Teacher</td><td>tbrooks@example.org</td><td><span class="badge badge-brass">Pending</span></td></tr>
+              <tr class="clickable" data-name="Sam Whitfield" onclick="openDrawer('Sam Whitfield','Facilities')"><td><div class="name-cell"><div class="mini-avatar">SW</div>Sam Whitfield</div></td><td>Facilities</td><td>Custodian</td><td>swhitfield@example.org</td><td><span class="badge badge-brick">Missing</span></td></tr>
+              <tr class="clickable" data-name="Casey Lin" onclick="openDrawer('Casey Lin','Elementary')"><td><div class="name-cell"><div class="mini-avatar">CL</div>Casey Lin</div></td><td>Elementary</td><td>Teacher's Aide</td><td>clin@example.org</td><td><span class="badge badge-moss">Signed</span></td></tr>
+              <tr class="clickable" data-name="Morgan Ellis" onclick="openDrawer('Morgan Ellis','High School')"><td><div class="name-cell"><div class="mini-avatar">ME</div>Morgan Ellis</div></td><td>High School</td><td>Teacher</td><td>mellis@example.org</td><td><span class="badge badge-moss">Signed</span></td></tr>
+            </tbody>
+          </table>
+          <div id="employees-empty" class="empty-state" style="display:none;">
+            <h4>No matches</h4>
+            <p>No employees match that search. Try a different name.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: SCHEDULING ============ -->
+      <section class="screen" id="a-scheduling" data-crumb="Scheduling">
+        <div class="page-head"><h1>Scheduling</h1><p>Assign, fill, and reuse shift patterns in one place</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-sub="sched" data-target="sched-week">This week</div>
+          <div class="subtab" data-sub="sched" data-target="sched-open">Open shifts <span class="badge badge-brick" style="margin-left:5px;">4</span></div>
+          <div class="subtab" data-sub="sched" data-target="sched-templates">Templates</div>
+        </div>
+        <div id="sched-week" class="sub-panel">
+          <div class="week-grid">
+            <div class="day-col"><div class="day-label">Monday</div><div class="shift-block"><strong>8:00 – 3:30</strong>Judaic Studies · A. Morgan</div><div class="shift-block"><strong>8:00 – 3:30</strong>Elementary · T. Brooks</div></div>
+            <div class="day-col"><div class="day-label">Tuesday</div><div class="shift-block open"><strong>8:00 – 12:00</strong>Math · Open shift</div><div class="shift-block"><strong>8:00 – 3:30</strong>Elementary · C. Lin</div></div>
+            <div class="day-col"><div class="day-label">Wednesday</div><div class="shift-block"><strong>8:00 – 3:30</strong>High School · M. Ellis</div></div>
+            <div class="day-col"><div class="day-label">Thursday</div><div class="shift-block"><strong>8:00 – 3:30</strong>Judaic Studies · A. Morgan</div><div class="shift-block open"><strong>1:00 – 3:30</strong>Facilities · Open shift</div></div>
+            <div class="day-col"><div class="day-label">Friday</div><div class="shift-block"><strong>8:00 – 12:00</strong>Elementary · T. Brooks</div></div>
+          </div>
+        </div>
+        <div id="sched-open" class="sub-panel" style="display:none;">
+          <div class="panel">
+            <table>
+              <thead><tr><th>Department</th><th>Day</th><th>Time</th><th>Reason</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>Math</td><td>Tuesday</td><td>8:00 – 12:00</td><td>Unfilled — new position</td><td><button class="btn btn-secondary btn-sm" onclick="fillShift(this)">Fill shift</button></td></tr>
+                <tr><td>Facilities</td><td>Thursday</td><td>1:00 – 3:30</td><td>S. Whitfield — approved time off</td><td><button class="btn btn-secondary btn-sm" onclick="fillShift(this)">Fill shift</button></td></tr>
+                <tr><td>Elementary</td><td>Friday</td><td>12:00 – 3:30</td><td>Unfilled — new position</td><td><button class="btn btn-secondary btn-sm" onclick="fillShift(this)">Fill shift</button></td></tr>
+                <tr><td>High School</td><td>Monday</td><td>3:30 – 5:00</td><td>Coverage needed — after-school</td><td><button class="btn btn-secondary btn-sm" onclick="fillShift(this)">Fill shift</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="sched-templates" class="sub-panel" style="display:none;">
+          <div class="panel"><div class="empty-state">
+            <h4>No templates yet</h4>
+            <p>Save a recurring weekly pattern once and reuse it each term instead of rebuilding shifts from scratch.</p>
+            <button class="btn btn-primary btn-sm" onclick="createTemplate()">Create template</button>
+          </div></div>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: CONTRACTS ============ -->
+      <section class="screen" id="a-contracts" data-crumb="Contracts">
+        <div class="page-head"><h1>Contracts</h1><p>A signed contract unlocks payroll for that employee</p></div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Name</th><th>Department</th><th>Type</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>Full-year</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Alex Morgan')">View</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>Full-year</td><td><span class="badge badge-brass">Sent — awaiting signature</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Reminder sent to Taylor Brooks')">Remind</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">SW</div>Sam Whitfield</div></td><td>Facilities</td><td>Hourly</td><td><span class="badge badge-brick">Not sent</span></td><td><button class="btn btn-primary btn-sm" onclick="sendContract(this,'Sam Whitfield')">Send contract</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">ME</div>Morgan Ellis</div></td><td>High School</td><td>Full-year</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Morgan Ellis')">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: PAYROLL ============ -->
+      <section class="screen" id="a-payroll" data-crumb="Payroll">
+        <div class="page-head"><h1>Payroll</h1><p>Pay period Sep 1 – 15, 2026 · Draft</p></div>
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-head">
+            <h3>This run</h3>
+            <button class="btn btn-primary btn-sm" onclick="submitPayroll(this)">Review &amp; submit</button>
+          </div>
+          <div class="panel-body" style="display:flex;gap:36px;">
+            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Total, if submitted now</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;">$118,420</div></div>
+            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Employees included</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;">121 of 128</div></div>
+            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Blocked</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;color:var(--brick);">7</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Name</th><th>Department</th><th>Gross pay</th><th>Adjustments</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>$1,840.00</td><td>—</td><td><span class="badge badge-moss">Ready</span></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">JR</div>Jordan Reyes</div></td><td>Administration</td><td>$2,105.00</td><td>+ $150 bonus</td><td><span class="badge badge-moss">Ready</span></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>—</td><td>—</td><td><span class="badge badge-brick">Blocked — contract not signed</span></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">CL</div>Casey Lin</div></td><td>Elementary</td><td>$1,120.00</td><td>− $40 absence</td><td><span class="badge badge-moss">Ready</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: ABSENCES ============ -->
+      <section class="screen" id="a-absences" data-crumb="Absences">
+        <div class="page-head"><h1>Absences</h1><p>Post and track time off across departments</p></div>
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-head"><h3>Post an absence</h3></div>
+          <div class="panel-body form-grid">
+            <div class="field"><label>Employee</label>
+              <select id="abs-employee">
+                <option value="">Select employee</option>
+                <option>Alex Morgan</option><option>Jordan Reyes</option><option>Taylor Brooks</option><option>Sam Whitfield</option><option>Casey Lin</option><option>Morgan Ellis</option>
+              </select>
+            </div>
+            <div class="field"><label>Type</label>
+              <select id="abs-type"><option>Sick</option><option>Personal</option><option>Unpaid</option></select>
+            </div>
+            <div class="field"><label>Start date</label><input type="date" id="abs-start" value="2026-09-08"></div>
+            <div class="field"><label>End date</label><input type="date" id="abs-end" value="2026-09-08"></div>
+          </div>
+          <div class="panel-body" style="padding-top:0;"><button class="btn btn-primary btn-sm" onclick="saveAbsence()">Save absence</button></div>
+        </div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Name</th><th>Type</th><th>Dates</th><th>Posted by</th></tr></thead>
+            <tbody id="absences-tbody">
+              <tr><td>Casey Lin</td><td><span class="badge badge-brick">Sick</span></td><td>Sep 4, 2026</td><td>J. Reyes</td></tr>
+              <tr><td>Sam Whitfield</td><td><span class="badge badge-brass">Personal</span></td><td>Sep 2 – Sep 3, 2026</td><td>J. Reyes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ADMIN: REPORTS ============ -->
+      <section class="screen" id="a-reports" data-crumb="Reports">
+        <div class="page-head"><h1>Reports</h1><p>Export and review data across every part of the portal</p></div>
+
+        <div class="panel" style="margin-bottom:24px;">
+          <div class="panel-head"><h3>Payroll trend — last 6 pay periods</h3></div>
+          <div class="panel-body">
+            <div class="chart-row">
+              <div class="chart-bar"><div class="val">$105k</div><div class="fill" style="height:81%;"></div><div class="lbl">Jun 15</div></div>
+              <div class="chart-bar"><div class="val">$112k</div><div class="fill" style="height:87%;"></div><div class="lbl">Jul 1</div></div>
+              <div class="chart-bar"><div class="val">$98k</div><div class="fill" style="height:75%;"></div><div class="lbl">Jul 15</div></div>
+              <div class="chart-bar"><div class="val">$120k</div><div class="fill" style="height:93%;"></div><div class="lbl">Aug 1</div></div>
+              <div class="chart-bar"><div class="val">$115k</div><div class="fill" style="height:89%;"></div><div class="lbl">Aug 15</div></div>
+              <div class="chart-bar"><div class="val">$118k</div><div class="fill flag" style="height:91%;"></div><div class="lbl">Sep 1 (draft)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <h4>Employee directory</h4>
+            <p>Full roster with department, position, and contract status.</p>
+            <div class="rc-meta">Last generated Sep 3, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Employee directory','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Employee directory','PDF',this)">Export PDF</button></div>
+          </div>
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2 2 0 0 1 0 4H12a2 2 0 0 0 0 4h.5a2.5 2.5 0 0 0 2.5-1"/></svg></div>
+            <h4>Payroll summary</h4>
+            <p>Gross pay, adjustments, and totals by pay period.</p>
+            <div class="rc-meta">Last generated Sep 1, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Payroll summary','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Payroll summary','PDF',this)">Export PDF</button></div>
+          </div>
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg></div>
+            <h4>Contract status</h4>
+            <p>Signed, sent, and unsent contracts across all departments.</p>
+            <div class="rc-meta">Last generated Sep 5, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Contract status','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Contract status','PDF',this)">Export PDF</button></div>
+          </div>
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <h4>Absence summary</h4>
+            <p>Time-off by employee and type, for the selected school year.</p>
+            <div class="rc-meta">Last generated Aug 29, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Absence summary','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Absence summary','PDF',this)">Export PDF</button></div>
+          </div>
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <h4>Shift coverage</h4>
+            <p>Filled vs. open shifts by department and week.</p>
+            <div class="rc-meta">Last generated Sep 6, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Shift coverage','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Shift coverage','PDF',this)">Export PDF</button></div>
+          </div>
+          <div class="report-card">
+            <div class="rc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></div>
+            <h4>Document compliance</h4>
+            <p>Required documents submitted vs. outstanding, by employee.</p>
+            <div class="rc-meta">Last generated Sep 4, 2026</div>
+            <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="exportReport('Document compliance','CSV',this)">Export CSV</button><button class="btn btn-secondary btn-sm" onclick="exportReport('Document compliance','PDF',this)">Export PDF</button></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Recently generated</h3></div>
+          <table>
+            <thead><tr><th>Report</th><th>Generated by</th><th>Date</th><th>Format</th><th></th></tr></thead>
+            <tbody id="recent-reports-tbody">
+              <tr><td>Payroll summary — Aug 15 period</td><td>J. Reyes</td><td>Sep 1, 2026</td><td>PDF</td><td><button class="btn btn-text btn-sm">Download</button></td></tr>
+              <tr><td>Shift coverage — week of Sep 1</td><td>J. Reyes</td><td>Sep 6, 2026</td><td>CSV</td><td><button class="btn btn-text btn-sm">Download</button></td></tr>
+              <tr><td>Contract status — full year</td><td>J. Reyes</td><td>Sep 5, 2026</td><td>PDF</td><td><button class="btn btn-text btn-sm">Download</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ STAFF: HOME ============ -->
+      <section class="screen" id="s-home" data-crumb="Home">
+        <div class="page-head"><h1>Welcome, Taylor</h1><p>Elementary · Teacher</p></div>
+        <div class="home-cards">
+          <div class="home-card">
+            <div class="hc-top"><h4>Your info</h4><span class="badge badge-moss">Complete</span></div>
+            <p>Personal, contact, and emergency details are up to date.</p>
+            <button class="btn btn-secondary btn-sm" onclick="go('s-info')">Review</button>
+          </div>
+          <div class="home-card">
+            <div class="hc-top"><h4>Documents</h4><span class="badge badge-brass" id="s-home-docs-badge">4 of 6 submitted</span></div>
+            <p>I‑9 and Direct Deposit are still needed before your contract can be finalized.</p>
+            <button class="btn btn-secondary btn-sm" onclick="go('s-docs')">Continue</button>
+          </div>
+          <div class="home-card">
+            <div class="hc-top"><h4>Your schedule</h4><span class="badge badge-neutral">Next: Tue, 8:00 AM</span></div>
+            <p>4 shifts scheduled this week, Elementary department.</p>
+            <button class="btn btn-secondary btn-sm" onclick="go('s-schedule')">View schedule</button>
+          </div>
+          <div class="home-card">
+            <div class="hc-top"><h4>Pay</h4><span class="badge badge-brick">Locked</span></div>
+            <p>Sign your contract to unlock pay and adjustment history.</p>
+            <button class="btn btn-secondary btn-sm" onclick="go('s-pay')">Go to My pay</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STAFF: MY INFO ============ -->
+      <section class="screen" id="s-info" data-crumb="My info">
+        <div class="page-head"><h1>My info</h1><p>Keep your details current — HR is notified when you make changes</p></div>
+        <div class="panel"><div class="panel-body">
+          <div class="section-label">Personal</div>
+          <div class="form-grid">
+            <div class="field"><label>Legal name</label><div class="value">Taylor Brooks</div></div>
+            <div class="field"><label>Known as</label><div class="value">Taylor B.</div></div>
+            <div class="field"><label>Date of birth</label><div class="value">•• / •• / ••••<span class="reveal" onclick="this.previousElementSibling ? null : null">Show</span></div></div>
+            <div class="field"><label>Gender</label><div class="value">Female</div></div>
+          </div>
+          <div class="section-label">Contact</div>
+          <div class="form-grid">
+            <div class="field"><label>Address</label><div class="value">123 Maple St, Springfield, ST</div></div>
+            <div class="field"><label>Cell phone</label><div class="value">(••• ) •••-••42<span class="reveal">Show</span></div></div>
+          </div>
+          <div class="section-label">Emergency contact</div>
+          <div class="form-grid">
+            <div class="field"><label>Name</label><div class="value">Jamie Brooks</div></div>
+            <div class="field"><label>Relationship</label><div class="value">Spouse</div></div>
+          </div>
+          <div style="margin-top:22px;"><button class="btn btn-primary btn-sm" onclick="saveMyInfo(this)">Save changes</button></div>
+        </div></div>
+      </section>
+
+      <!-- ============ STAFF: DOCUMENTS ============ -->
+      <section class="screen" id="s-docs" data-crumb="Documents">
+        <div class="page-head"><h1>Documents</h1><p><span id="s-docs-count">4 of 6</span> submitted</p></div>
+        <div class="panel"><div class="panel-body" style="padding:6px 20px;">
+          <div class="drawer-doc-row"><div><div class="doc-name">W‑4</div><div class="doc-sub">Submitted Aug 12, 2026</div></div><span class="badge badge-moss">Submitted</span></div>
+          <div class="drawer-doc-row"><div><div class="doc-name">ID card</div><div class="doc-sub">Submitted Aug 12, 2026</div></div><span class="badge badge-moss">Submitted</span></div>
+          <div class="drawer-doc-row"><div><div class="doc-name">I‑9</div><div class="doc-sub">Needed to finalize your contract</div></div><button class="btn btn-primary btn-sm" onclick="markUploaded(this,'I-9')">Upload</button></div>
+          <div class="drawer-doc-row"><div><div class="doc-name">IT‑2104</div><div class="doc-sub">Submitted Aug 14, 2026</div></div><span class="badge badge-moss">Submitted</span></div>
+          <div class="drawer-doc-row"><div><div class="doc-name">Direct deposit</div><div class="doc-sub">Needed to receive payment</div></div><button class="btn btn-primary btn-sm" onclick="markUploaded(this,'Direct deposit')">Upload</button></div>
+          <div class="drawer-doc-row"><div><div class="doc-name">Other</div><div class="doc-sub">Optional</div></div><span class="badge badge-neutral">Not required</span></div>
+        </div></div>
+      </section>
+
+      <!-- ============ STAFF: MY SCHEDULE ============ -->
+      <section class="screen" id="s-schedule" data-crumb="My schedule">
+        <div class="page-head"><h1>My schedule</h1><p>Week of Sep 8, 2026</p></div>
+        <div class="panel"><div class="panel-body">
+          <div class="task-row"><div><div class="task-label">Monday</div><div class="task-sub">8:00 AM – 3:30 PM · Elementary</div></div></div>
+          <div class="task-row"><div><div class="task-label">Tuesday</div><div class="task-sub">8:00 AM – 3:30 PM · Elementary</div></div></div>
+          <div class="task-row"><div><div class="task-label">Wednesday</div><div class="task-sub">No shift scheduled</div></div></div>
+          <div class="task-row"><div><div class="task-label">Thursday</div><div class="task-sub">8:00 AM – 3:30 PM · Elementary</div></div></div>
+          <div class="task-row"><div><div class="task-label">Friday</div><div class="task-sub">8:00 AM – 12:00 PM · Elementary</div></div></div>
+        </div></div>
+      </section>
+
+      <!-- ============ STAFF: MY PAY ============ -->
+      <section class="screen" id="s-pay" data-crumb="My pay">
+        <div class="page-head"><h1>My pay</h1><p>Pay, PTO, and adjustments</p></div>
+        <div class="locked-card" style="margin-bottom:24px;">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+          <div style="flex:1;"><h4>Pay is locked</h4><p>Sign your contract to unlock pay history and this pay period's breakdown.</p></div>
+          <button class="btn btn-primary btn-sm" onclick="go('s-docs')">Go to contract</button>
+        </div>
+        <div class="section-label">PTO balance</div>
+        <div class="pto-stats">
+          <div class="pto-stat"><div class="n">40</div><div class="l">Allowance (hrs)</div></div>
+          <div class="pto-stat"><div class="n">13</div><div class="l">Used (hrs)</div></div>
+          <div class="pto-stat"><div class="n">27</div><div class="l">Balance (hrs)</div></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ EMPLOYEE DRAWER ============ -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="who">
+      <div class="mini-avatar" id="drawer-avatar">AM</div>
+      <div><h3 id="drawer-name">Alex Morgan</h3><div class="role" id="drawer-role">Judaic Studies · Teacher</div></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="drawer-tabs">
+    <div class="subtab active" data-sub="drawer" data-target="drawer-info">Info</div>
+    <div class="subtab" data-sub="drawer" data-target="drawer-documents">Documents</div>
+    <div class="subtab" data-sub="drawer" data-target="drawer-contract">Contract</div>
+  </div>
+  <div class="drawer-body">
+    <div id="drawer-info" class="sub-panel">
+      <div class="section-label" style="margin-top:0;">Contact</div>
+      <div class="field" style="margin-bottom:14px;"><label>Email</label><div class="value">amorgan@example.org</div></div>
+      <div class="field" style="margin-bottom:14px;"><label>Cell phone</label><div class="value">(•••) •••-••18<span class="reveal">Show</span></div></div>
+      <div class="section-label">Personal</div>
+      <div class="field" style="margin-bottom:14px;"><label>Date of birth</label><div class="value">•• / •• / ••••<span class="reveal">Show</span></div></div>
+      <div class="field"><label>Department hired</label><div class="value">Aug 2021</div></div>
+    </div>
+    <div id="drawer-documents" class="sub-panel" style="display:none;">
+      <div class="drawer-doc-row"><div><div class="doc-name">W‑4</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
+      <div class="drawer-doc-row"><div><div class="doc-name">I‑9</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
+      <div class="drawer-doc-row"><div><div class="doc-name">Direct deposit</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
+    </div>
+    <div id="drawer-contract" class="sub-panel" style="display:none;">
+      <div class="field" style="margin-bottom:14px;"><label>Type</label><div class="value">Full-year</div></div>
+      <div class="field" style="margin-bottom:14px;"><label>Status</label><div class="value"><span class="badge badge-moss">Signed</span></div></div>
+      <button class="btn btn-secondary btn-sm" onclick="showToast('Opening signed contract…')">View signed contract</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADD EMPLOYEE MODAL ============ -->
+<div class="modal-overlay" id="add-emp-overlay" onclick="if(event.target===this) closeAddEmployee()">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Add employee</h3><button class="drawer-close" onclick="closeAddEmployee()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-body">
+      <div class="field"><label>Full name</label><input type="text" id="new-emp-name" placeholder="e.g. Jamie Rivera"></div>
+      <div class="field"><label>Department</label>
+        <select id="new-emp-dept">
+          <option>Judaic Studies</option><option>Elementary</option><option>High School</option><option>Administration</option><option>Facilities</option>
+        </select>
+      </div>
+      <div class="field"><label>Position</label><input type="text" id="new-emp-position" placeholder="e.g. Teacher"></div>
+      <div class="field" style="margin-bottom:0;"><label>Email</label><input type="text" id="new-emp-email" placeholder="e.g. jrivera@example.org"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" onclick="closeAddEmployee()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="submitAddEmployee()">Add employee</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script>
+  function go(screenId){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.screen===screenId));
+    document.getElementById('breadcrumb').innerHTML = '<span class="crumb-current">'+target.dataset.crumb+'</span>';
+  }
+
+  document.querySelectorAll('.nav-item').forEach(btn=>{
+    btn.addEventListener('click', ()=>go(btn.dataset.screen));
+  });
+
+  function setRole(role){
+    if(role==='admin'){
+      document.getElementById('nav-admin').style.display='flex';
+      document.getElementById('nav-admin').previousElementSibling.style.display='block';
+      document.getElementById('nav-staff').style.display='none';
+      document.getElementById('nav-staff').previousElementSibling.style.display='none';
+      document.getElementById('role-admin-btn').classList.add('active');
+      document.getElementById('role-staff-btn').classList.remove('active');
+      go('a-dashboard');
+    } else {
+      document.getElementById('nav-staff').style.display='flex';
+      document.getElementById('nav-staff').previousElementSibling.style.display='block';
+      document.getElementById('nav-admin').style.display='none';
+      document.getElementById('nav-admin').previousElementSibling.style.display='none';
+      document.getElementById('role-staff-btn').classList.add('active');
+      document.getElementById('role-admin-btn').classList.remove('active');
+      go('s-home');
+    }
+  }
+
+  // sub-tabs (scheduling + drawer)
+  document.querySelectorAll('.subtab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      const group = tab.dataset.sub;
+      const parent = tab.closest('.subtabs') || tab.closest('.drawer-tabs');
+      parent.querySelectorAll('.subtab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const container = tab.closest('.screen') || tab.closest('.drawer');
+      container.querySelectorAll('.sub-panel').forEach(p=>p.style.display='none');
+      document.getElementById(tab.dataset.target).style.display='block';
+    });
+  });
+
+  function openDrawer(name, roleLine){
+    document.getElementById('drawer-name').textContent = name;
+    document.getElementById('drawer-role').textContent = roleLine;
+    const initials = name.split(' ').map(n=>n[0]).join('');
+    document.getElementById('drawer-avatar').textContent = initials;
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+  }
+  function closeDrawer(){
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').classList.remove('open');
+  }
+
+  // reveal toggles
+  document.querySelectorAll('.reveal').forEach(r=>{
+    r.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      r.textContent = r.textContent === 'Show' ? 'Hide' : 'Show';
+    });
+  });
+
+  // ---------- toasts ----------
+  function showToast(msg, tone){
+    const stack = document.getElementById('toast-stack');
+    const t = document.createElement('div');
+    t.className = 'toast' + (tone==='brick' ? ' brick' : '');
+    t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>'+msg+'</span>';
+    stack.appendChild(t);
+    requestAnimationFrame(()=>t.classList.add('show'));
+    setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 200); }, 2800);
+  }
+
+  // ---------- dropdowns ----------
+  function toggleDropdown(id){
+    const el = document.getElementById(id);
+    const wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.mini-dropdown').forEach(d=>d.classList.remove('open'));
+    if(!wasOpen) el.classList.add('open');
+  }
+  document.addEventListener('click', (e)=>{
+    if(!e.target.closest('.mini-dropdown') && !e.target.closest('[onclick*="toggleDropdown"]')){
+      document.querySelectorAll('.mini-dropdown').forEach(d=>d.classList.remove('open'));
+    }
+  });
+  function toggleColumn(index, visible){
+    const table = document.getElementById('employees-table');
+    table.querySelectorAll('tr').forEach(row=>{
+      const cell = row.children[index];
+      if(cell) cell.style.display = visible ? '' : 'none';
+    });
+  }
+
+  // ---------- employee search ----------
+  function filterEmployees(query){
+    const q = query.trim().toLowerCase();
+    const rows = document.querySelectorAll('#employees-tbody tr');
+    let visibleCount = 0;
+    rows.forEach(row=>{
+      const match = row.dataset.name.toLowerCase().includes(q);
+      row.style.display = match ? '' : 'none';
+      if(match) visibleCount++;
+    });
+    document.getElementById('employees-empty').style.display = visibleCount===0 ? 'block' : 'none';
+    document.querySelector('#employees-table').style.display = visibleCount===0 ? 'none' : 'table';
+  }
+
+  // ---------- add employee ----------
+  function openAddEmployee(){
+    document.getElementById('add-emp-overlay').classList.add('open');
+    document.getElementById('new-emp-name').focus();
+  }
+  function closeAddEmployee(){
+    document.getElementById('add-emp-overlay').classList.remove('open');
+  }
+  function submitAddEmployee(){
+    const name = document.getElementById('new-emp-name').value.trim();
+    if(!name){ showToast('Enter a name to add an employee', 'brick'); return; }
+    const dept = document.getElementById('new-emp-dept').value;
+    const position = document.getElementById('new-emp-position').value.trim() || '—';
+    const email = document.getElementById('new-emp-email').value.trim() || '—';
+    const initials = name.split(' ').filter(Boolean).map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const tr = document.createElement('tr');
+    tr.className = 'clickable';
+    tr.dataset.name = name;
+    tr.onclick = ()=>openDrawer(name, dept);
+    tr.innerHTML = '<td><div class="name-cell"><div class="mini-avatar">'+initials+'</div>'+name+'</div></td><td>'+dept+'</td><td>'+position+'</td><td>'+email+'</td><td><span class="badge badge-brick">Missing</span></td>';
+    document.getElementById('employees-tbody').appendChild(tr);
+    const countEl = document.getElementById('employee-count');
+    countEl.textContent = parseInt(countEl.textContent, 10) + 1;
+    closeAddEmployee();
+    document.getElementById('new-emp-name').value = '';
+    document.getElementById('new-emp-position').value = '';
+    document.getElementById('new-emp-email').value = '';
+    showToast(name + ' added to Employees');
+  }
+
+  // ---------- contracts ----------
+  function sendContract(btn, name){
+    const row = btn.closest('tr');
+    row.querySelector('td:nth-child(4)').innerHTML = '<span class="badge badge-brass">Sent — awaiting signature</span>';
+    btn.textContent = 'Remind';
+    btn.className = 'btn btn-secondary btn-sm';
+    btn.setAttribute('onclick', "showToast('Reminder sent to "+name+"')");
+    showToast('Contract sent to ' + name);
+  }
+  function viewContract(name){ showToast('Opening ' + name + '\u2019s contract\u2026'); }
+
+  // ---------- payroll ----------
+  function submitPayroll(btn){
+    btn.textContent = 'Submitted';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'default';
+    showToast('Payroll run submitted for processing');
+  }
+
+  // ---------- scheduling ----------
+  function fillShift(btn){
+    const row = btn.closest('tr');
+    row.style.transition = 'opacity .2s ease';
+    row.style.opacity = '0';
+    setTimeout(()=>{
+      row.remove();
+      const badge = document.querySelector('.subtab[data-target="sched-open"] .badge');
+      if(badge){
+        const n = Math.max(0, parseInt(badge.textContent,10) - 1);
+        badge.textContent = n;
+      }
+    }, 180);
+    showToast('Shift filled');
+  }
+  function createTemplate(){
+    const box = document.getElementById('sched-templates').querySelector('.panel');
+    box.innerHTML = '<div class="panel-head"><h3>Templates</h3><button class="btn btn-secondary btn-sm" onclick="createTemplate()">New template</button></div>'
+      + '<table><thead><tr><th>Name</th><th>Department</th><th>Pattern</th><th></th></tr></thead><tbody>'
+      + '<tr><td>Standard weekday</td><td>Elementary</td><td>Mon\u2013Fri, 8:00\u20133:30</td><td><button class="btn btn-text btn-sm" onclick="showToast(\'Applied to this week\')">Apply</button></td></tr>'
+      + '</tbody></table>';
+    showToast('Template created');
+  }
+
+  // ---------- absences ----------
+  function saveAbsence(){
+    const emp = document.getElementById('abs-employee').value;
+    const type = document.getElementById('abs-type').value;
+    const start = document.getElementById('abs-start').value;
+    const end = document.getElementById('abs-end').value;
+    if(!emp){ showToast('Select an employee first', 'brick'); return; }
+    const dateLabel = (start && end && start!==end) ? (fmtDate(start)+' \u2013 '+fmtDate(end)) : fmtDate(start || new Date().toISOString().slice(0,10));
+    const badgeClass = type==='Sick' ? 'badge-brick' : (type==='Personal' ? 'badge-brass' : 'badge-neutral');
+    const tbody = document.getElementById('absences-tbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+emp+'</td><td><span class="badge '+badgeClass+'">'+type+'</span></td><td>'+dateLabel+'</td><td>You</td>';
+    tbody.prepend(tr);
+    showToast('Absence saved for ' + emp);
+  }
+  function fmtDate(iso){
+    if(!iso) return '\u2014';
+    const d = new Date(iso+'T00:00:00');
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  }
+
+  // ---------- reports ----------
+  const reportCsvData = {
+    'Employee directory': [['Name','Department','Position','Contract'],['Alex Morgan','Judaic Studies','Teacher','Signed'],['Jordan Reyes','Administration','Office Manager','Signed'],['Taylor Brooks','Elementary','Teacher','Pending'],['Sam Whitfield','Facilities','Custodian','Missing'],['Casey Lin','Elementary',"Teacher's Aide",'Signed'],['Morgan Ellis','High School','Teacher','Signed']],
+    'Payroll summary': [['Pay period','Total','Employees included','Blocked'],['Sep 1\u201315, 2026','$118,420','121','7']],
+    'Contract status': [['Name','Department','Status'],['Alex Morgan','Judaic Studies','Signed'],['Taylor Brooks','Elementary','Sent'],['Sam Whitfield','Facilities','Not sent'],['Morgan Ellis','High School','Signed']],
+    'Absence summary': [['Name','Type','Dates'],['Casey Lin','Sick','Sep 4, 2026'],['Sam Whitfield','Personal','Sep 2\u20133, 2026']],
+    'Shift coverage': [['Department','Day','Status'],['Math','Tuesday','Open'],['Facilities','Thursday','Open'],['Elementary','Monday','Filled']],
+    'Document compliance': [['Name','Submitted','Outstanding'],['Taylor Brooks','4','2'],['Alex Morgan','6','0']]
+  };
+  function exportReport(name, format, btn){
+    if(format === 'CSV'){
+      const rows = reportCsvData[name] || [['No data']];
+      const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name.toLowerCase().replace(/\s+/g,'-') + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+    logReport(name, format);
+    showToast(name + ' exported as ' + format);
+  }
+  function logReport(name, format){
+    const tbody = document.getElementById('recent-reports-tbody');
+    if(!tbody) return;
+    const tr = document.createElement('tr');
+    const today = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    tr.innerHTML = '<td>'+name+'</td><td>You</td><td>'+today+'</td><td>'+format+'</td><td><button class="btn btn-text btn-sm">Download</button></td>';
+    tbody.prepend(tr);
+  }
+
+  // ---------- staff documents ----------
+  function markUploaded(btn, docName){
+    const row = btn.closest('.drawer-doc-row');
+    const today = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    row.querySelector('.doc-sub').textContent = 'Submitted ' + today;
+    btn.outerHTML = '<span class="badge badge-moss">Submitted</span>';
+    const counterBadge = document.getElementById('s-docs-count');
+    if(counterBadge){
+      const parts = counterBadge.textContent.match(/(\d+) of (\d+)/);
+      if(parts) counterBadge.textContent = (parseInt(parts[1],10)+1) + ' of ' + parts[2];
+    }
+    const homeBadge = document.getElementById('s-home-docs-badge');
+    if(homeBadge){
+      const parts = homeBadge.textContent.match(/(\d+) of (\d+)/);
+      if(parts) homeBadge.textContent = (parseInt(parts[1],10)+1) + ' of ' + parts[2];
+    }
+    showToast(docName + ' uploaded');
+  }
+
+  // ---------- staff my info ----------
+  function saveMyInfo(btn){
+    const original = btn.textContent;
+    btn.textContent = 'Saved';
+    setTimeout(()=>{ btn.textContent = original; }, 1600);
+    showToast('Changes saved');
+  }
+
+  // init
+  go('a-dashboard');
+</script>
+
+</body>
+</html>
