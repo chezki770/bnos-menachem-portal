@@ -382,9 +382,18 @@
     outline:2px solid var(--brass);outline-offset:3px;
   }
   #a-payroll button:disabled{opacity:.55;cursor:not-allowed;}
+  .pay-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   .pay-heading,.pay-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .pay-note{font-size:13px;color:var(--ink-soft);margin:12px 0 20px;}
-  .pay-select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;max-width:100%;}
+  .pay-select{
+    font:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--surface);
+    border:1.5px solid var(--ink-faint);border-radius:6px;padding:9px 32px 9px 12px;max-width:100%;
+    box-shadow:0 1px 2px rgba(28,43,69,.05);appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6579' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat;background-position:right 10px center;background-size:14px;
+  }
+  .pay-select:hover{border-color:var(--brass);}
+  .pay-select:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px var(--brass-soft);}
   #a-payroll .subtab{font-family:inherit;background:none;border-top:0;border-left:0;border-right:0;}
   .pay-scroll{max-width:100%;overflow-x:auto;}
   .pay-scroll table{min-width:900px;}
@@ -404,16 +413,56 @@
   .pay-value{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:12px 0;font-size:13px;}
   .pay-reveal{background:none;border:none;font-family:inherit;color:var(--ink-soft);padding:4px;}
   .pay-demo-toggle{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--ink-soft);margin-bottom:16px;}
-  .drawer.pay-drawer{max-width:100vw;}
+
+  /* Page header */
+  .pay-page-head{margin-bottom:24px;}
+  .pay-head-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .pay-head-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pay-head-title h1{font-size:25px;}
+  .pay-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pay-head-actions .pay-select{min-width:168px;}
+  .pay-subtitle-line{margin:8px 0 0;font-size:13px;color:var(--ink-soft);}
+
+  /* Warning banner */
+  .pay-warning{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--brass-soft);color:var(--brass);border:1px solid var(--line);border-radius:8px;margin-bottom:20px;font-size:13px;}
+  .pay-warning svg{width:18px;height:18px;flex-shrink:0;}
+  .pay-warning .pay-warning-text{flex:1;}
+
+  /* Summary cards */
+  .stat-card.clickable{cursor:pointer;text-align:left;width:100%;font:inherit;}
+  .stat-card.clickable:hover{border-color:var(--ink-faint);}
+  .stat-card.clickable:focus-visible{outline:2px solid var(--brass);outline-offset:2px;}
+
+  /* This run table */
+  .pay-run-section-head td{padding:9px 16px;font-size:11.5px;font-weight:600;color:var(--ink-soft);background:var(--line-soft);border-bottom:1px solid var(--line);}
+  .pay-run-row{height:52px;cursor:pointer;}
+  .pay-run-row td{padding:8px 16px;}
+  .pay-run-row:hover,.pay-run-row:focus-within{background:#FAFAF6;}
+  .pay-run-row:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;}
+  .pay-emp-cell{display:flex;align-items:center;gap:10px;}
+  .pay-emp-name{font-size:13.5px;font-weight:500;}
+  .pay-emp-sub{font-size:11.5px;color:var(--ink-faint);margin-top:1px;}
+  .pay-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .pay-pending{color:var(--ink-faint);font-size:11px;display:block;margin-top:1px;font-weight:400;}
+  .pay-status-cell .badge{cursor:help;}
+  .pay-adjust-btn{font:inherit;font-size:13px;background:none;border:none;color:var(--ink);font-weight:500;cursor:pointer;padding:3px 6px;border-radius:4px;font-variant-numeric:tabular-nums;}
+  .pay-adjust-btn:hover{background:var(--line-soft);}
+  .pay-adjust-add{opacity:0;font:inherit;font-size:12px;color:var(--ink-faint);background:none;border:none;cursor:pointer;padding:3px 6px;}
+  .pay-run-row:hover .pay-adjust-add,.pay-run-row:focus-within .pay-adjust-add,.pay-adjust-add:focus{opacity:1;}
+  .pay-row-actions{display:flex;gap:6px;justify-content:flex-end;}
+  .pay-run-footer{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px;flex-wrap:wrap;gap:10px;}
+  .pay-run-footer strong{font-variant-numeric:tabular-nums;}
+
+  .drawer.pay-drawer{max-width:100vw;width:480px;right:-500px;}
+  .drawer.pay-drawer.open{right:0;}
   .drawer.pay-drawer .drawer-tabs,.drawer.pay-drawer .drawer-body > .sub-panel{display:none !important;}
   .pay-drawer .field{margin-bottom:16px;}
-  .pay-drawer input,.pay-drawer textarea{width:100%;padding:9px 12px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;}
+  .pay-drawer input,.pay-drawer textarea,.pay-drawer select{width:100%;padding:9px 12px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;}
   #a-payroll .subtabs{flex-wrap:wrap;}
   .pay-timeline{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));list-style:none;padding:0;gap:12px;}
   .pay-timeline li{border-top:2px solid var(--line);padding:12px 0;font-size:13px;min-width:0;}
   .pay-timeline strong,.pay-timeline time{display:block;margin-bottom:10px;}
   .pay-timeline time{color:var(--ink-soft);}
-  .pay-warning{padding:14px 16px;background:var(--brass-soft);color:var(--brass);border:1px solid var(--line);border-radius:6px;margin-bottom:20px;font-size:13px;}
   .pay-field-error{color:var(--brick);font-size:12px;margin:6px 0;min-height:16px;}
   .pay-card-summary{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;font-size:13px;}
   .pay-card-summary strong{display:block;font-family:'Fraunces',serif;font-size:24px;}
@@ -424,39 +473,87 @@
   .pay-edited{position:relative;display:inline-block;}
   .pay-edit-reason{display:none;position:absolute;top:100%;left:0;width:190px;padding:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:5px;z-index:2;font-size:12px;white-space:normal;}
   .pay-edited:hover .pay-edit-reason,.pay-edited:focus .pay-edit-reason{display:block;}
-  .pay-drawer.wide-pay-drawer{width:760px;right:-780px;}
-  .pay-drawer.wide-pay-drawer.open{right:0;}
   #pay-changes{margin-top:20px;}
   #pay-changes-list{list-style:none;padding:0;margin:0;}
   #pay-changes-list li{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;}
+
+  /* Employee side panel */
+  .pay-emp-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;}
+  .pay-emp-nav{display:flex;gap:2px;flex-shrink:0;}
+  .pay-breakdown{margin:4px 0 18px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .pay-breakdown-row{display:flex;justify-content:space-between;gap:8px;padding:9px 14px;font-size:13px;border-bottom:1px solid var(--line-soft);}
+  .pay-breakdown-row:last-child{border-bottom:none;}
+  .pay-breakdown-row.total{font-weight:600;background:var(--line-soft);}
+  .pay-breakdown-row .amt{font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .pay-seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .pay-seg button{font:inherit;font-size:12.5px;padding:7px 12px;background:var(--surface);border:none;cursor:pointer;color:var(--ink-soft);border-right:1px solid var(--line);}
+  .pay-seg button:last-child{border-right:none;}
+  .pay-seg button.active{background:var(--ink);color:#F2EFE4;}
+  .pay-adj-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:13px;}
+  .pay-adj-item:last-child{border-bottom:none;}
+  .pay-adj-item .amt{font-variant-numeric:tabular-nums;font-weight:500;}
+  .pay-adj-actions{display:flex;gap:4px;flex-shrink:0;}
+  .pay-adj-confirm{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--brick);}
+
+  /* Time card detail */
   .tc-detail{min-width:0;}
   .tc-detail :focus-visible{outline:2px solid var(--brass);outline-offset:3px;}
   .tc-detail input,.tc-detail select,.tc-detail textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:8px;max-width:100%;}
   .tc-detail textarea{width:100%;}
-  .tc-summary{display:flex;flex-wrap:wrap;gap:18px;padding:16px 0;font-size:12px;}
-  .tc-summary strong{display:block;font-size:19px;}
-  .tc-exceptions{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
-  .tc-day{border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:12px 0;min-width:0;}
-  .tc-row{display:grid;grid-template-columns:105px minmax(0,1fr) 130px;align-items:center;gap:14px;padding:14px;}
-  .tc-date{white-space:normal;text-align:left;}
-  .tc-day-total{text-align:right;font-size:13px;}
-  .tc-day-total .badge{display:inline-block;margin:3px 0 0 3px;}
-  .tc-bar{position:relative;height:148px;min-width:0;background:repeating-linear-gradient(to right,var(--line-soft) 0,var(--line-soft) 1px,transparent 1px,transparent calc(100% / 14));}
-  .tc-hours{display:flex;justify-content:space-between;font-size:9px;color:var(--ink-soft);}
-  .tc-block{position:absolute;top:50px;height:28px;border-radius:3px;}
-  .tc-scheduled{top:24px;height:64px;border:1px solid var(--ink-faint);background:var(--paper);font-size:10px;padding:2px 4px;color:var(--ink-soft);}
+  .tc-stat-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:16px 0;}
+  .tc-stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0;}
+  .tc-stat .l{font-size:10px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tc-stat .v{font-family:'Fraunces';font-size:17px;font-weight:560;margin-top:3px;font-variant-numeric:tabular-nums;}
+  .tc-stat .v.pos{color:var(--moss);}
+  .tc-stat .v.neg{color:var(--brick);}
+  .tc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--ink-soft);margin:4px 0 16px;align-items:center;}
+  .tc-legend .chip{display:inline-flex;align-items:center;gap:5px;}
+  .tc-legend .swatch{width:14px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0;}
+  .tc-legend .swatch.sched{border:1px solid var(--ink-faint);background:var(--paper);}
+  .tc-legend .swatch.work{background:var(--ink);}
+  .tc-legend .swatch.break{border:1px dashed var(--ink-soft);background:var(--surface);}
+  .tc-legend .swatch.pto{background:var(--brass-soft);}
+  .tc-legend .swatch.edited{background:var(--brass);}
+  .tc-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start;}
+  .tc-grid-panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .tc-axis{display:flex;position:sticky;top:0;z-index:3;background:var(--line-soft);border-bottom:1px solid var(--line);}
+  .tc-axis-spacer{width:138px;flex-shrink:0;}
+  .tc-axis-hours{flex:1;display:flex;font-size:9.5px;color:var(--ink-soft);padding:7px 4px;min-width:0;}
+  .tc-axis-hours span{flex:1;text-align:left;white-space:nowrap;}
+  .tc-axis-end{width:64px;flex-shrink:0;}
+  .tc-axis-badges{width:116px;flex-shrink:0;}
+  .tc-exceptions-panel{position:sticky;top:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;}
+  .tc-exceptions-panel h3{font-size:12.5px;margin-bottom:8px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+  .tc-exception-item{display:block;width:100%;text-align:left;font:inherit;font-size:12px;line-height:1.4;padding:8px 9px;border-radius:6px;border:1px solid var(--line);background:var(--surface);margin-bottom:6px;cursor:pointer;}
+  .tc-exception-item:hover{border-color:var(--ink-faint);background:#FAFAF6;}
+  .tc-exception-item strong{display:block;font-size:11px;color:var(--ink-soft);margin-bottom:2px;font-weight:600;}
+  .tc-day-row{display:flex;align-items:center;gap:12px;padding:0 12px;height:44px;border-bottom:1px solid var(--line-soft);cursor:pointer;background:none;width:100%;font:inherit;text-align:left;}
+  .tc-day-row:last-child{border-bottom:none;}
+  .tc-day-row:hover{background:#FAFAF6;}
+  .tc-day-row.selected{background:var(--brass-soft);}
+  .tc-day-row:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;}
+  .tc-day-row.off-row,.tc-day-row.holiday-row{height:28px;color:var(--ink-faint);font-size:12px;cursor:default;font-style:italic;}
+  .tc-day-side{width:138px;flex-shrink:0;font-size:12.5px;line-height:1.3;}
+  .tc-day-side strong{display:block;font-size:12.5px;font-style:normal;}
+  .tc-day-bar-wrap{flex:1;min-width:0;}
+  .tc-day-hours{width:64px;text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;flex-shrink:0;}
+  .tc-day-badges{display:flex;gap:4px;flex-wrap:wrap;width:116px;flex-shrink:0;}
+  .tc-day-badges .badge{font-size:9.5px;padding:2px 6px;}
+  .tc-bar{position:relative;height:26px;min-width:0;background:repeating-linear-gradient(to right,var(--line-soft) 0,var(--line-soft) 1px,transparent 1px,transparent calc(100% / 14));border-radius:4px;}
+  .tc-block{position:absolute;top:4px;height:18px;border-radius:3px;}
+  .tc-scheduled{top:1px;height:24px;border:1px solid var(--ink-faint);background:var(--paper);}
   .tc-work{background:var(--ink);}
   .tc-break{border:1px dashed var(--ink-soft);background:var(--surface);}
-  .tc-pto{top:108px;height:24px;background:var(--brass-soft);color:var(--brass);font-size:11px;padding:3px;white-space:nowrap;}
-  .tc-marker{position:absolute;top:43px;transform:translateX(-50%);padding:0;border:1px solid var(--surface);background:var(--ink);color:var(--surface);width:10px;height:42px;cursor:ew-resize;touch-action:none;}
+  .tc-pto{top:1px;height:24px;background:var(--brass-soft);color:var(--brass);font-size:9.5px;padding:2px 3px;white-space:nowrap;overflow:hidden;}
+  .tc-empty{position:absolute;top:50%;left:6px;transform:translateY(-50%);font-size:10.5px;color:var(--ink-soft);}
+  .tc-empty.missing{color:var(--brick);}
+  .tc-marker{position:absolute;top:1px;transform:translateX(-50%);padding:0;border:1px solid var(--surface);background:var(--ink);color:var(--surface);width:8px;height:24px;cursor:ew-resize;touch-action:none;border-radius:2px;}
   .tc-marker:disabled{cursor:default;opacity:1 !important;}
-  .tc-marker span{position:absolute;top:43px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--ink);background:var(--surface);padding:2px;}
-  .tc-marker:nth-of-type(even) span{top:-29px;}
+  .tc-marker span{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:2px 5px;z-index:4;}
+  .tc-marker:hover span,.tc-marker:focus span,.tc-marker.dragging span{display:block;}
   .tc-marker del{color:var(--ink-soft);}
   .tc-mobile-punches{display:none;}
   .tc-no-punches{color:var(--brick);}
-  .tc-expanded{border-top:1px solid var(--line);padding:16px;min-width:0;}
-  .tc-expanded table{min-width:740px;}
   .tc-form{background:var(--paper);border:1px solid var(--line);padding:14px;margin:12px 0;border-radius:6px;}
   .tc-popover{max-width:380px;}
   .tc-form-grid{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;}
@@ -464,18 +561,31 @@
   .tc-form .field{flex:1;min-width:130px;}
   .tc-history{padding-left:22px;}
   .tc-history li{padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;}
-  .tc-empty{position:absolute;top:55px;left:12px;font-size:13px;color:var(--ink-soft);}
-  .tc-empty.missing{color:var(--brick);}
   .toast button{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:3px 8px;}
+
+  /* Day edit side panel */
+  .tc-punch-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
+  .tc-punch-row:last-child{border-bottom:none;}
+  .tc-punch-row.selected{background:var(--brass-soft);border-radius:6px;padding-left:6px;padding-right:6px;}
+  .tc-punch-row select,.tc-punch-row input[type=time]{font-size:12.5px;padding:6px 8px;width:auto;}
+  .tc-punch-row .orig{font-size:11px;color:var(--ink-faint);white-space:nowrap;}
+  .tc-punch-delete{background:none;border:none;color:var(--ink-faint);cursor:pointer;padding:4px;flex-shrink:0;}
+  .tc-punch-delete:hover{color:var(--brick);}
+  .tc-quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+
+  @media(max-width:900px){
+    .tc-layout{grid-template-columns:1fr;}
+    .tc-exceptions-panel{position:static;order:-1;}
+  }
   @media(max-width:700px){
-    .tc-row{grid-template-columns:minmax(0,1fr) auto;gap:8px;}
-    .tc-chart{display:none;}
-    .tc-mobile-punches{display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;}
-    .tc-mobile-punches button{text-align:left;white-space:normal;}
-    .tc-day-total{max-width:140px;}
-    .tc-expanded{padding:10px;overflow:hidden;}
-    .tc-detail .pay-heading>div,.tc-detail .pay-actions>div{min-width:0;max-width:100%;}
-    .tc-exceptions button{white-space:normal;text-align:left;}
+    .tc-axis{display:none;}
+    .tc-day-row{flex-wrap:wrap;height:auto;padding:10px 12px;}
+    .tc-day-bar-wrap{display:none;}
+    .tc-day-side{width:auto;flex:1;}
+    .tc-day-hours{width:auto;}
+    .tc-day-badges{width:auto;}
+    .tc-mobile-punches{display:flex;flex-direction:column;gap:4px;width:100%;font-size:11.5px;color:var(--ink-soft);margin-top:4px;}
+    .tc-detail .pay-emp-panel-head,.tc-detail .pay-actions>div{min-width:0;max-width:100%;}
   }
   @media (max-width:700px){
     #a-payroll .stat-row{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -485,6 +595,10 @@
     .pay-timeline{grid-template-columns:1fr;}
     .pay-timeline li{border-top:0;border-left:2px solid var(--line);padding:8px 14px;}
     .pay-stubs{grid-template-columns:1fr;}
+    .tc-stat-row{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .pay-head-row{flex-direction:column;align-items:stretch;}
+    .pay-head-actions{width:100%;}
+    .pay-head-actions .pay-select{flex:1;}
     #s-pay .locked-card{flex-wrap:wrap;gap:12px;padding:16px;}
     #s-pay .pto-stats{gap:6px;}
     #s-pay .pto-stat{padding:12px 6px;}
@@ -683,14 +797,18 @@
 
       <!-- ============ ADMIN: PAYROLL ============ -->
       <section class="screen" id="a-payroll" data-crumb="Payroll">
-        <div class="page-head">
-          <div class="pay-heading"><h1>Payroll</h1><span id="pay-status" class="badge badge-brass">Draft</span></div>
-          <p id="pay-subtitle">Pay period Sep 1 – 15, 2026 · Draft</p>
-          <p class="pay-note">Taxes, net pay and direct deposit are calculated by the payroll provider.</p>
-          <label for="pay-period">Pay period</label>
-          <select id="pay-period" class="pay-select" onchange="changePayPeriod(this.value)">
-            <option value="sep">Sep 1–15 Draft</option><option value="aug-late">Aug 16–31 Paid</option><option value="aug-early">Aug 1–15 Paid</option>
-          </select>
+        <div class="page-head pay-page-head">
+          <div class="pay-head-row">
+            <div class="pay-head-title"><h1>Payroll</h1><span id="pay-status" class="badge badge-brass">Draft</span></div>
+            <div class="pay-head-actions">
+              <label for="pay-period" class="pay-sr-only">Pay period</label>
+              <select id="pay-period" class="pay-select" onchange="changePayPeriod(this.value)">
+                <option value="sep">Sep 1–15 Draft</option><option value="aug-late">Aug 16–31 Paid</option><option value="aug-early">Aug 1–15 Paid</option>
+              </select>
+              <button id="pay-review-button" class="btn btn-primary btn-sm" onclick="reviewPayroll()">Review &amp; submit</button>
+            </div>
+          </div>
+          <p id="pay-subtitle" class="pay-subtitle-line">Sep 1 – 15, 2026 · Pay date Sep 18, 2026 · Taxes and net pay calculated by the payroll provider.</p>
         </div>
         <div id="pay-loading" class="panel panel-body" hidden role="status" aria-label="Loading payroll">
           Loading payroll…
@@ -705,15 +823,14 @@
           <div id="pay-summary" class="stat-row"></div>
           <div class="pay-actions" style="margin-bottom:16px;">
             <div class="subtabs" style="margin-bottom:0;" aria-label="Payroll views">
-              <button class="subtab active" data-pay-tab="timeline" onclick="setPayTab('timeline')">Timeline</button>
+              <button class="subtab" data-pay-tab="timeline" onclick="setPayTab('timeline')">Timeline</button>
               <button class="subtab" data-pay-tab="cards" onclick="setPayTab('cards')">Time cards</button>
-              <button class="subtab" data-pay-tab="run" onclick="setPayTab('run')">This run</button>
+              <button class="subtab active" data-pay-tab="run" onclick="setPayTab('run')">This run</button>
               <button class="subtab" data-pay-tab="adjustments" onclick="setPayTab('adjustments')">Adjustments</button>
               <button class="subtab" data-pay-tab="history" onclick="setPayTab('history')">History</button>
             </div>
-            <button id="pay-review-button" class="btn btn-primary btn-sm" onclick="reviewPayroll()">Review &amp; submit</button>
           </div>
-          <div id="pay-timeline" class="panel">
+          <div id="pay-timeline" class="panel" hidden>
             <div class="panel-head"><h3>Pay period timeline</h3><button id="pay-timeline-edit" class="btn btn-secondary btn-sm" onclick="openPayTimeline()">Edit timeline</button></div>
             <div class="panel-body">
               <p id="pay-timeline-lock" class="pay-note" hidden></p>
@@ -745,15 +862,16 @@
             <div class="toolbar"><div class="toolbar-left">
               <input id="pay-search" class="search-input" type="search" placeholder="Search employees" aria-label="Search payroll employees" oninput="renderPayRows()">
               <select id="pay-filter" class="pay-select" aria-label="Filter payroll status" onchange="renderPayRows()">
-                <option value="all">All statuses</option><option value="ready">Ready</option><option value="contract">Blocked — contract not signed</option><option value="deposit">Missing direct deposit</option><option value="timecard">Blocked — time card not approved</option>
+                <option value="all">All statuses</option><option value="blocked">Needs attention</option><option value="ready">Ready</option><option value="contract">Blocked — contract not signed</option><option value="deposit">Missing direct deposit</option><option value="timecard">Blocked — time card not approved</option>
               </select>
             </div></div>
             <div class="panel">
-              <div id="pay-table-wrap" class="pay-scroll"><table>
-                <thead><tr><th>Name</th><th>Department</th><th>Type</th><th>Gross pay</th><th>Adjustments</th><th>Net (est.)</th><th>Status</th></tr></thead>
+              <div id="pay-table-wrap" class="pay-scroll pay-run-table"><table>
+                <thead><tr><th>Employee</th><th class="pay-num">Hours</th><th class="pay-num">Gross</th><th class="pay-num">Adjustments</th><th class="pay-num">Net (est.)</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody id="pay-rows"></tbody>
               </table></div>
               <div id="pay-empty" class="empty-state" hidden><h4>No matches</h4><p>Try a different name or status filter.</p><button class="btn btn-secondary btn-sm" onclick="clearPaySearch()">Clear filters</button></div>
+              <div id="pay-run-footer" class="pay-run-footer"><span id="pay-run-footer-text"></span><button id="pay-run-footer-review" class="btn btn-primary btn-sm" onclick="reviewPayroll()">Review &amp; submit</button></div>
             </div>
             <p class="pay-note">Fictional gross amounts and net estimates only. Employees with unsigned contracts, missing direct deposit or unapproved time cards are skipped. Hourly gross is based only on approved hours.</p>
           </div>
@@ -771,8 +889,9 @@
             </div>
           </section>
           <section id="pay-changes" class="panel" aria-labelledby="pay-changes-title">
-            <div class="panel-head"><h3 id="pay-changes-title">Changes</h3></div>
-            <div class="panel-body"><ul id="pay-changes-list"></ul><p id="pay-changes-empty" class="pay-note">No changes this period</p></div>
+            <div id="pay-changes-head" class="panel-head"><h3 id="pay-changes-title">Changes</h3></div>
+            <div id="pay-changes-body" class="panel-body"><ul id="pay-changes-list"></ul></div>
+            <p id="pay-changes-empty" class="pay-note" style="padding:16px 20px;margin:0;">No changes this period</p>
           </section>
         </div>
       </section>
@@ -1109,6 +1228,8 @@
   function closeDrawer(){
     document.getElementById('drawer').classList.remove('open');
     document.getElementById('drawer-overlay').classList.remove('open');
+    if(payDayDraft){ payDayDraft = null; if(payDetail) payDetail.selectedDay = null; renderPayDetail(); }
+    payEmpPanel = null;
     if(payDrawerReturnTab) setPayTab(payDrawerReturnTab);
     if(payDrawerFocus){
       const source = payDrawerFocus.isConnected ? payDrawerFocus : document.getElementById(payDrawerFocus.id) ||
@@ -1407,7 +1528,7 @@
     ]
   };
   const payCurrency = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
-  const payState = {period:'sep', tab:'timeline', loading:false, failed:false, submitting:false, timer:null, selected:new Set(), editor:null};
+  const payState = {period:'sep', tab:'run', loading:false, failed:false, submitting:false, timer:null, selected:new Set(), editor:null};
   let payDrawerFocus = null;
   let payDrawerReturnTab = null;
   function payMoney(cents){ return payCurrency.format(cents / 100); }
@@ -1467,8 +1588,9 @@
     payState.selected.clear();
     payState.editor = null;
     payDetail = null;
-    payPunchDraft = null;
+    payDayDraft = null;
     payDrag = null;
+    payEmpPanel = null;
     document.getElementById('pay-search').value = '';
     document.getElementById('pay-filter').value = 'all';
     document.getElementById('pay-card-search').value = '';
@@ -1486,18 +1608,22 @@
   }
   function renderPayroll(){
     const period = payPeriod(), totals = payTotals(period);
-    document.getElementById('pay-subtitle').textContent = 'Pay period '+period.label+' · '+period.status;
+    document.getElementById('pay-subtitle').textContent = period.label+' · Pay date '+period.payDate+' · Taxes and net pay calculated by the payroll provider.';
     const badge = document.getElementById('pay-status');
     badge.textContent = period.status;
     badge.className = 'badge '+(period.status==='Draft' ? 'badge-brass' : 'badge-moss');
     document.getElementById('pay-period').value = period.id;
     payrollData.periods.forEach(p=>document.querySelector('#pay-period option[value="'+p.id+'"]').textContent = p.short+' '+p.status);
     document.getElementById('pay-summary').innerHTML = [
-      [period.status==='Draft' ? 'Total if submitted now' : 'Run total',payMoney(totals.total),'Gross plus adjustments, included employees'],
-      ['Employees included',totals.count+' of '+period.rows.length,'Ready employees only'],
-      ['Blocked',String(totals.blocked),'Skipped from this run'],
-      ['Pay date',period.payDate,'Provider processing date']
-    ].map(([label,value,note],i)=>'<div class="stat-card'+(i===2 && totals.blocked ? ' flag' : '')+'"><div class="stat-label">'+label+'</div><div class="stat-num">'+value+'</div><div class="stat-note">'+note+'</div></div>').join('');
+      ['Total gross',payMoney(totals.total),'Gross plus adjustments, ready employees',false],
+      ['Ready',totals.count+' of '+period.rows.length,'Included in this run',false],
+      ['Needs attention',String(totals.blocked),'Click to filter the table',true],
+      ['Pay date',period.payDate,'Provider processing date',false]
+    ].map(([label,value,note,clickable])=>
+      clickable
+        ? '<button type="button" class="stat-card clickable'+(totals.blocked ? ' flag' : '')+'" onclick="payFilterAttention()"><div class="stat-label">'+label+'</div><div class="stat-num">'+value+'</div><div class="stat-note">'+note+'</div></button>'
+        : '<div class="stat-card"><div class="stat-label">'+label+'</div><div class="stat-num">'+value+'</div><div class="stat-note">'+note+'</div></div>'
+    ).join('');
     document.getElementById('pay-review-button').disabled = !payEditable();
     document.getElementById('pay-review-button').textContent = period.status==='Draft' ? 'Review & submit' : period.status+' · Read-only';
     document.getElementById('pay-add-button').disabled = !payEditable();
@@ -1510,25 +1636,57 @@
     renderPayDetail();
     setPayTab(payState.tab);
   }
+  function payFilterAttention(){
+    setPayTab('run');
+    document.getElementById('pay-filter').value = 'blocked';
+    renderPayRows();
+    document.getElementById('pay-filter').focus();
+  }
+  const payStatusInfo = {
+    ready:['Ready','moss','Ready for this payroll run.',()=>''],
+    timecard:['Time card not approved','brass','An approved time card is required before this employee can be paid.',id=>'<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();reviewPayCardFromRun(\''+id+'\')">Review hours</button>'],
+    contract:['Contract not signed','brick','A signed contract is required before this employee can be paid.',()=>'<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();go(\'a-contracts\')">Go to contract</button>'],
+    deposit:['Missing direct deposit','brass','Direct deposit details are required before this employee can be paid.',id=>'<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showToast(\'Direct deposit document requested from '+payEmployee(id).name+'\')">Request document</button>']
+  };
+  function payRenderRunRow(period,row){
+    const e = payEmployee(row.employee), adjustments = payAdjustments(period,e.id), rowStatus = payRowStatus(period,row);
+    const netAdjCents = adjustments.reduce((sum,a)=>sum+a.cents,0);
+    const card = e.type==='Hourly' ? payCard(period,e.id) : null;
+    const pending = rowStatus==='timecard';
+    const hoursText = card ? (card.status==='Missing' ? '—' : payHours(payCardHours(card.days).minutes)) : '—';
+    const grossCell = pending ? '—<span class="pay-pending">Pending approval</span>' : '<span class="pay-money">'+payMoney(payRowGross(period,row))+'</span>';
+    const netCell = rowStatus!=='ready' ? (pending ? '—<span class="pay-pending">Pending approval</span>' : '<span class="pay-money">—</span>') : '<span class="pay-money">'+payMoney(payRowNet(period,row))+'</span>';
+    const adjCell = adjustments.length
+      ? '<button type="button" class="pay-adjust-btn" onclick="event.stopPropagation();openPayEmployeePanel(\''+e.id+'\')">'+(netAdjCents<0 ? '−' : '+')+payMoney(Math.abs(netAdjCents))+'</button>'
+      : '<button type="button" class="pay-adjust-add" onclick="event.stopPropagation();openPayEmployeePanel(\''+e.id+'\')">+ Add</button>';
+    const info = payStatusInfo[rowStatus];
+    return '<tr class="pay-run-row" tabindex="0" role="button" aria-label="Open '+e.name+'\u2019s pay details" onclick="openPayEmployeePanel(\''+e.id+'\')" onkeydown="if(event.key===\'Enter\'){openPayEmployeePanel(\''+e.id+'\');}">'+
+      '<td><div class="pay-emp-cell"><div class="mini-avatar">'+e.name.split(' ').map(n=>n[0]).join('')+'</div><div><div class="pay-emp-name">'+e.name+'</div><div class="pay-emp-sub">'+e.department+' · '+e.type+'</div></div></div></td>'+
+      '<td class="pay-num">'+hoursText+'</td>'+
+      '<td class="pay-num">'+grossCell+'</td>'+
+      '<td class="pay-num">'+adjCell+'</td>'+
+      '<td class="pay-num">'+netCell+'</td>'+
+      '<td class="pay-status-cell"><span class="badge badge-'+info[1]+'" title="'+payEscape(info[2])+'">'+info[0]+'</span></td>'+
+      '<td class="pay-row-actions">'+info[3](e.id)+'</td></tr>';
+  }
   function renderPayRows(){
     const period = payPeriod(), query = document.getElementById('pay-search').value.trim().toLowerCase();
     const filter = document.getElementById('pay-filter').value;
     const rows = period.rows.filter(r=>{
-      const e = payEmployee(r.employee);
-      return (e.name+' '+e.department).toLowerCase().includes(query) && (filter==='all' || payRowStatus(period,r)===filter);
+      const e = payEmployee(r.employee), status = payRowStatus(period,r);
+      const matches = filter==='all' || (filter==='blocked' ? status!=='ready' : status===filter);
+      return (e.name+' '+e.department).toLowerCase().includes(query) && matches;
     });
     document.getElementById('pay-empty').hidden = rows.length!==0;
     document.getElementById('pay-table-wrap').hidden = rows.length===0;
-    document.getElementById('pay-rows').innerHTML = rows.map(row=>{
-      const e = payEmployee(row.employee), adjustments = payAdjustments(period,e.id), rowStatus = payRowStatus(period,row);
-      const status = rowStatus==='ready' ? '<span class="badge badge-moss">Ready</span>' :
-        rowStatus==='timecard' ? '<span class="badge badge-brass">Blocked — time card not approved</span><div class="pay-reason">An approved time card is required.</div><button id="pay-run-card-'+e.id+'" class="btn btn-text btn-sm" onclick="reviewPayCardFromRun(\''+e.id+'\')">Review time card</button>' :
-        rowStatus==='contract' ? '<span class="badge badge-brick">Blocked — contract not signed</span><div class="pay-reason">A signed contract is required.</div><button class="btn btn-text btn-sm" onclick="go(\'a-contracts\')">Go to contract</button>' :
-        '<span class="badge badge-brass">Missing direct deposit</span><div class="pay-reason">Direct deposit details are required.</div><button class="btn btn-text btn-sm" onclick="showToast(\'Direct deposit document requested from '+e.name+'\')">Request document</button>';
-      return '<tr><td><div class="name-cell"><div class="mini-avatar">'+e.name.split(' ').map(n=>n[0]).join('')+'</div>'+e.name+'</div></td><td>'+e.department+'</td><td>'+e.type+'</td><td class="pay-money">'+payMoney(payRowGross(period,row))+'</td><td>'+
-        (adjustments.length ? adjustments.map(a=>'<div>'+payEscape(payAdjustmentLabel(a))+'</div>').join('') : '—')+
-        '</td><td class="pay-money">'+(rowStatus==='ready' ? payMoney(payRowNet(period,row)) : '—')+'</td><td>'+status+'</td></tr>';
-    }).join('');
+    document.getElementById('pay-run-footer').hidden = rows.length===0;
+    const attention = rows.filter(r=>payRowStatus(period,r)!=='ready'), ready = rows.filter(r=>payRowStatus(period,r)==='ready');
+    const group = (label,list)=> list.length ? '<tr class="pay-run-section-head"><td colspan="7">'+label+' ('+list.length+')</td></tr>'+list.map(row=>payRenderRunRow(period,row)).join('') : '';
+    document.getElementById('pay-rows').innerHTML = group('Needs attention',attention)+group('Ready',ready);
+    const totals = payTotals(period);
+    document.getElementById('pay-run-footer-text').textContent = period.rows.length+' employees · '+totals.count+' ready · Total '+payMoney(totals.total);
+    document.getElementById('pay-run-footer-review').disabled = !payEditable();
+    document.getElementById('pay-run-footer-review').textContent = period.status==='Draft' ? 'Review & submit' : period.status+' · Read-only';
   }
   function clearPaySearch(){
     document.getElementById('pay-search').value = '';
@@ -1596,11 +1754,172 @@
     if(payRowTotal(payPeriod(),row)+signedCents<0 || payRowNet(payPeriod(),row)+(type==='Reimbursement' ? signedCents : Math.round(signedCents*.8))<0){
       showToast('Deduction cannot exceed the employee’s remaining pay','brick'); return;
     }
-    payPeriod().adjustments.push({employee,type,cents:signedCents,note});
+    payPeriod().adjustments.push({id:'adj-'+(payAdjustSeq++),employee,type,cents:signedCents,note});
+    payAddChange(payPeriod(),'added a '+type.toLowerCase()+' of '+payMoney(Math.abs(signedCents))+' for '+payEmployee(employee).name+' — '+note);
     closeDrawer();
     closePayReview(false);
     renderPayroll();
     showToast('Adjustment added');
+  }
+  function payAdjustmentImpact(type,cents){ return {total:cents, net: type==='Reimbursement' ? cents : Math.round(cents*.8)}; }
+  function payCanApplyAdjustment(period,row,type,signedCents,exclude){
+    let total = payRowTotal(period,row), net = payRowNet(period,row);
+    if(exclude){
+      const old = payAdjustmentImpact(exclude.type,exclude.cents);
+      total -= exclude.cents; net -= old.net;
+    }
+    const impact = payAdjustmentImpact(type,signedCents);
+    total += impact.total; net += impact.net;
+    return total>=0 && net>=0;
+  }
+  function payValidateAdjustmentAmount(raw){
+    const parts = raw.split('.');
+    return /^\d+(\.\d{1,2})?$/.test(raw) ? Number(parts[0])*100+Number((parts[1] || '').padEnd(2,'0')) : NaN;
+  }
+
+  // ---------- Employee side panel ----------
+  function openPayEmployeePanel(id){
+    payEmpPanel = {employee:id, type:'Bonus', confirmRemoveId:null, editingId:null, editType:null};
+    const e = payEmployee(id);
+    openPayDrawer(e.name, e.department+' · '+e.type+(e.rate ? ' · '+payMoney(e.rate)+'/hr' : ''), payEmpPanelHtml());
+    document.getElementById('drawer').classList.add('pay-drawer');
+  }
+  function refreshPayEmpPanel(focusId){
+    const e = payEmployee(payEmpPanel.employee);
+    document.getElementById('drawer-name').textContent = e.name;
+    document.getElementById('drawer-role').textContent = e.department+' · '+e.type+(e.rate ? ' · '+payMoney(e.rate)+'/hr' : '');
+    document.getElementById('drawer-avatar').textContent = e.name.split(' ').map(n=>n[0]).join('');
+    document.getElementById('pay-drawer-body').innerHTML = payEmpPanelHtml();
+    if(focusId) payFocus(focusId);
+  }
+  function movePayEmpPanel(offset){
+    const period = payPeriod(), index = period.rows.findIndex(r=>r.employee===payEmpPanel.employee);
+    const next = period.rows[index+offset];
+    if(!next) return;
+    payEmpPanel = {employee:next.employee, type:'Bonus', confirmRemoveId:null, editingId:null, editType:null};
+    refreshPayEmpPanel();
+  }
+  function payEmpPanelHtml(){
+    const period = payPeriod(), id = payEmpPanel.employee, e = payEmployee(id), row = period.rows.find(r=>r.employee===id);
+    const rowStatus = payRowStatus(period,row), editable = payEditable(), pending = rowStatus==='timecard';
+    const adjustments = payAdjustments(period,id);
+    const employees = period.rows, index = employees.findIndex(r=>r.employee===id);
+    const card = e.type==='Hourly' ? payCard(period,id) : null;
+    const hours = card ? payCardHours(card.days) : null;
+    const info = payStatusInfo[rowStatus];
+    const gross = payRowGross(period,row), total = payRowTotal(period,row);
+    const breakdownRows = e.type!=='Hourly' ? [['Salary','',payMoney(row.gross)]] :
+      pending ? [['Hours submitted',payHours(hours.minutes)+' hrs (awaiting approval)','']] : [
+        ['Regular',payHours(hours.minutes-hours.overtime)+' hrs × '+payMoney(e.rate),payMoney(Math.round((hours.minutes-hours.overtime)*e.rate/60))],
+        ['Overtime',payHours(hours.overtime)+' hrs',payMoney(Math.round(hours.overtime*e.rate*3/120))],
+        ['PTO',payHours(hours.pto)+' hrs',payMoney(Math.round(hours.pto*e.rate/60))]
+      ];
+    return '<div class="pay-emp-panel-head"><span class="badge badge-'+info[1]+'">'+info[0]+'</span>'+
+      '<div class="pay-emp-nav"><button class="btn btn-text btn-sm" aria-label="Previous employee" '+(index<=0 ? 'disabled ' : '')+'onclick="movePayEmpPanel(-1)">←</button><button class="btn btn-text btn-sm" aria-label="Next employee" '+(index>=employees.length-1 ? 'disabled ' : '')+'onclick="movePayEmpPanel(1)">→</button></div></div>'+
+      (rowStatus!=='ready' ? '<div class="pay-warning"><span class="pay-warning-text">'+payBlockedReason(rowStatus).charAt(0).toUpperCase()+payBlockedReason(rowStatus).slice(1)+' — skipped from the run total.</span>'+info[3](id)+'</div>' : '')+
+      (!editable ? '<div class="pay-warning"><span class="pay-warning-text">This payroll run is read-only.</span></div>' : '')+
+      '<div class="pay-breakdown">'+
+        breakdownRows.map(([l,sub,amt])=>'<div class="pay-breakdown-row"><span>'+l+(sub ? ' <span style="color:var(--ink-faint);font-size:11.5px;">('+sub+')</span>' : '')+'</span><span class="amt">'+amt+'</span></div>').join('')+
+        '<div class="pay-breakdown-row"><span>Gross</span><span class="amt">'+(pending ? 'Pending approval' : payMoney(gross))+'</span></div>'+
+        (adjustments.length ? adjustments.map(a=>'<div class="pay-breakdown-row"><span>'+payEscape(a.type)+' — '+payEscape(a.note)+'</span><span class="amt">'+(a.cents<0 ? '−' : '+')+payMoney(Math.abs(a.cents))+'</span></div>').join('') : '<div class="pay-breakdown-row"><span>Adjustments</span><span class="amt">—</span></div>')+
+        '<div class="pay-breakdown-row total"><span>Total</span><span class="amt">'+(pending ? 'Pending approval' : payMoney(total))+'</span></div>'+
+      '</div>'+
+      (e.type==='Hourly' ? '<div class="section-label">Hours</div><p class="pay-note">'+(card ? (card.status==='Missing' ? 'No time card submitted yet.' : payHours(hours.minutes)+' hrs this period · '+payCardBadge(card.status)) : 'No time card for this period.')+'</p><button class="btn btn-secondary btn-sm" onclick="closeDrawer();setPayTab(\'cards\');openPayCard(\''+id+'\');">Open time card</button>' : '')+
+      '<div class="section-label">Adjustments</div>'+
+      (editable ? payAdjQuickAddHtml() : '')+
+      (adjustments.length ? adjustments.map(a=>payAdjItemHtml(a,editable)).join('') : '<p class="pay-note">No adjustments for this employee.</p>');
+  }
+  function payAdjQuickAddHtml(){
+    const type = payEmpPanel.type;
+    return '<div class="pay-seg" role="group" aria-label="Adjustment type">'+['Bonus','Deduction','Reimbursement'].map(t=>'<button type="button" id="pay-seg-'+t+'" class="'+(type===t ? 'active' : '')+'" aria-pressed="'+(type===t)+'" onclick="setPayAdjType(\''+t+'\')">'+t+'</button>').join('')+'</div>'+
+      '<div class="tc-form-grid" style="margin:10px 0;">'+
+      '<div class="field"><label for="pay-emp-adj-amount">Amount (USD)</label><input id="pay-emp-adj-amount" type="number" min="0.01" max="100000" step="0.01" inputmode="decimal"></div>'+
+      '<div class="field"><label for="pay-emp-adj-note">Note</label><input id="pay-emp-adj-note" type="text" maxlength="160"></div></div>'+
+      '<p id="pay-emp-adj-error" class="pay-field-error" role="alert"></p>'+
+      '<button class="btn btn-secondary btn-sm" onclick="addPayEmpAdjustment()">Add '+type.toLowerCase()+'</button>';
+  }
+  function setPayAdjType(type){ payEmpPanel.type = type; refreshPayEmpPanel('pay-seg-'+type); }
+  function addPayEmpAdjustment(){
+    const period = payPeriod(), id = payEmpPanel.employee;
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    const amountRaw = document.getElementById('pay-emp-adj-amount').value;
+    const note = document.getElementById('pay-emp-adj-note').value.trim();
+    const cents = payValidateAdjustmentAmount(amountRaw), type = payEmpPanel.type;
+    const errorEl = document.getElementById('pay-emp-adj-error');
+    if(!Number.isSafeInteger(cents) || cents<=0 || cents>10000000 || !note){
+      errorEl.textContent = 'Enter a positive amount with at most two decimals, and a note.'; return;
+    }
+    const signedCents = type==='Deduction' ? -cents : cents;
+    const row = period.rows.find(r=>r.employee===id);
+    if(!payCanApplyAdjustment(period,row,type,signedCents,null)){
+      errorEl.textContent = 'Deduction cannot exceed the employee’s remaining pay.'; return;
+    }
+    period.adjustments.push({id:'adj-'+(payAdjustSeq++),employee:id,type,cents:signedCents,note});
+    payAddChange(period,'added a '+type.toLowerCase()+' of '+payMoney(Math.abs(signedCents))+' for '+payEmployee(id).name+' — '+note);
+    closePayReview(false); renderPayroll();
+    refreshPayEmpPanel('pay-seg-'+type);
+    showToast('Adjustment added');
+  }
+  function payAdjItemHtml(a,editable){
+    if(payEmpPanel.editingId===a.id) return payAdjEditFormHtml(a);
+    if(payEmpPanel.confirmRemoveId===a.id){
+      return '<div class="pay-adj-item"><span>'+payEscape(a.type)+' '+(a.cents<0 ? '−' : '+')+payMoney(Math.abs(a.cents))+' — '+payEscape(a.note)+'</span>'+
+        '<span class="pay-adj-confirm">Remove? <button class="btn btn-text btn-sm" onclick="removePayAdjustment(\''+a.id+'\')">Yes</button><button class="btn btn-text btn-sm" onclick="cancelPayAdjRemove()">Cancel</button></span></div>';
+    }
+    return '<div class="pay-adj-item"><span>'+payEscape(a.type)+' — '+payEscape(a.note)+'</span><span style="display:flex;align-items:center;gap:8px;"><span class="amt">'+(a.cents<0 ? '−' : '+')+payMoney(Math.abs(a.cents))+'</span>'+
+      (editable ? '<span class="pay-adj-actions"><button class="btn btn-text btn-sm" onclick="editPayAdjustment(\''+a.id+'\')">Edit</button><button class="btn btn-text btn-sm" onclick="confirmPayAdjRemove(\''+a.id+'\')">Remove</button></span>' : '')+'</span></div>';
+  }
+  function payAdjEditFormHtml(a){
+    return '<div class="tc-form"><div class="pay-seg" role="group" aria-label="Adjustment type">'+['Bonus','Deduction','Reimbursement'].map(t=>'<button type="button" id="pay-edit-seg-'+t+'" class="'+(payEmpPanel.editType===t ? 'active' : '')+'" aria-pressed="'+(payEmpPanel.editType===t)+'" onclick="setPayEditAdjType(\''+t+'\')">'+t+'</button>').join('')+'</div>'+
+      '<div class="tc-form-grid" style="margin:10px 0;">'+
+      '<div class="field"><label for="pay-edit-adj-amount">Amount (USD)</label><input id="pay-edit-adj-amount" type="number" min="0.01" max="100000" step="0.01" value="'+(Math.abs(a.cents)/100).toFixed(2)+'"></div>'+
+      '<div class="field"><label for="pay-edit-adj-note">Note</label><input id="pay-edit-adj-note" type="text" maxlength="160" value="'+payEscape(a.note)+'"></div></div>'+
+      '<p id="pay-emp-adj-error" class="pay-field-error" role="alert"></p>'+
+      '<button class="btn btn-primary btn-sm" onclick="savePayAdjustmentEdit(\''+a.id+'\')">Save</button> <button class="btn btn-secondary btn-sm" onclick="cancelPayAdjEdit()">Cancel</button></div>';
+  }
+  function editPayAdjustment(id){
+    const a = payPeriod().adjustments.find(x=>x.id===id);
+    payEmpPanel.editingId = id; payEmpPanel.editType = a.type;
+    refreshPayEmpPanel('pay-edit-seg-'+a.type);
+  }
+  function setPayEditAdjType(type){ payEmpPanel.editType = type; refreshPayEmpPanel('pay-edit-seg-'+type); }
+  function cancelPayAdjEdit(){ payEmpPanel.editingId = null; refreshPayEmpPanel(); }
+  function savePayAdjustmentEdit(id){
+    const period = payPeriod();
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    const a = period.adjustments.find(x=>x.id===id);
+    const amountRaw = document.getElementById('pay-edit-adj-amount').value;
+    const note = document.getElementById('pay-edit-adj-note').value.trim();
+    const cents = payValidateAdjustmentAmount(amountRaw), type = payEmpPanel.editType;
+    const errorEl = document.getElementById('pay-emp-adj-error');
+    if(!Number.isSafeInteger(cents) || cents<=0 || cents>10000000 || !note){
+      errorEl.textContent = 'Enter a positive amount with at most two decimals, and a note.'; return;
+    }
+    const signedCents = type==='Deduction' ? -cents : cents;
+    const row = period.rows.find(r=>r.employee===a.employee);
+    if(!payCanApplyAdjustment(period,row,type,signedCents,a)){
+      errorEl.textContent = 'Deduction cannot exceed the employee’s remaining pay.'; return;
+    }
+    const before = a.type+' '+payMoney(Math.abs(a.cents))+' — '+a.note;
+    a.type = type; a.cents = signedCents; a.note = note;
+    payEmpPanel.editingId = null;
+    payAddChange(period,"changed "+payEmployee(a.employee).name+"'s adjustment from "+before+' to '+type+' '+payMoney(Math.abs(signedCents))+' — '+note);
+    closePayReview(false); renderPayroll();
+    refreshPayEmpPanel();
+    showToast('Adjustment updated');
+  }
+  function confirmPayAdjRemove(id){ payEmpPanel.confirmRemoveId = id; refreshPayEmpPanel(); }
+  function cancelPayAdjRemove(){ payEmpPanel.confirmRemoveId = null; refreshPayEmpPanel(); }
+  function removePayAdjustment(id){
+    const period = payPeriod();
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    const idx = period.adjustments.findIndex(a=>a.id===id), a = period.adjustments[idx];
+    period.adjustments.splice(idx,1);
+    payEmpPanel.confirmRemoveId = null;
+    payAddChange(period,'removed '+payEmployee(a.employee).name+"'s "+a.type.toLowerCase()+' of '+payMoney(Math.abs(a.cents))+' — '+a.note);
+    closePayReview(false); renderPayroll();
+    refreshPayEmpPanel();
+    showToast('Adjustment removed');
   }
   function reviewPayroll(){
     if(!payEditable()) return;
@@ -1689,8 +2008,11 @@
     if(card) card.history.push({who:'Jordan Reyes',text,when:new Date().toLocaleString('en-US')});
   }
   function renderPayChanges(){
-    const changes = payPeriod().changes;
-    document.getElementById('pay-changes-empty').hidden = changes.length>0;
+    const changes = payPeriod().changes, has = changes.length>0;
+    document.getElementById('pay-changes').classList.toggle('panel',has);
+    document.getElementById('pay-changes-head').hidden = !has;
+    document.getElementById('pay-changes-body').hidden = !has;
+    document.getElementById('pay-changes-empty').hidden = has;
     document.getElementById('pay-changes-list').innerHTML = changes.map(text=>'<li>'+payEscape(text)+'</li>').join('');
   }
   function renderPayTimeline(){
@@ -1869,7 +2191,7 @@
     setPayTab('cards');
     openPayCard(id);
   }
-  let payDetail = null, payPunchDraft = null, payLastUndo = null, payDrag = null;
+  let payDetail = null, payDayDraft = null, payLastUndo = null, payDrag = null, payEmpPanel = null, payAdjustSeq = 1;
   const payPunchTypes = {in:'Clock-in',break_start:'Break start',break_end:'Break end',out:'Clock-out'};
   function payTimeString(minutes){
     return String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
@@ -1926,8 +2248,8 @@
     if(element) element.focus({preventScroll:true});
   }
   function openPayCard(id){
-    payDetail = {employee:id,week:'all',tab:'days',expanded:new Set(),returnFocus:document.activeElement.id || 'pay-card-review-'+id};
-    payPunchDraft = null; payDrag = null;
+    payDetail = {employee:id,week:'first',tab:'days',selectedDay:null,returnFocus:document.activeElement.id || 'pay-card-review-'+id};
+    payDayDraft = null; payDrag = null;
     setPayTab('cards');
     renderPayDetail();
     payFocus('tc-back');
@@ -1935,33 +2257,33 @@
   }
   function closePayCard(){
     const focus = payDetail.returnFocus;
-    payDetail = null; payPunchDraft = null; payDrag = null;
+    closeDrawer();
+    payDetail = null; payDayDraft = null; payDrag = null;
     renderPayDetail();
     payFocus(focus);
   }
   function payMoveEmployee(offset){
     const cards = payPeriod().timeCards, index = cards.findIndex(c=>c.employee===payDetail.employee);
+    if(!cards[index+offset]) return;
+    closeDrawer();
     openPayCard(cards[index+offset].employee);
   }
   function payDetailTab(tab){
-    payDetail.tab = tab; payPunchDraft = null; payDrag = null;
+    closeDrawer();
+    payDetail.tab = tab; payDetail.selectedDay = null; payDayDraft = null; payDrag = null;
     renderPayDetail(); payFocus('tc-tab-'+tab);
   }
   function payDetailWeek(week){
-    payDetail.week = week; payPunchDraft = null; payDrag = null;
+    closeDrawer();
+    payDetail.week = week; payDetail.selectedDay = null; payDayDraft = null; payDrag = null;
     renderPayDetail(); payFocus('tc-week-'+week);
-  }
-  function payExpandDay(index,scroll){
-    payPunchDraft = null; payDrag = null;
-    if(scroll || !payDetail.expanded.has(index)) payDetail.expanded.add(index);
-    else payDetail.expanded.delete(index);
-    renderPayDetail();
-    payFocus('tc-day-button-'+index);
-    if(scroll) document.getElementById('tc-day-'+index).scrollIntoView({block:'center',behavior:'smooth'});
   }
   function payExceptionDay(index){
     payDetail.week = 'all'; payDetail.tab = 'days';
-    payExpandDay(index,true);
+    renderPayDetail();
+    const row = document.getElementById('tc-day-row-'+index);
+    if(row) row.scrollIntoView({block:'center',behavior:'smooth'});
+    openPayDayPanel(index);
   }
   function payBarPosition(minutes){ return Math.max(0,Math.min(100,(minutes-360)/840*100)); }
   function payBlockStyle(start,end){
@@ -1969,32 +2291,14 @@
   }
   function payRenderBar(day,index,editable){
     const schedule = day.schedule, segments = paySegments(day);
-    return '<div class="tc-chart"><div class="tc-hours">'+Array.from({length:15},(_,i)=>'<span>'+(i+6===12 ? '12p' : i+6>12 ? (i-6)+'p' : (i+6)+'a')+'</span>').join('')+'</div>'+
-      '<div class="tc-bar" id="tc-bar-'+index+'" aria-label="6 AM to 8 PM timeline">'+
-      (schedule ? '<div class="tc-block tc-scheduled" style="'+payBlockStyle(payTimeMinutes(schedule.in),payTimeMinutes(schedule.out))+'" title="'+payEscape(schedule.source)+'">Scheduled '+schedule.in+'–'+schedule.out+'</div>' : '')+
+    return '<div class="tc-bar" id="tc-bar-'+index+'" aria-label="6 AM to 8 PM timeline">'+
+      (schedule ? '<div class="tc-block tc-scheduled" style="'+payBlockStyle(payTimeMinutes(schedule.in),payTimeMinutes(schedule.out))+'" title="'+payEscape(schedule.source)+'"></div>' : '')+
       segments.map(s=>'<div class="tc-block tc-'+s.type+'" data-from="'+s.from+'" data-to="'+s.to+'" style="'+payBlockStyle(s.start,s.end)+'" title="'+(s.type==='work' ? 'Worked' : 'Break')+' '+payTimeString(s.start)+'–'+payTimeString(s.end)+'"></div>').join('')+
-      (day.absence ? '<div class="tc-block tc-pto" style="'+payBlockStyle(payTimeMinutes(day.absence.start),payTimeMinutes(day.absence.start)+day.absence.minutes)+'">'+payEscape(day.absence.label)+' — '+payHours(day.absence.minutes)+' hrs</div>' : '')+
+      (day.absence ? '<div class="tc-block tc-pto" style="'+payBlockStyle(payTimeMinutes(day.absence.start),payTimeMinutes(day.absence.start)+day.absence.minutes)+'" title="'+payEscape(day.absence.label)+'">'+payEscape(day.absence.label)+'</div>' : '')+
       (!day.punches.length ? '<span class="tc-empty'+(schedule && !day.absence ? ' missing' : '')+'">'+(schedule && !day.absence ? 'No punches' : day.absence ? '' : 'Off')+'</span>' : '')+
       day.punches.map((p,j)=>'<button id="tc-marker-'+index+'-'+j+'" class="tc-marker" style="left:'+payBarPosition(payTimeMinutes(p.time))+'%" '+(!editable ? 'disabled ' : '')+
         'aria-label="'+payPunchTypes[p.type]+' '+p.time+' '+p.source+'. Arrow keys adjust five minutes; Enter gives a reason." onpointerdown="payStartDrag(event,'+index+','+j+')" onkeydown="payMarkerKey(event,'+index+','+j+')" onclick="payMarkerClick('+index+','+j+')"><span>'+(p.original ? '<del>'+p.original+'</del> ' : '')+p.time+' '+p.source[0]+'</span></button>').join('')+
-      '</div></div>';
-  }
-  function payBoundaryDays(period,before){
-    const first = new Date(period.timeline.start+'T00:00:00Z');
-    first.setUTCDate(first.getUTCDate()-((first.getUTCDay()+6)%7));
-    const boundary = new Date((before ? period.timeline.start : period.timeline.end)+'T00:00:00Z');
-    const dates = [];
-    if(before){
-      const date = new Date(first);
-      while(date<boundary){ dates.push(date.toISOString().slice(0,10)); date.setUTCDate(date.getUTCDate()+1); }
-    } else {
-      boundary.setUTCDate(boundary.getUTCDate()+1);
-      while(boundary.getUTCDay()!==1){ dates.push(boundary.toISOString().slice(0,10)); boundary.setUTCDate(boundary.getUTCDate()+1); }
-    }
-    return dates.filter(date=>{
-      const offset = Math.round((new Date(date+'T00:00:00Z')-first)/86400000);
-      return payDetail.week==='all' || (payDetail.week==='first' ? offset<7 : offset>=7 && offset<14);
-    }).map(date=>'<article class="tc-day"><div class="tc-row"><span>'+payDayLabel({date})+'</span><span class="pay-note">Off · Outside this pay period</span><span></span></div></article>').join('');
+      '</div>';
   }
   function renderPayDetail(){
     const root = document.getElementById('pay-card-detail'), list = document.getElementById('pay-cards-list');
@@ -2004,20 +2308,25 @@
     const hours = payCardHours(card.days), scheduled = card.days.reduce((sum,d)=>sum+(d.schedule ? payTimeMinutes(d.schedule.out)-payTimeMinutes(d.schedule.in) : 0),0);
     const exceptions = card.days.flatMap((day,i)=>payDayExceptions(day).map(e=>({...e,index:i,day})));
     const difference = hours.minutes+hours.pto-scheduled, employees = period.timeCards, employeeIndex = employees.indexOf(card);
+    const cardGross = Math.round((hours.minutes-hours.overtime+hours.pto)*employee.rate/60+hours.overtime*employee.rate*3/120);
+    const firstMonday = new Date(period.timeline.start+'T00:00:00Z');
+    firstMonday.setUTCDate(firstMonday.getUTCDate()-((firstMonday.getUTCDay()+6)%7));
+    const dayOffset = day=>Math.round((new Date(day.date+'T00:00:00Z')-firstMonday)/86400000);
     root.innerHTML = '<button id="tc-back" class="btn btn-text" onclick="closePayCard()">← All time cards</button>'+
-      '<div class="pay-heading"><div><h2>'+employee.name+'</h2><p class="pay-note">'+employee.department+' · Hourly · '+payMoney(employee.rate)+'/hr<br>'+period.label+' · '+payCardBadge(card.status)+'</p></div>'+
+      '<div class="pay-heading"><div><h2>'+employee.name+'</h2><p class="pay-note">'+employee.department+' · Hourly · '+payMoney(employee.rate)+'/hr · '+period.label+' · '+payCardBadge(card.status)+'</p></div>'+
       '<div class="pay-actions"><button class="btn btn-secondary" '+(!editable || card.status==='Missing' ? 'disabled ' : '')+'onclick="payDetailAction(\'approve\')">Approve</button>'+
       '<button class="btn btn-secondary" '+(!editable || card.status==='Missing' ? 'disabled ' : '')+'onclick="payRequestChanges()">Request changes</button>'+
       '<button class="btn btn-secondary" '+(!payEditable() || card.status!=='Approved' ? 'disabled ' : '')+'onclick="reopenPayCard(\''+card.employee+'\')">Reopen</button>'+
       '<button class="btn btn-text" aria-label="Previous employee" '+(!employeeIndex ? 'disabled ' : '')+'onclick="payMoveEmployee(-1)">←</button>'+
       '<button class="btn btn-text" aria-label="Next employee" '+(employeeIndex===employees.length-1 ? 'disabled ' : '')+'onclick="payMoveEmployee(1)">→</button></div></div>'+
-      '<div class="tc-summary" aria-live="polite">'+[
-        ['Scheduled hrs',payHours(scheduled)],['Worked hrs',payHours(hours.minutes)],['Regular',payHours(hours.minutes-hours.overtime)],
-        ['Overtime',payHours(hours.overtime)],['PTO',payHours(hours.pto)],['Difference vs schedule',(difference>=0 ? '+' : '−')+payHours(Math.abs(difference))],['Exceptions',exceptions.length],
-        ['Card gross',payMoney(Math.round((hours.minutes-hours.overtime+hours.pto)*employee.rate/60+hours.overtime*employee.rate*3/120))]
-      ].map(([label,value])=>'<div>'+label+'<strong>'+value+'</strong></div>').join('')+'</div>'+
-      '<p class="pay-note">Whole-card totals · PTO is paid at the base rate, not counted toward overtime. Difference includes PTO; scheduled hours are the full shift span. Missing punches count only bounded work segments and must be resolved before approval. Only approved, ready cards enter payroll totals.</p>'+
-      (!editable ? '<div class="pay-warning">'+(period.status!=='Draft' ? 'This period is '+period.status.toLowerCase()+' — time cards are read-only.' : 'This card is approved — Reopen to make changes.')+'</div>' : '')+
+      '<div class="tc-stat-row" aria-live="polite">'+[
+        ['Scheduled',payHours(scheduled)+' hrs',''],['Worked',payHours(hours.minutes)+' hrs',''],['Regular',payHours(hours.minutes-hours.overtime)+' hrs',''],
+        ['Overtime',payHours(hours.overtime)+' hrs',''],['PTO',payHours(hours.pto)+' hrs',''],
+        ['vs Schedule',(difference>=0 ? '+' : '−')+payHours(Math.abs(difference))+' hrs',difference>=0 ? 'pos' : 'neg'],
+        ['Gross',payMoney(cardGross),'']
+      ].map(([label,value,cls])=>'<div class="tc-stat"><div class="l">'+label+'</div><div class="v'+(cls ? ' '+cls : '')+'">'+value+'</div></div>').join('')+'</div>'+
+      '<div class="tc-legend"><span class="chip"><span class="swatch sched"></span>Scheduled</span><span class="chip"><span class="swatch work"></span>Worked</span><span class="chip"><span class="swatch break"></span>Break</span><span class="chip"><span class="swatch pto"></span>PTO</span><span class="chip"><span class="swatch edited"></span>Edited</span><span class="chip">Sources: K Kiosk · W Web · P Phone · M Manual</span></div>'+
+      (!editable ? '<div class="pay-warning"><span class="pay-warning-text">'+(period.status!=='Draft' ? 'This period is '+period.status.toLowerCase()+' — time cards are read-only.' : 'This card is approved — Reopen to make changes.')+'</span></div>' : '')+
       (card.status==='Missing' ? '<div class="empty-state"><h4>Time card missing</h4><p>No hours have been submitted. Add fictional punches to prepare this card for review.</p><button class="btn btn-secondary" '+(!payEditable() ? 'disabled ' : '')+'onclick="remindPayCard(\''+card.employee+'\')">Send reminder</button></div>' : '')+
       (card.note ? '<p class="pay-note">Requested changes: '+payEscape(card.note)+'</p>' : '')+
       '<div id="tc-request" hidden class="tc-form"><label for="tc-request-note">Note for requested changes</label><textarea id="tc-request-note" maxlength="200" aria-describedby="tc-request-error"></textarea><p class="pay-field-error" id="tc-request-error" aria-live="polite"></p><button class="btn btn-primary" onclick="payDetailAction(\'request\')">Send request</button> <button class="btn btn-secondary" onclick="payCancelRequest()">Cancel</button></div>'+
@@ -2025,117 +2334,202 @@
       '<div class="pay-actions"><div class="subtabs">'+[['first','Week of Sep 1'],['second','Week of Sep 8'],['all','Whole period']].map(([key,label])=>'<button id="tc-week-'+key+'" class="subtab'+(payDetail.week===key ? ' active' : '')+'" aria-pressed="'+(payDetail.week===key)+'" onclick="payDetailWeek(\''+key+'\')">'+(period.id==='sep' ? label : key==='all' ? label : key==='first' ? 'First week' : 'Second week')+'</button>').join('')+'</div>'+
       '<div class="subtabs"><button id="tc-tab-days" class="subtab'+(payDetail.tab==='days' ? ' active' : '')+'" aria-pressed="'+(payDetail.tab==='days')+'" onclick="payDetailTab(\'days\')">Days</button><button id="tc-tab-history" class="subtab'+(payDetail.tab==='history' ? ' active' : '')+'" aria-pressed="'+(payDetail.tab==='history')+'" onclick="payDetailTab(\'history\')">History</button></div></div>'+
       (payDetail.tab==='history' ? '<div class="panel panel-body"><h3>Card history · oldest first</h3>'+(card.history.length ? '<ol class="tc-history">'+card.history.map(h=>'<li><strong>'+payEscape(h.who)+'</strong> · '+payEscape(h.when)+'<br>'+payEscape(h.text)+'</li>').join('')+'</ol>' : '<p class="pay-note">No changes to this card yet.</p>')+'</div>' :
-      '<p class="pay-note">Outlined = scheduled · Navy = worked · Dashed = unpaid break · Brass = absence/PTO. Sources: K Kiosk · W Web · P Phone · M Manual. Expand a day to edit. Drag a punch edge, or focus a marker and use ←/→, then Enter. Esc cancels. All times are same-day local times.</p>'+
-      '<h3>Exceptions</h3><div class="tc-exceptions">'+(exceptions.length ? exceptions.map(e=>'<button class="btn btn-secondary btn-sm" onclick="payExceptionDay('+e.index+')">'+payDayLabel(e.day)+' — '+payEscape(e.text)+'</button>').join('') : '<p class="pay-note">No exceptions</p>')+'</div>'+
-      payBoundaryDays(period,true)+card.days.map((day,i)=>{
-        const start = new Date(period.timeline.start+'T00:00:00Z');
-        start.setUTCDate(start.getUTCDate()-((start.getUTCDay()+6)%7));
-        const offset = Math.round((new Date(day.date+'T00:00:00Z')-start)/86400000);
-        if(payDetail.week==='first' && offset>=7 || payDetail.week==='second' && (offset<7 || offset>=14)) return '';
-        const expanded = payDetail.expanded.has(i);
-        return '<article class="tc-day" id="tc-day-'+i+'"><div class="tc-row" onclick="payDayRowClick(event,'+i+')">'+
-          '<button id="tc-day-button-'+i+'" class="btn btn-text tc-date" aria-expanded="'+expanded+'" aria-controls="tc-expanded-'+i+'" onclick="payExpandDay('+i+',false)">'+payDayLabel(day)+'<br>'+(expanded ? 'Collapse' : 'Expand')+'</button>'+
-          payRenderBar(day,i,editable)+'<div class="tc-day-total"><strong>'+payHours(payDayMinutes(day))+' hrs</strong><br>'+
-          payDayExceptions(day).map(e=>'<span class="badge badge-'+(e.badge==='Edited' ? 'brass' : 'brick')+'">'+e.badge+'</span>').join('')+'</div>'+
-          '<div class="tc-mobile-punches">'+(day.schedule ? '<span>Scheduled '+day.schedule.in+'–'+day.schedule.out+'</span>' : '')+
-          day.punches.map((p,j)=>'<button id="tc-mobile-'+i+'-'+j+'" class="btn btn-secondary btn-sm" '+(!editable ? 'disabled ' : '')+'onkeydown="payMarkerKey(event,'+i+','+j+')" onclick="payEditPunch('+i+','+j+',\'edit\',this.id)">'+payPunchTypes[p.type]+': '+(p.original ? '<del>'+p.original+'</del> → ' : '')+p.time+' · '+p.source+'</button>').join('')+
-          (!day.punches.length ? '<span class="'+(day.schedule ? 'tc-no-punches' : '')+'">'+(!day.schedule ? 'Off' : 'No punches')+'</span>' : '')+
-          (day.absence ? '<span class="badge badge-brass">'+payEscape(day.absence.label)+' — '+payHours(day.absence.minutes)+' hrs</span>' : '')+'</div></div>'+
-          '<div id="tc-expanded-'+i+'" class="tc-expanded" '+(!expanded ? 'hidden' : '')+'>'+payRenderPunchTable(day,i,editable)+'</div></article>';
-      }).join('')+payBoundaryDays(period,false));
-    if(payPunchDraft) payRenderPunchForm();
+      '<div class="tc-layout"><div class="tc-grid-panel">'+
+        '<div class="tc-axis"><div class="tc-axis-spacer"></div><div class="tc-axis-hours">'+Array.from({length:15},(_,i)=>'<span>'+(i+6===12 ? '12p' : i+6>12 ? (i-6)+'p' : (i+6)+'a')+'</span>').join('')+'</div><div class="tc-axis-end"></div><div class="tc-axis-badges"></div></div>'+
+        card.days.filter(day=>{
+          const offset = dayOffset(day);
+          return payDetail.week==='all' || (payDetail.week==='first' ? offset<7 : offset>=7 && offset<14);
+        }).map(day=>{
+          const i = card.days.indexOf(day);
+          if(day.holiday) return '<div class="tc-day-row holiday-row"><span class="tc-day-side">'+payDayLabel(day)+'</span><span>Holiday — Labor Day</span></div>';
+          if(!day.schedule && !day.punches.length && !day.absence) return '<div class="tc-day-row off-row"><span class="tc-day-side">'+payDayLabel(day)+'</span><span>Off</span></div>';
+          const dayExceptions = payDayExceptions(day), selected = payDetail.selectedDay===i;
+          return '<div id="tc-day-row-'+i+'" class="tc-day-row'+(selected ? ' selected' : '')+'" tabindex="0" role="button" aria-pressed="'+selected+'" aria-label="Edit '+payDayLabel(day)+'" onclick="payDayRowActivate(event,'+i+')" onkeydown="payDayRowKey(event,'+i+')">'+
+            '<span class="tc-day-side"><strong>'+payDayLabel(day)+'</strong></span>'+
+            '<span class="tc-day-bar-wrap">'+payRenderBar(day,i,editable)+'</span>'+
+            '<span class="tc-day-hours">'+payHours(payDayMinutes(day))+'h</span>'+
+            '<span class="tc-day-badges">'+dayExceptions.map(e=>'<span class="badge badge-'+(e.badge==='Edited' ? 'brass' : 'brick')+'">'+e.badge+'</span>').join('')+'</span>'+
+            '<span class="tc-mobile-punches">'+(day.schedule ? 'Scheduled '+day.schedule.in+'–'+day.schedule.out+'<br>' : '')+
+              (day.punches.length ? day.punches.map(p=>payPunchTypes[p.type]+' '+(p.original ? '<del>'+p.original+'</del> → ' : '')+p.time+' · '+p.source).join('<br>') : (day.schedule ? 'No punches' : ''))+
+              (day.absence ? '<br>'+payEscape(day.absence.label)+' — '+payHours(day.absence.minutes)+' hrs' : '')+'</span>'+
+          '</div>';
+        }).join('')+
+      '</div>'+
+      '<div class="tc-exceptions-panel"><h3>Exceptions ('+exceptions.length+')</h3>'+
+        (exceptions.length ? exceptions.map(e=>'<button type="button" class="tc-exception-item" onclick="payExceptionDay('+e.index+')"><strong>'+payDayLabel(e.day)+'</strong>'+payEscape(e.text)+'</button>').join('') : '<p class="pay-note">No exceptions this period.</p>')+
+      '</div></div>');
   }
-  function payDayRowClick(event,index){
-    if(!event.target.closest('button,input,textarea,select')) payExpandDay(index,false);
+  function payDayRowActivate(event,index){
+    if(event.target.closest('button')) return;
+    openPayDayPanel(index);
   }
-  function payRenderPunchTable(day,index,editable){
-    return '<div class="pay-scroll" tabindex="0" role="region" aria-label="'+payDayLabel(day)+' punch table"><table><thead><tr><th>Type</th><th>Time</th><th>Source</th><th>Original</th><th>Edited by</th><th>Reason</th><th>Actions</th></tr></thead><tbody>'+
-      (day.punches.length ? day.punches.map((p,j)=>'<tr><td>'+payPunchTypes[p.type]+'</td><td>'+p.time+'</td><td>'+p.source+'</td><td>'+(p.original ? '<del>'+p.original+'</del> → '+p.time : '—')+'</td><td>'+payEscape(p.editedBy || '—')+'</td><td>'+payEscape(p.reason || '—')+'</td><td>'+
-      (editable ? '<button id="tc-edit-'+index+'-'+j+'" class="btn btn-text btn-sm" onclick="payEditPunch('+index+','+j+',\'edit\',this.id)">Edit</button> <button id="tc-delete-'+index+'-'+j+'" class="btn btn-text btn-sm" onclick="payEditPunch('+index+','+j+',\'delete\',this.id)">Delete</button>' : 'Read-only')+'</td></tr>').join('') : '<tr><td colspan="7">No punches</td></tr>')+
-      '</tbody></table></div>'+
-      (editable ? '<div class="pay-actions"><button id="tc-add-'+index+'" class="btn btn-secondary btn-sm" onclick="payEditPunch('+index+',-1,\'add\',this.id)">Add punch</button>'+
-        (payDayExceptions(day).some(e=>e.badge==='Missing punch') && day.schedule ? '<button id="tc-fill-'+index+'" class="btn btn-secondary btn-sm" onclick="payFillSchedule('+index+',this.id)">Fill from schedule</button>' : '')+'</div>' : '')+
-      '<div id="tc-form-host-'+index+'"></div><div class="field"><label for="tc-note-'+index+'">Admin note · '+payDayLabel(day)+'</label><textarea id="tc-note-'+index+'" rows="2" maxlength="400" '+(!editable ? 'readonly ' : '')+'>'+payEscape(day.note || '')+'</textarea>'+
-      (editable ? '<button id="tc-note-save-'+index+'" class="btn btn-secondary btn-sm" onclick="paySaveDayNote('+index+')">Save note</button>' : '')+'</div>';
+  function payDayRowKey(event,index){
+    if(event.target!==event.currentTarget) return;
+    if(event.key==='Enter' || event.key===' '){ event.preventDefault(); openPayDayPanel(index); }
   }
-  function payEditPunch(dayIndex,index,action,returnFocus,time,additions){
-    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
-    const day = payDetailCard().days[dayIndex], punch = day.punches[index];
-    payDetail.expanded.add(dayIndex);
-    payDrag = null;
-    payPunchDraft = {day:dayIndex,index,action,returnFocus,type:punch ? punch.type : 'in',time:time || (punch ? punch.time : '08:00'),source:punch ? punch.source : 'Manual',additions};
-    renderPayDetail(); payFocus(action==='delete' || action==='adjust' ? 'tc-reason' : 'tc-punch-time');
-    document.getElementById('tc-punch-form').scrollIntoView({block:'nearest'});
-  }
-  function payFillSchedule(index,returnFocus){
-    const day = payDetailCard().days[index], last = day.punches[day.punches.length-1];
-    const additions = [];
-    const add = (type,time)=>additions.push({type,time,source:'Manual',original:null,editedBy:null,reason:null});
-    if(!last){ add('in',day.schedule.in); add('out',day.schedule.out); }
-    else if(last.type==='break_start'){
-      add('break_end',payTimeString(payTimeMinutes(last.time)+30)); add('out',day.schedule.out);
-    } else if(last.type==='in' || last.type==='break_end') add('out',day.schedule.out);
-    else { showToast('There is no missing trailing punch to fill','brick'); return; }
-    payEditPunch(index,-1,'fill',returnFocus,additions[additions.length-1].time,additions);
-    payFocus('tc-reason');
-  }
-  function payRenderPunchForm(){
-    const draft = payPunchDraft, host = document.getElementById('tc-form-host-'+draft.day);
-    host.innerHTML = '<form id="tc-punch-form" class="tc-form'+(draft.action==='adjust' ? ' tc-popover' : '')+'" aria-labelledby="tc-form-title" novalidate onsubmit="paySavePunch(event)" onkeydown="if(event.key===\'Escape\'){event.preventDefault();payCancelPunch();}">'+
-      '<h3 id="tc-form-title">'+(draft.action==='delete' ? 'Delete punch' : draft.action==='fill' ? 'Fill from schedule' : draft.action==='add' ? 'Add punch' : 'Adjust punch')+'</h3>'+
-      (draft.action==='fill' ? '<p>'+draft.additions.map(p=>payPunchTypes[p.type]+' '+p.time).join(' · ')+' (Manual)</p>' :
-      draft.action==='adjust' ? '<p>'+payPunchTypes[draft.type]+' · '+draft.source+' · <del>'+payDetailCard().days[draft.day].punches[draft.index].time+'</del> → '+draft.time+'</p>'+
-      '<input id="tc-punch-type" type="hidden" value="'+draft.type+'"><input id="tc-punch-source" type="hidden" value="'+draft.source+'"><label for="tc-punch-time">New time</label><input id="tc-punch-time" type="time" value="'+draft.time+'" aria-describedby="tc-time-error"><p id="tc-time-error" class="pay-field-error" aria-live="polite"></p>' :
-      '<div class="tc-form-grid"><div class="field"><label for="tc-punch-type">Type</label><select id="tc-punch-type" '+(['adjust','delete'].includes(draft.action) ? 'disabled' : '')+'>'+Object.entries(payPunchTypes).map(([type,label])=>'<option value="'+type+'" '+(draft.type===type ? 'selected' : '')+'>'+label+'</option>').join('')+'</select></div>'+
-      '<div class="field"><label for="tc-punch-time">Time</label><input id="tc-punch-time" type="time" value="'+draft.time+'" '+(draft.action==='delete' ? 'readonly' : '')+' aria-describedby="tc-time-error"><p id="tc-time-error" class="pay-field-error" aria-live="polite"></p></div>'+
-      '<div class="field"><label for="tc-punch-source">Source</label><select id="tc-punch-source" '+(['adjust','delete'].includes(draft.action) ? 'disabled' : '')+'>'+['Kiosk','Web','Phone','Manual'].map(source=>'<option '+(source===draft.source ? 'selected' : '')+'>'+source+'</option>').join('')+'</select></div></div>')+
-      '<label for="tc-reason">Reason (required)</label><input id="tc-reason" type="text" maxlength="200" aria-describedby="tc-reason-error"><p id="tc-reason-error" class="pay-field-error" aria-live="polite"></p>'+
-      '<p id="tc-punch-error" class="pay-field-error" role="alert"></p><button type="submit" class="btn btn-primary">'+(draft.action==='delete' ? 'Delete punch' : 'Save')+'</button> <button type="button" class="btn btn-secondary" onclick="payCancelPunch()">Cancel</button></form>';
-  }
-  function payCancelPunch(){
-    const focus = payPunchDraft && payPunchDraft.returnFocus;
-    payPunchDraft = null; payDrag = null;
-    renderPayDetail(); payFocus(focus);
-  }
-  function paySavePunch(event){
-    event.preventDefault();
-    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
-    const draft = payPunchDraft, card = payDetailCard(), day = card.days[draft.day], reasonInput = document.getElementById('tc-reason');
-    const reason = reasonInput.value.trim(), reasonError = reason ? '' : 'Enter a reason for this change.';
-    document.getElementById('tc-reason-error').textContent = reasonError;
-    reasonInput.setAttribute('aria-invalid',String(Boolean(reasonError)));
-    const punches = day.punches.map(p=>({...p})), before = day.punches[draft.index];
-    const type = draft.action==='fill' ? '' : document.getElementById('tc-punch-type').value;
-    const time = draft.action==='fill' ? '' : document.getElementById('tc-punch-time').value;
-    const source = draft.action==='fill' ? 'Manual' : document.getElementById('tc-punch-source').value;
-    let text;
-    if(draft.action==='delete'){
-      punches.splice(draft.index,1); text='deleted '+payPunchTypes[before.type].toLowerCase()+' from '+before.time+' to no punch';
-    } else if(draft.action==='fill'){
-      punches.push(...draft.additions.map(p=>({...p,editedBy:'Jordan Reyes',reason})));
-      text='filled missing punches from no punch to '+draft.additions.map(p=>payPunchTypes[p.type].toLowerCase()+' '+p.time).join(', ');
-    } else {
-      const punch = {type,time,source,original:before ? before.original || (time!==before.time ? before.time : null) : null,editedBy:'Jordan Reyes',reason};
-      if(before) punches[draft.index] = punch; else punches.push(punch);
-      text=before ? 'changed '+payPunchTypes[before.type].toLowerCase()+' from '+before.time+' to '+time+(before.type!==type ? ' ('+payPunchTypes[type]+')' : '')+(before.source!==source ? ' · source '+before.source+' → '+source : '') : 'added '+payPunchTypes[type].toLowerCase()+' from no punch to '+time;
+  function openPayDayPanel(dayIndex,options){
+    options = options || {};
+    const card = payDetailCard();
+    if(!card) return;
+    payDetail.selectedDay = dayIndex;
+    const day = card.days[dayIndex];
+    payDayDraft = {day:dayIndex, punches:day.punches.map(p=>({...p})), selectedPunch: options.selectedPunch!==undefined ? options.selectedPunch : (day.punches.length ? day.punches.length-1 : null)};
+    if(options.pendingChange){
+      const p = payDayDraft.punches[options.pendingChange.index];
+      if(p) p.time = options.pendingChange.time;
+      payDayDraft.selectedPunch = options.pendingChange.index;
     }
-    // Inserting a punch is chronological; edits must retain their position to detect overlaps.
-    if(draft.action==='add' || draft.action==='fill') punches.sort((a,b)=>payTimeMinutes(a.time)-payTimeMinutes(b.time));
-    const error = payPunchError(punches,true);
-    const errorElement = document.getElementById('tc-time-error') || document.getElementById('tc-punch-error');
-    errorElement.textContent = error;
-    const timeInput = document.getElementById('tc-punch-time');
-    if(timeInput) timeInput.setAttribute('aria-invalid',String(Boolean(error)));
+    renderPayDetail();
+    openPayDrawer('Edit day',payDayLabel(day),payDayPanelHtml());
+    if(options.focusReason) payFocus('tc-day-reason');
+  }
+  function refreshDayPanel(focusId){
+    const card = payDetailCard(), day = card.days[payDayDraft.day];
+    document.getElementById('drawer-name').textContent = 'Edit day';
+    document.getElementById('drawer-role').textContent = payDayLabel(day);
+    document.getElementById('pay-drawer-body').innerHTML = payDayPanelHtml();
+    if(focusId) payFocus(focusId);
+  }
+  function payDayPanelHtml(){
+    const card = payDetailCard(), day = card.days[payDayDraft.day], editable = payCanEditCard();
+    const punches = payDayDraft.punches, selected = payDayDraft.selectedPunch;
+    const rows = punches.length ? punches.map((p,j)=>
+      '<div class="tc-punch-row'+(selected===j ? ' selected' : '')+'" onclick="selectDraftPunch('+j+')">'+
+        '<select aria-label="Punch type" '+(editable ? '' : 'disabled ')+'onclick="event.stopPropagation()" onchange="updateDraftPunch('+j+',\'type\',this.value)">'+Object.entries(payPunchTypes).map(([t,l])=>'<option value="'+t+'" '+(p.type===t ? 'selected' : '')+'>'+l+'</option>').join('')+'</select>'+
+        '<input type="time" aria-label="Punch time" value="'+p.time+'" '+(editable ? '' : 'readonly ')+'onclick="event.stopPropagation()" onchange="updateDraftPunch('+j+',\'time\',this.value)">'+
+        '<select aria-label="Punch source" '+(editable ? '' : 'disabled ')+'onclick="event.stopPropagation()" onchange="updateDraftPunch('+j+',\'source\',this.value)">'+['Kiosk','Web','Phone','Manual'].map(s=>'<option '+(p.source===s ? 'selected' : '')+'>'+s+'</option>').join('')+'</select>'+
+        '<span class="orig">'+(p.original ? '<del>'+p.original+'</del>' : '—')+'</span>'+
+        (editable ? '<button type="button" class="tc-punch-delete" aria-label="Delete this punch" onclick="event.stopPropagation();deleteDraftPunch('+j+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14"/></svg></button>' : '')+
+      '</div>').join('') : '<p class="pay-note">No punches for this day.</p>';
+    const quickActions = editable ? '<div class="tc-quick-actions">'+
+      '<button type="button" class="btn btn-secondary btn-sm" onclick="quickMatchSchedule()">Match schedule</button>'+
+      '<button type="button" class="btn btn-secondary btn-sm" '+(selected===null ? 'disabled ' : '')+'onclick="quickNudgePunch(-15)">−15 min</button>'+
+      '<button type="button" class="btn btn-secondary btn-sm" '+(selected===null ? 'disabled ' : '')+'onclick="quickNudgePunch(15)">+15 min</button>'+
+      '<button type="button" class="btn btn-secondary btn-sm" onclick="quickAddBreak()">Add break</button>'+
+      '<button type="button" class="btn btn-secondary btn-sm" onclick="quickAddPunch()">Add punch</button>'+
+    '</div>' : '';
+    return '<p class="pay-note">'+payDayLabel(day)+(day.schedule ? ' · Scheduled '+day.schedule.in+'–'+day.schedule.out : ' · No schedule')+(day.absence ? ' · '+payEscape(day.absence.label)+' '+payHours(day.absence.minutes)+' hrs' : '')+'</p>'+
+      (!editable ? '<div class="pay-warning"><span class="pay-warning-text">'+(payPeriod().status!=='Draft' ? 'This period is '+payPeriod().status.toLowerCase()+' — read-only.' : 'This card is approved — Reopen to make changes.')+'</span></div>' : '')+
+      '<div>'+rows+'</div>'+quickActions+
+      (editable ? '<label for="tc-day-reason">Reason (required)</label><input id="tc-day-reason" type="text" maxlength="200" aria-describedby="tc-day-reason-error"><p id="tc-day-reason-error" class="pay-field-error" aria-live="polite"></p><p id="tc-day-panel-error" class="pay-field-error" role="alert"></p><div class="pay-actions"><button class="btn btn-secondary" onclick="cancelDayPanel()">Cancel</button><button class="btn btn-primary" onclick="saveDayPanel()">Save</button></div>' : '')+
+      '<div class="section-label">Day note</div><textarea id="tc-day-note" rows="3" maxlength="400" '+(!editable ? 'readonly ' : '')+'>'+payEscape(day.note || '')+'</textarea>'+
+      (editable ? '<button class="btn btn-secondary btn-sm" onclick="saveDayNotePanel()">Save note</button>' : '');
+  }
+  function selectDraftPunch(j){ payDayDraft.selectedPunch = payDayDraft.selectedPunch===j ? null : j; refreshDayPanel(); }
+  function updateDraftPunch(j,field,value){ payDayDraft.punches[j][field] = value; }
+  function deleteDraftPunch(j){
+    payDayDraft.punches.splice(j,1);
+    if(payDayDraft.selectedPunch===j) payDayDraft.selectedPunch = null;
+    else if(payDayDraft.selectedPunch>j) payDayDraft.selectedPunch--;
+    refreshDayPanel();
+  }
+  function quickNudgePunch(delta){
+    if(payDayDraft.selectedPunch===null) return;
+    const p = payDayDraft.punches[payDayDraft.selectedPunch];
+    p.time = payTimeString(Math.max(0,Math.min(1439,payTimeMinutes(p.time)+delta)));
+    refreshDayPanel();
+  }
+  function quickAddBreak(){
+    const punches = payDayDraft.punches;
+    if(!punches.some(p=>p.type==='in')){ showToast('Add a clock-in first','brick'); return; }
+    punches.push({type:'break_start',time:'12:00',source:'Manual',original:null,editedBy:null,reason:null});
+    punches.push({type:'break_end',time:'12:30',source:'Manual',original:null,editedBy:null,reason:null});
+    punches.sort((a,b)=>payTimeMinutes(a.time)-payTimeMinutes(b.time));
+    payDayDraft.selectedPunch = punches.findIndex(p=>p.type==='break_start' && p.time==='12:00');
+    refreshDayPanel();
+  }
+  function quickAddPunch(){
+    const punches = payDayDraft.punches;
+    let state = 'off', last = null;
+    punches.forEach(p=>{ state = p.type==='out' ? 'off' : p.type==='break_start' ? 'break' : 'work'; last = p; });
+    const nextType = state==='off' ? 'in' : state==='work' ? 'out' : 'break_end';
+    const time = last ? payTimeString(Math.min(1435,payTimeMinutes(last.time)+30)) : '08:00';
+    punches.push({type:nextType,time,source:'Manual',original:null,editedBy:null,reason:null});
+    payDayDraft.selectedPunch = punches.length-1;
+    refreshDayPanel();
+  }
+  function quickMatchSchedule(){
+    const day = payDetailCard().days[payDayDraft.day];
+    if(!day.schedule){ showToast('No schedule to match for this day','brick'); return; }
+    if(!payDayDraft.punches.length){
+      const span = payTimeMinutes(day.schedule.out)-payTimeMinutes(day.schedule.in);
+      payDayDraft.punches = span>300 ? [
+        {type:'in',time:day.schedule.in,source:'Manual',original:null,editedBy:null,reason:null},
+        {type:'break_start',time:'12:00',source:'Manual',original:null,editedBy:null,reason:null},
+        {type:'break_end',time:'12:30',source:'Manual',original:null,editedBy:null,reason:null},
+        {type:'out',time:day.schedule.out,source:'Manual',original:null,editedBy:null,reason:null}
+      ] : [
+        {type:'in',time:day.schedule.in,source:'Manual',original:null,editedBy:null,reason:null},
+        {type:'out',time:day.schedule.out,source:'Manual',original:null,editedBy:null,reason:null}
+      ];
+    } else {
+      const firstIn = payDayDraft.punches.find(p=>p.type==='in');
+      const lastOut = [...payDayDraft.punches].reverse().find(p=>p.type==='out');
+      if(firstIn) firstIn.time = day.schedule.in;
+      else payDayDraft.punches.unshift({type:'in',time:day.schedule.in,source:'Manual',original:null,editedBy:null,reason:null});
+      if(lastOut) lastOut.time = day.schedule.out;
+      else payDayDraft.punches.push({type:'out',time:day.schedule.out,source:'Manual',original:null,editedBy:null,reason:null});
+      payDayDraft.punches.sort((a,b)=>payTimeMinutes(a.time)-payTimeMinutes(b.time));
+    }
+    refreshDayPanel();
+  }
+  function cancelDayPanel(){
+    payDayDraft = null;
+    if(payDetail) payDetail.selectedDay = null;
+    closeDrawer();
+    renderPayDetail();
+  }
+  function payStampDraftPunches(before,after,reason){
+    const used = new Array(before.length).fill(false), events = [];
+    const stamped = after.map(p=>{
+      let idx = before.findIndex((o,i)=>!used[i] && o.type===p.type && o.time===p.time && o.source===p.source);
+      if(idx!==-1){ used[idx]=true; return before[idx]; }
+      idx = before.findIndex((o,i)=>!used[i] && o.type===p.type);
+      if(idx!==-1){
+        used[idx]=true;
+        const o = before[idx];
+        events.push(payPunchTypes[o.type].toLowerCase()+' from '+o.time+' to '+p.time+(o.source!==p.source ? ' (source '+o.source+' → '+p.source+')' : ''));
+        return {...p, original:o.original || (o.time!==p.time ? o.time : null), editedBy:'Jordan Reyes', reason};
+      }
+      events.push('added '+payPunchTypes[p.type].toLowerCase()+' at '+p.time);
+      return {...p, original:null, editedBy:'Jordan Reyes', reason};
+    });
+    before.forEach((o,i)=>{ if(!used[i]) events.push('removed '+payPunchTypes[o.type].toLowerCase()+' at '+o.time); });
+    return {stamped,events};
+  }
+  function saveDayPanel(){
+    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
+    const card = payDetailCard(), day = card.days[payDayDraft.day];
+    const reasonInput = document.getElementById('tc-day-reason');
+    const reason = reasonInput.value.trim(), reasonError = reason ? '' : 'Enter a reason for this change.';
+    document.getElementById('tc-day-reason-error').textContent = reasonError;
+    reasonInput.setAttribute('aria-invalid',String(Boolean(reasonError)));
+    const sorted = payDayDraft.punches.map(p=>({...p})).sort((a,b)=>payTimeMinutes(a.time)-payTimeMinutes(b.time));
+    const validationError = payPunchError(sorted,true);
+    document.getElementById('tc-day-panel-error').textContent = validationError;
     if(reasonError){ reasonInput.focus(); return; }
-    if(error){ (timeInput || reasonInput).focus(); return; }
-    payLastUndo = {period:payPeriod().id,employee:card.employee,day:draft.day,before:JSON.parse(JSON.stringify(day)),status:card.status};
-    day.punches = punches; day.edited = true;
-    if(card.status==='Missing') card.status='Needs changes';
-    payAddChange(payPeriod(),text.replace(/^(changed|deleted|filled|added) /, "$1 "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' ')+' — '+reason);
-    const focus = draft.returnFocus;
-    payPunchDraft = null;
-    closePayReview(false); renderPayroll(); payFocus(focus);
+    if(validationError) return;
+    const {stamped,events} = payStampDraftPunches(day.punches, sorted, reason);
+    if(!events.length){ showToast('No changes to save','brick'); return; }
+    payLastUndo = {period:payPeriod().id,employee:card.employee,day:payDayDraft.day,before:JSON.parse(JSON.stringify(day)),status:card.status};
+    const dayIndex = payDayDraft.day;
+    day.punches = stamped; day.edited = true;
+    if(card.status==='Missing') card.status = 'Needs changes';
+    const text = events.length===1
+      ? "changed "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' '+events[0]+' — '+reason
+      : "changed "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' punches ('+events.join('; ')+') — '+reason;
+    payAddChange(payPeriod(),text);
+    payDayDraft = null; payDetail.selectedDay = null;
+    closeDrawer();
+    closePayReview(false); renderPayroll();
+    payFocus('tc-day-row-'+dayIndex);
     payUndoToast('Time card updated');
+  }
+  function saveDayNotePanel(){
+    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
+    const card = payDetailCard(), day = card.days[payDayDraft.day], note = document.getElementById('tc-day-note').value.trim();
+    payAddChange(payPeriod(),"changed "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' admin note from '+(day.note || '(empty)')+' to '+(note || '(empty)')+' — Admin note');
+    day.note = note; renderPayChanges(); showToast('Day note saved');
   }
   function payUndoToast(message){
     showToast(payEscape(message)+' <button onclick="payUndoChange(this)">Undo</button>',undefined,10000);
@@ -2156,25 +2550,19 @@
     if(undo.status==='Missing' && card.status==='Needs changes') card.status = undo.status;
     payLastUndo = null; button.closest('.toast').remove();
     closePayReview(false); renderPayroll();
-    payFocus('tc-day-button-'+undo.day);
+    payFocus('tc-day-row-'+undo.day);
     showToast('Last change undone');
-  }
-  function paySaveDayNote(index){
-    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
-    const card = payDetailCard(), day = card.days[index], note = document.getElementById('tc-note-'+index).value.trim();
-    payAddChange(payPeriod(),"changed "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' admin note from '+(day.note || '(empty)')+' to '+(note || '(empty)')+' — Admin note');
-    day.note = note; renderPayChanges(); showToast('Day note saved');
   }
   function payRequestChanges(){
     if(!payCanEditCard()) return;
-    payCancelPunch();
+    if(payDayDraft){ closeDrawer(); payDayDraft = null; payDetail.selectedDay = null; renderPayDetail(); }
     document.getElementById('tc-request').hidden = false; payFocus('tc-request-note');
   }
   function payCancelRequest(){ document.getElementById('tc-request').hidden = true; payFocus('tc-back'); }
   function payDetailAction(action){
     const card = payDetailCard(), period = payPeriod();
     if(!payCanEditCard() || card.status==='Missing'){ showToast('This card cannot be approved or requested yet','brick'); return; }
-    if(payPunchDraft || payDrag){ document.getElementById('tc-action-error').textContent='Save or cancel the pending punch adjustment first.'; return; }
+    if(payDayDraft || payDrag){ document.getElementById('tc-action-error').textContent='Save or cancel the pending day edit first.'; return; }
     if(action==='approve'){
       const error = payCardApprovalError(period,card,card.days);
       document.getElementById('tc-action-error').textContent = error;
@@ -2190,7 +2578,7 @@
       card.status='Needs changes'; card.note=note;
       payAddChange(period,"requested changes to "+payEmployee(card.employee).name+"'s time card from "+previous+' to Needs changes — '+note);
     }
-    payPunchDraft = null; payState.selected.delete(card.employee);
+    payState.selected.delete(card.employee);
     closePayReview(false); renderPayroll(); payFocus('tc-back');
     showToast(action==='approve' ? 'Time card approved' : 'Changes requested');
   }
@@ -2208,10 +2596,11 @@
   }
   function payStartDrag(event,day,index){
     if(!payCanEditCard() || event.button!==0) return;
-    if(payPunchDraft){ showToast('Save or cancel the pending adjustment first','brick'); return; }
+    if(payDayDraft){ showToast('Save or cancel the current day edit first','brick'); return; }
     const marker = event.currentTarget, bar = marker.closest('.tc-bar'), bounds = bar.getBoundingClientRect();
     payDrag = {day,index,marker,minutes:payTimeMinutes(payDetailCard().days[day].punches[index].time),startX:event.clientX,moved:false};
     marker.setPointerCapture(event.pointerId);
+    marker.classList.add('dragging');
     marker.onpointermove = move=>{
       if(!payDrag) return;
       if(Math.abs(move.clientX-payDrag.startX)>3) payDrag.moved = true;
@@ -2223,25 +2612,23 @@
       if(!payDrag) return;
       const drag = payDrag; payDrag = null;
       marker.onpointermove = null; marker.onpointerup = null;
-      if(drag.moved){
-        payEditPunch(day,index,'adjust',marker.id,payTimeString(drag.minutes));
-      }
+      marker.classList.remove('dragging');
+      if(drag.moved) openPayDayPanel(day,{selectedPunch:index, pendingChange:{index,time:payTimeString(drag.minutes)}, focusReason:true});
     };
-    marker.onpointercancel = ()=>{ payDrag=null; renderPayDetail(); payFocus(marker.id); };
+    marker.onpointercancel = ()=>{ marker.classList.remove('dragging'); payDrag=null; renderPayDetail(); payFocus(marker.id); };
   }
   function payMarkerClick(day,index){
-    if(payPunchDraft) return;
-    payEditPunch(day,index,'adjust','tc-marker-'+day+'-'+index);
+    if(payDrag) return;
+    openPayDayPanel(day,{selectedPunch:index});
   }
   function payMarkerKey(event,day,index){
     if(!payCanEditCard()) return;
     if(event.key==='Escape'){
       event.preventDefault();
-      if(payPunchDraft) payCancelPunch();
-      else { payDrag=null; renderPayDetail(); payFocus(event.currentTarget.id); }
+      if(payDrag){ payDrag=null; renderPayDetail(); payFocus(event.currentTarget.id); }
     } else if(event.key==='ArrowLeft' || event.key==='ArrowRight'){
       event.preventDefault();
-      if(payPunchDraft){ showToast('Save or cancel the pending adjustment first','brick'); return; }
+      if(payDayDraft){ showToast('Save or cancel the current day edit first','brick'); return; }
       const punch = payDetailCard().days[day].punches[index];
       if(!payDrag || payDrag.day!==day || payDrag.index!==index){
         if(payDrag) renderPayDetail();
@@ -2249,18 +2636,18 @@
       }
       payDrag.minutes = Math.max(0,Math.min(1439,payDrag.minutes+(event.key==='ArrowLeft' ? -5 : 5)));
       payPreviewMarker(day,index,payDrag.minutes);
-      if(event.currentTarget.id.startsWith('tc-mobile')) event.currentTarget.textContent = payPunchTypes[punch.type]+': '+payTimeString(payDrag.minutes)+' · '+punch.source;
     } else if(event.key==='Enter'){
       event.preventDefault();
       const minutes = payDrag && payDrag.day===day && payDrag.index===index ? payDrag.minutes : payTimeMinutes(payDetailCard().days[day].punches[index].time);
-      payDrag = null; payEditPunch(day,index,'adjust',event.currentTarget.id,payTimeString(minutes));
+      payDrag = null;
+      openPayDayPanel(day,{selectedPunch:index, pendingChange:{index,time:payTimeString(minutes)}, focusReason:true});
     }
   }
   document.addEventListener('keydown',event=>{
     if(event.key!=='Escape' || !payDetail) return;
-    if(payPunchDraft){ event.preventDefault(); payCancelPunch(); }
+    if(payDayDraft){ event.preventDefault(); cancelDayPanel(); }
     else if(payDrag){ const focus='tc-marker-'+payDrag.day+'-'+payDrag.index; payDrag=null; renderPayDetail(); payFocus(focus); }
-    else if(!document.getElementById('tc-request').hidden) payCancelRequest();
+    else if(document.getElementById('tc-request') && !document.getElementById('tc-request').hidden) payCancelRequest();
   });
   function makePayCardDays(period,id){
     const days = [];
@@ -2276,17 +2663,15 @@
     const punch = (type,time)=>({type,time,source,original:null,editedBy:null,reason:null});
     while(date.toISOString().slice(0,10)<=end){
       const iso = date.toISOString().slice(0,10);
-      const weekday = date.getUTCDay()!==0 && date.getUTCDay()!==6;
-      const day = {date:iso,schedule:weekday ? {in:scheduledIn,out:scheduledOut,source:assignment ? 'Scheduling · C. Lin / fictional weekday repetition' : 'Fictional weekday schedule using the Scheduling pattern'} : null,
+      const holiday = iso==='2026-09-07';
+      const weekday = !holiday && date.getUTCDay()!==0 && date.getUTCDay()!==6;
+      const day = {date:iso,holiday,schedule:weekday ? {in:scheduledIn,out:scheduledOut,source:assignment ? 'Scheduling · C. Lin / fictional weekday repetition' : 'Fictional weekday schedule using the Scheduling pattern'} : null,
         punches:weekday ? [punch('in',scheduledIn),punch('break_start','12:00'),punch('break_end','12:30'),punch('out',scheduledOut)] : [],absence:null,note:'',edited:false};
       if(period.id==='sep' && ['sam','casey','riley'].includes(id)){
-        if(iso==='2026-09-08' && id!=='casey'){
-          day.punches[0].time='08:12';
-          if(id==='sam') day.punches[3].time='18:30';
-        }
+        if(iso==='2026-09-08' && id!=='casey') day.punches[0].time='08:12';
         if(iso==='2026-09-03') day.punches[3].time='14:30';
         if(iso==='2026-09-04' && id!=='casey') day.punches[2].time='13:05';
-        if(iso==='2026-09-07' && id==='sam') day.punches[3].time='19:15';
+        if(iso==='2026-09-02' && id==='sam') day.punches[3].time='19:15';
         if(iso==='2026-09-09' && id==='sam' || iso==='2026-09-14' && id==='riley') day.punches.pop();
         if(iso==='2026-09-10'){
           day.punches=[punch('in','08:00'),punch('out','11:30'),punch('in','13:00'),punch('out','15:30')];
@@ -2306,6 +2691,7 @@
     return days;
   }
   payrollData.periods.forEach(period=>{
+    period.adjustments.forEach(a=>{ a.id = 'adj-'+(payAdjustSeq++); });
     period.timeCards = period.rows.filter(row=>payEmployee(row.employee).type==='Hourly').map(row=>{
       const status = period.status==='Paid' ? 'Approved' : payrollData.timeCardStatuses[row.employee];
       const days = makePayCardDays(period,row.employee);
