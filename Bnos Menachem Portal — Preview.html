@@ -375,6 +375,128 @@
     .week-grid{grid-template-columns:1fr;}
     .home-cards{grid-template-columns:1fr;}
   }
+  /* ---------- Payroll demo ---------- */
+  #a-payroll [hidden], #s-pay [hidden], #drawer [hidden]{display:none !important;}
+  #a-payroll button:focus-visible, #s-pay button:focus-visible, #a-payroll input:focus-visible,
+  #a-payroll select:focus-visible, #s-pay input:focus-visible, .drawer.pay-drawer :focus-visible{
+    outline:2px solid var(--brass);outline-offset:3px;
+  }
+  #a-payroll button:disabled{opacity:.55;cursor:not-allowed;}
+  .pay-heading,.pay-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .pay-note{font-size:13px;color:var(--ink-soft);margin:12px 0 20px;}
+  .pay-select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;max-width:100%;}
+  #a-payroll .subtab{font-family:inherit;background:none;border-top:0;border-left:0;border-right:0;}
+  .pay-scroll{max-width:100%;overflow-x:auto;}
+  .pay-scroll table{min-width:900px;}
+  .pay-reason{font-size:12px;color:var(--ink-soft);margin-top:6px;max-width:220px;}
+  .pay-money{white-space:nowrap;}
+  .pay-review{margin-top:20px;}
+  .pay-review h3{font-family:'Fraunces',serif;}
+  .pay-review label{display:flex;align-items:center;gap:8px;margin:20px 0;}
+  .pay-skeleton{height:18px;background:var(--line);border-radius:5px;margin:18px 0;animation:pay-pulse 1s ease-in-out infinite alternate;}
+  .pay-skeleton:nth-child(even){width:65%;}
+  @keyframes pay-pulse{to{opacity:.35;}}
+  .pay-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--brass);border-radius:50%;animation:pay-spin .7s linear infinite;}
+  @keyframes pay-spin{to{transform:rotate(360deg);}}
+  .pay-stubs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px;}
+  .pay-stubs h3{font-size:18px;}
+  .pay-stubs p{font-size:13px;color:var(--ink-soft);}
+  .pay-value{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:12px 0;font-size:13px;}
+  .pay-reveal{background:none;border:none;font-family:inherit;color:var(--ink-soft);padding:4px;}
+  .pay-demo-toggle{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--ink-soft);margin-bottom:16px;}
+  .drawer.pay-drawer{max-width:100vw;}
+  .drawer.pay-drawer .drawer-tabs,.drawer.pay-drawer .drawer-body > .sub-panel{display:none !important;}
+  .pay-drawer .field{margin-bottom:16px;}
+  .pay-drawer input,.pay-drawer textarea{width:100%;padding:9px 12px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;}
+  #a-payroll .subtabs{flex-wrap:wrap;}
+  .pay-timeline{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));list-style:none;padding:0;gap:12px;}
+  .pay-timeline li{border-top:2px solid var(--line);padding:12px 0;font-size:13px;min-width:0;}
+  .pay-timeline strong,.pay-timeline time{display:block;margin-bottom:10px;}
+  .pay-timeline time{color:var(--ink-soft);}
+  .pay-warning{padding:14px 16px;background:var(--brass-soft);color:var(--brass);border:1px solid var(--line);border-radius:6px;margin-bottom:20px;font-size:13px;}
+  .pay-field-error{color:var(--brick);font-size:12px;margin:6px 0;min-height:16px;}
+  .pay-card-summary{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;font-size:13px;}
+  .pay-card-summary strong{display:block;font-family:'Fraunces',serif;font-size:24px;}
+  .pay-day-table table{min-width:640px;}
+  .pay-day-table input[type=time]{min-width:100px;}
+  .pay-day-table input[type=number]{min-width:70px;}
+  .pay-day-table input[type=text]{min-width:140px;}
+  .pay-edited{position:relative;display:inline-block;}
+  .pay-edit-reason{display:none;position:absolute;top:100%;left:0;width:190px;padding:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:5px;z-index:2;font-size:12px;white-space:normal;}
+  .pay-edited:hover .pay-edit-reason,.pay-edited:focus .pay-edit-reason{display:block;}
+  .pay-drawer.wide-pay-drawer{width:760px;right:-780px;}
+  .pay-drawer.wide-pay-drawer.open{right:0;}
+  #pay-changes{margin-top:20px;}
+  #pay-changes-list{list-style:none;padding:0;margin:0;}
+  #pay-changes-list li{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .tc-detail{min-width:0;}
+  .tc-detail :focus-visible{outline:2px solid var(--brass);outline-offset:3px;}
+  .tc-detail input,.tc-detail select,.tc-detail textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:8px;max-width:100%;}
+  .tc-detail textarea{width:100%;}
+  .tc-summary{display:flex;flex-wrap:wrap;gap:18px;padding:16px 0;font-size:12px;}
+  .tc-summary strong{display:block;font-size:19px;}
+  .tc-exceptions{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+  .tc-day{border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:12px 0;min-width:0;}
+  .tc-row{display:grid;grid-template-columns:105px minmax(0,1fr) 130px;align-items:center;gap:14px;padding:14px;}
+  .tc-date{white-space:normal;text-align:left;}
+  .tc-day-total{text-align:right;font-size:13px;}
+  .tc-day-total .badge{display:inline-block;margin:3px 0 0 3px;}
+  .tc-bar{position:relative;height:148px;min-width:0;background:repeating-linear-gradient(to right,var(--line-soft) 0,var(--line-soft) 1px,transparent 1px,transparent calc(100% / 14));}
+  .tc-hours{display:flex;justify-content:space-between;font-size:9px;color:var(--ink-soft);}
+  .tc-block{position:absolute;top:50px;height:28px;border-radius:3px;}
+  .tc-scheduled{top:24px;height:64px;border:1px solid var(--ink-faint);background:var(--paper);font-size:10px;padding:2px 4px;color:var(--ink-soft);}
+  .tc-work{background:var(--ink);}
+  .tc-break{border:1px dashed var(--ink-soft);background:var(--surface);}
+  .tc-pto{top:108px;height:24px;background:var(--brass-soft);color:var(--brass);font-size:11px;padding:3px;white-space:nowrap;}
+  .tc-marker{position:absolute;top:43px;transform:translateX(-50%);padding:0;border:1px solid var(--surface);background:var(--ink);color:var(--surface);width:10px;height:42px;cursor:ew-resize;touch-action:none;}
+  .tc-marker:disabled{cursor:default;opacity:1 !important;}
+  .tc-marker span{position:absolute;top:43px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--ink);background:var(--surface);padding:2px;}
+  .tc-marker:nth-of-type(even) span{top:-29px;}
+  .tc-marker del{color:var(--ink-soft);}
+  .tc-mobile-punches{display:none;}
+  .tc-no-punches{color:var(--brick);}
+  .tc-expanded{border-top:1px solid var(--line);padding:16px;min-width:0;}
+  .tc-expanded table{min-width:740px;}
+  .tc-form{background:var(--paper);border:1px solid var(--line);padding:14px;margin:12px 0;border-radius:6px;}
+  .tc-popover{max-width:380px;}
+  .tc-form-grid{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;}
+  .tc-form label{display:block;font-size:12px;margin-bottom:5px;}
+  .tc-form .field{flex:1;min-width:130px;}
+  .tc-history{padding-left:22px;}
+  .tc-history li{padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .tc-empty{position:absolute;top:55px;left:12px;font-size:13px;color:var(--ink-soft);}
+  .tc-empty.missing{color:var(--brick);}
+  .toast button{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:3px 8px;}
+  @media(max-width:700px){
+    .tc-row{grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+    .tc-chart{display:none;}
+    .tc-mobile-punches{display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;}
+    .tc-mobile-punches button{text-align:left;white-space:normal;}
+    .tc-day-total{max-width:140px;}
+    .tc-expanded{padding:10px;overflow:hidden;}
+    .tc-detail .pay-heading>div,.tc-detail .pay-actions>div{min-width:0;max-width:100%;}
+    .tc-exceptions button{white-space:normal;text-align:left;}
+  }
+  @media (max-width:700px){
+    #a-payroll .stat-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+    #a-payroll .stat-num{font-size:21px;}
+    #a-payroll .toolbar,#a-payroll .toolbar-left{flex-wrap:wrap;}
+    #a-payroll .search-input{width:100%;min-width:0;}
+    .pay-timeline{grid-template-columns:1fr;}
+    .pay-timeline li{border-top:0;border-left:2px solid var(--line);padding:8px 14px;}
+    .pay-stubs{grid-template-columns:1fr;}
+    #s-pay .locked-card{flex-wrap:wrap;gap:12px;padding:16px;}
+    #s-pay .pto-stats{gap:6px;}
+    #s-pay .pto-stat{padding:12px 6px;}
+    body.pay-demo .sidebar{width:126px;padding:12px 4px;}
+    body.pay-demo .nav-item{padding:9px 6px;font-size:12px;gap:5px;}
+    body.pay-demo .brand{font-size:14px;}
+    body.pay-demo .year-select{padding:6px;font-size:11px;}
+    body.pay-demo .content{padding:24px 12px;}
+    body.pay-demo .topbar{padding:0 12px;}
+    body.pay-demo .breadcrumb{display:none;}
+    body.pay-demo .topbar-right{gap:8px;margin-left:auto;}
+  }
 </style>
 </head>
 <body>
@@ -561,28 +683,97 @@
 
       <!-- ============ ADMIN: PAYROLL ============ -->
       <section class="screen" id="a-payroll" data-crumb="Payroll">
-        <div class="page-head"><h1>Payroll</h1><p>Pay period Sep 1 – 15, 2026 · Draft</p></div>
-        <div class="panel" style="margin-bottom:20px;">
-          <div class="panel-head">
-            <h3>This run</h3>
-            <button class="btn btn-primary btn-sm" onclick="submitPayroll(this)">Review &amp; submit</button>
-          </div>
-          <div class="panel-body" style="display:flex;gap:36px;">
-            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Total, if submitted now</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;">$118,420</div></div>
-            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Employees included</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;">121 of 128</div></div>
-            <div><div class="stat-label" style="font-size:12px;color:var(--ink-soft);">Blocked</div><div class="stat-num" style="font-family:'Fraunces';font-size:22px;color:var(--brick);">7</div></div>
-          </div>
+        <div class="page-head">
+          <div class="pay-heading"><h1>Payroll</h1><span id="pay-status" class="badge badge-brass">Draft</span></div>
+          <p id="pay-subtitle">Pay period Sep 1 – 15, 2026 · Draft</p>
+          <p class="pay-note">Taxes, net pay and direct deposit are calculated by the payroll provider.</p>
+          <label for="pay-period">Pay period</label>
+          <select id="pay-period" class="pay-select" onchange="changePayPeriod(this.value)">
+            <option value="sep">Sep 1–15 Draft</option><option value="aug-late">Aug 16–31 Paid</option><option value="aug-early">Aug 1–15 Paid</option>
+          </select>
         </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>Name</th><th>Department</th><th>Gross pay</th><th>Adjustments</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>$1,840.00</td><td>—</td><td><span class="badge badge-moss">Ready</span></td></tr>
-              <tr><td><div class="name-cell"><div class="mini-avatar">JR</div>Jordan Reyes</div></td><td>Administration</td><td>$2,105.00</td><td>+ $150 bonus</td><td><span class="badge badge-moss">Ready</span></td></tr>
-              <tr><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>—</td><td>—</td><td><span class="badge badge-brick">Blocked — contract not signed</span></td></tr>
-              <tr><td><div class="name-cell"><div class="mini-avatar">CL</div>Casey Lin</div></td><td>Elementary</td><td>$1,120.00</td><td>− $40 absence</td><td><span class="badge badge-moss">Ready</span></td></tr>
-            </tbody>
-          </table>
+        <div id="pay-loading" class="panel panel-body" hidden role="status" aria-label="Loading payroll">
+          Loading payroll…
+          <div class="pay-skeleton"></div><div class="pay-skeleton"></div><div class="pay-skeleton"></div><div class="pay-skeleton"></div>
+        </div>
+        <div id="pay-error" class="panel empty-state" hidden role="alert">
+          <h4>Payroll could not be loaded</h4><p>This is a demo error. Try again to load the fictional run.</p>
+          <button class="btn btn-secondary" onclick="loadPayroll(true)">Try again</button>
+        </div>
+        <div id="pay-content" hidden>
+          <div id="pay-overdue" class="pay-warning" hidden role="status"></div>
+          <div id="pay-summary" class="stat-row"></div>
+          <div class="pay-actions" style="margin-bottom:16px;">
+            <div class="subtabs" style="margin-bottom:0;" aria-label="Payroll views">
+              <button class="subtab active" data-pay-tab="timeline" onclick="setPayTab('timeline')">Timeline</button>
+              <button class="subtab" data-pay-tab="cards" onclick="setPayTab('cards')">Time cards</button>
+              <button class="subtab" data-pay-tab="run" onclick="setPayTab('run')">This run</button>
+              <button class="subtab" data-pay-tab="adjustments" onclick="setPayTab('adjustments')">Adjustments</button>
+              <button class="subtab" data-pay-tab="history" onclick="setPayTab('history')">History</button>
+            </div>
+            <button id="pay-review-button" class="btn btn-primary btn-sm" onclick="reviewPayroll()">Review &amp; submit</button>
+          </div>
+          <div id="pay-timeline" class="panel">
+            <div class="panel-head"><h3>Pay period timeline</h3><button id="pay-timeline-edit" class="btn btn-secondary btn-sm" onclick="openPayTimeline()">Edit timeline</button></div>
+            <div class="panel-body">
+              <p id="pay-timeline-lock" class="pay-note" hidden></p>
+              <p class="pay-note">Fictional demo date: Sep 17, 2026. Deadline states reflect outstanding work.</p>
+              <ol id="pay-timeline-steps" class="pay-timeline"></ol>
+            </div>
+          </div>
+          <div id="pay-cards" hidden>
+            <div id="pay-cards-list">
+            <div id="pay-card-summary" class="pay-card-summary" aria-live="polite"></div>
+            <p class="pay-note">Hourly employees only. Overtime is hours over 40 per Monday–Sunday week, paid at 1.5×. Missing cards have no submitted hours.</p>
+            <div class="toolbar"><div class="toolbar-left">
+              <input id="pay-card-search" class="search-input" type="search" placeholder="Search time cards" aria-label="Search time cards" oninput="renderPayCards()">
+              <select id="pay-card-filter" class="pay-select" aria-label="Filter time card status" onchange="renderPayCards()">
+                <option value="all">All statuses</option><option>Submitted</option><option>Approved</option><option>Needs changes</option><option>Missing</option>
+              </select>
+            </div><button id="pay-card-bulk" class="btn btn-primary btn-sm" disabled onclick="approvePaySelected()">Approve selected</button></div>
+            <div class="panel">
+              <div id="pay-card-table-wrap" class="pay-scroll"><table>
+                <thead><tr><th>Select</th><th>Name</th><th>Department</th><th>Hours (total)</th><th>Overtime</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="pay-card-rows"></tbody>
+              </table></div>
+              <div id="pay-card-empty" class="empty-state" hidden><h4>No matches</h4><p>Try a different name or status filter.</p><button class="btn btn-secondary btn-sm" onclick="clearPayCardSearch()">Clear filters</button></div>
+            </div>
+            </div>
+            <section id="pay-card-detail" class="tc-detail" hidden aria-label="Time card detail"></section>
+          </div>
+          <div id="pay-run" hidden>
+            <div class="toolbar"><div class="toolbar-left">
+              <input id="pay-search" class="search-input" type="search" placeholder="Search employees" aria-label="Search payroll employees" oninput="renderPayRows()">
+              <select id="pay-filter" class="pay-select" aria-label="Filter payroll status" onchange="renderPayRows()">
+                <option value="all">All statuses</option><option value="ready">Ready</option><option value="contract">Blocked — contract not signed</option><option value="deposit">Missing direct deposit</option><option value="timecard">Blocked — time card not approved</option>
+              </select>
+            </div></div>
+            <div class="panel">
+              <div id="pay-table-wrap" class="pay-scroll"><table>
+                <thead><tr><th>Name</th><th>Department</th><th>Type</th><th>Gross pay</th><th>Adjustments</th><th>Net (est.)</th><th>Status</th></tr></thead>
+                <tbody id="pay-rows"></tbody>
+              </table></div>
+              <div id="pay-empty" class="empty-state" hidden><h4>No matches</h4><p>Try a different name or status filter.</p><button class="btn btn-secondary btn-sm" onclick="clearPaySearch()">Clear filters</button></div>
+            </div>
+            <p class="pay-note">Fictional gross amounts and net estimates only. Employees with unsigned contracts, missing direct deposit or unapproved time cards are skipped. Hourly gross is based only on approved hours.</p>
+          </div>
+          <div id="pay-adjustments" class="panel" hidden>
+            <div class="panel-head"><h3>Adjustments</h3><button id="pay-add-button" class="btn btn-secondary btn-sm" onclick="openAdjustment()">Add adjustment</button></div>
+            <div id="pay-adjustment-list" class="panel-body"></div>
+          </div>
+          <div id="pay-history" class="panel pay-scroll" hidden></div>
+          <section id="pay-review" class="panel pay-review" hidden aria-labelledby="pay-review-title" tabindex="-1">
+            <div class="panel-head"><h3 id="pay-review-title">Review this run</h3><button id="pay-review-close" class="btn btn-text btn-sm" onclick="closePayReview()">Close review</button></div>
+            <div class="panel-body">
+              <div id="pay-review-details"></div>
+              <label><input id="pay-reviewed" type="checkbox" onchange="updatePaySubmit()">I've reviewed this run</label>
+              <button id="pay-submit" class="btn btn-primary" disabled onclick="submitPayroll()">Submit</button>
+            </div>
+          </section>
+          <section id="pay-changes" class="panel" aria-labelledby="pay-changes-title">
+            <div class="panel-head"><h3 id="pay-changes-title">Changes</h3></div>
+            <div class="panel-body"><ul id="pay-changes-list"></ul><p id="pay-changes-empty" class="pay-note">No changes this period</p></div>
+          </section>
         </div>
       </section>
 
@@ -773,10 +964,15 @@
       <!-- ============ STAFF: MY PAY ============ -->
       <section class="screen" id="s-pay" data-crumb="My pay">
         <div class="page-head"><h1>My pay</h1><p>Pay, PTO, and adjustments</p></div>
-        <div class="locked-card" style="margin-bottom:24px;">
+        <label class="pay-demo-toggle"><input id="pay-contract-signed" type="checkbox" onchange="renderMyPay()">Demo: contract signed</label>
+        <div id="my-pay-locked" class="locked-card" style="margin-bottom:24px;">
           <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
           <div style="flex:1;"><h4>Pay is locked</h4><p>Sign your contract to unlock pay history and this pay period's breakdown.</p></div>
           <button class="btn btn-primary btn-sm" onclick="go('s-docs')">Go to contract</button>
+        </div>
+        <div id="my-pay-unlocked" hidden>
+          <p class="pay-note">Fictional pay stubs for Taylor Brooks · Demo only</p>
+          <div id="my-pay-stubs" class="pay-stubs"></div>
         </div>
         <div class="section-label">PTO balance</div>
         <div class="pto-stats">
@@ -857,6 +1053,9 @@
     target.classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.screen===screenId));
     document.getElementById('breadcrumb').innerHTML = '<span class="crumb-current">'+target.dataset.crumb+'</span>';
+    document.body.classList.toggle('pay-demo', screenId==='a-payroll' || screenId==='s-pay');
+    if(screenId==='a-payroll') loadPayroll();
+    if(screenId==='s-pay') renderMyPay();
   }
 
   document.querySelectorAll('.nav-item').forEach(btn=>{
@@ -884,7 +1083,7 @@
   }
 
   // sub-tabs (scheduling + drawer)
-  document.querySelectorAll('.subtab').forEach(tab=>{
+  document.querySelectorAll('.subtab[data-sub]').forEach(tab=>{
     tab.addEventListener('click', ()=>{
       const group = tab.dataset.sub;
       const parent = tab.closest('.subtabs') || tab.closest('.drawer-tabs');
@@ -897,6 +1096,9 @@
   });
 
   function openDrawer(name, roleLine){
+    document.getElementById('drawer').classList.remove('pay-drawer','wide-pay-drawer');
+    const payBody = document.getElementById('pay-drawer-body');
+    if(payBody) payBody.hidden = true;
     document.getElementById('drawer-name').textContent = name;
     document.getElementById('drawer-role').textContent = roleLine;
     const initials = name.split(' ').map(n=>n[0]).join('');
@@ -907,6 +1109,14 @@
   function closeDrawer(){
     document.getElementById('drawer').classList.remove('open');
     document.getElementById('drawer-overlay').classList.remove('open');
+    if(payDrawerReturnTab) setPayTab(payDrawerReturnTab);
+    if(payDrawerFocus){
+      const source = payDrawerFocus.isConnected ? payDrawerFocus : document.getElementById(payDrawerFocus.id) ||
+        (payDrawerReturnTab && document.querySelector('[data-pay-tab="'+payDrawerReturnTab+'"]'));
+      if(source) source.focus();
+      payDrawerFocus = null;
+    }
+    payDrawerReturnTab = null;
   }
 
   // reveal toggles
@@ -916,16 +1126,35 @@
       r.textContent = r.textContent === 'Show' ? 'Hide' : 'Show';
     });
   });
+  document.addEventListener('click', e=>{
+    const button = e.target.closest('button.reveal[data-cents]');
+    if(!button) return;
+    const shown = button.getAttribute('aria-pressed') !== 'true';
+    button.setAttribute('aria-pressed', String(shown));
+    button.textContent = shown ? 'Hide' : 'Show';
+    button.previousElementSibling.textContent = shown ? payMoney(Number(button.dataset.cents)) : '$•,•••.••';
+  });
+  document.addEventListener('keydown', e=>{
+    const drawer = document.getElementById('drawer');
+    if(!drawer.classList.contains('open')) return;
+    if(e.key==='Escape'){ e.preventDefault(); closeDrawer(); }
+    if(e.key==='Tab' && drawer.classList.contains('pay-drawer')){
+      const controls = [...drawer.querySelectorAll('button,input,select,textarea,[tabindex="0"]')].filter(el=>el.getClientRects().length && !el.disabled);
+      const first = controls[0], last = controls[controls.length-1];
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+    }
+  });
 
   // ---------- toasts ----------
-  function showToast(msg, tone){
+  function showToast(msg, tone, duration=2800){
     const stack = document.getElementById('toast-stack');
     const t = document.createElement('div');
     t.className = 'toast' + (tone==='brick' ? ' brick' : '');
     t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><span>'+msg+'</span>';
     stack.appendChild(t);
     requestAnimationFrame(()=>t.classList.add('show'));
-    setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 200); }, 2800);
+    setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 200); }, duration);
   }
 
   // ---------- dropdowns ----------
@@ -1002,15 +1231,6 @@
     showToast('Contract sent to ' + name);
   }
   function viewContract(name){ showToast('Opening ' + name + '\u2019s contract\u2026'); }
-
-  // ---------- payroll ----------
-  function submitPayroll(btn){
-    btn.textContent = 'Submitted';
-    btn.disabled = true;
-    btn.style.opacity = '0.6';
-    btn.style.cursor = 'default';
-    showToast('Payroll run submitted for processing');
-  }
 
   // ---------- scheduling ----------
   function fillShift(btn){
@@ -1118,6 +1338,982 @@
     setTimeout(()=>{ btn.textContent = original; }, 1600);
     showToast('Changes saved');
   }
+
+  // ---------- Fictional payroll demo (all monetary values are integer cents) ----------
+  const payrollData = {
+    employees: [
+      {id:'alex', name:'Alex Morgan', department:'Judaic Studies', type:'Full-year'},
+      {id:'jordan', name:'Jordan Reyes', department:'Administration', type:'Full-year'},
+      {id:'taylor', name:'Taylor Brooks', department:'Elementary', type:'Full-year'},
+      {id:'sam', name:'Sam Whitfield', department:'Facilities', type:'Hourly', rate:2000},
+      {id:'casey', name:'Casey Lin', department:'Elementary', type:'Hourly', rate:1750},
+      {id:'morgan', name:'Morgan Ellis', department:'High School', type:'Full-year'},
+      {id:'avery', name:'Avery Patel', department:'Administration', type:'Hourly', rate:1800, email:'apatel@example.org'},
+      {id:'riley', name:'Riley Chen', department:'Elementary', type:'Hourly', rate:2200, email:'rchen@example.org'},
+      {id:'jamie', name:'Jamie Rivera', department:'Facilities', type:'Hourly', rate:1900, email:'jrivera@example.org'},
+      {id:'devon', name:'Devon Park', department:'Administration', type:'Hourly', rate:2100, email:'dpark@example.org'},
+      {id:'quinn', name:'Quinn Hayes', department:'High School', type:'Hourly', rate:2300, email:'qhayes@example.org'}
+    ],
+    periods: [
+      {id:'sep', label:'Sep 1 – 15, 2026', short:'Sep 1–15', status:'Draft', payDate:'Sep 18, 2026',
+        timeline:{start:'2026-09-01',end:'2026-09-15',cards:'2026-09-16',approvals:'2026-09-16',submit:'2026-09-17',pay:'2026-09-18'},
+        changes:[],
+        rows:[
+          {employee:'alex', gross:184000, net:147200, status:'ready'},
+          {employee:'jordan', gross:210500, net:168400, status:'ready'},
+          {employee:'taylor', gross:176000, net:140800, status:'contract'},
+          {employee:'sam', gross:98000, net:78400, status:'contract'},
+          {employee:'casey', gross:112000, net:89600, status:'ready'},
+          {employee:'morgan', gross:192500, net:154000, status:'ready'},
+          {employee:'avery', gross:105000, net:84000, status:'deposit'},
+          {employee:'riley', gross:0, net:0, status:'ready'},
+          {employee:'jamie', gross:0, net:0, status:'ready'},
+          {employee:'devon', gross:0, net:0, status:'ready'},
+          {employee:'quinn', gross:0, net:0, status:'ready'}
+        ],
+        adjustments:[
+          {employee:'jordan', type:'Bonus', cents:15000, note:'bonus'},
+          {employee:'casey', type:'Deduction', cents:-4000, note:'absence, Sep 4'}
+        ]},
+      {id:'aug-late', label:'Aug 16 – 31, 2026', short:'Aug 16–31', status:'Paid', payDate:'Sep 3, 2026', submittedBy:'Jordan Reyes',
+        timeline:{start:'2026-08-16',end:'2026-08-31',cards:'2026-09-01',approvals:'2026-09-01',submit:'2026-09-02',pay:'2026-09-03'},
+        changes:[],
+        rows:[
+          {employee:'alex', gross:184000, net:147200, status:'ready'},
+          {employee:'jordan', gross:210500, net:168400, status:'ready'},
+          {employee:'taylor', gross:176000, net:140800, status:'ready'},
+          {employee:'sam', gross:96000, net:76800, status:'ready'},
+          {employee:'casey', gross:110000, net:88000, status:'ready'},
+          {employee:'morgan', gross:192500, net:154000, status:'ready'}
+        ], adjustments:[{employee:'alex', type:'Reimbursement', cents:2500, note:'classroom supplies'}]},
+      {id:'aug-early', label:'Aug 1 – 15, 2026', short:'Aug 1–15', status:'Paid', payDate:'Aug 18, 2026', submittedBy:'Jordan Reyes',
+        timeline:{start:'2026-08-01',end:'2026-08-15',cards:'2026-08-16',approvals:'2026-08-16',submit:'2026-08-17',pay:'2026-08-18'},
+        changes:[],
+        rows:[
+          {employee:'alex', gross:184000, net:147200, status:'ready'},
+          {employee:'jordan', gross:210500, net:168400, status:'ready'},
+          {employee:'taylor', gross:176000, net:140800, status:'ready'},
+          {employee:'sam', gross:92000, net:73600, status:'ready'},
+          {employee:'casey', gross:108000, net:86400, status:'ready'},
+          {employee:'morgan', gross:192500, net:154000, status:'ready'}
+        ], adjustments:[]}
+    ],
+    demoToday:'2026-09-17',
+    timeCardStatuses:{sam:'Submitted',casey:'Approved',avery:'Missing',riley:'Submitted',jamie:'Approved',devon:'Needs changes',quinn:'Missing'},
+    stubs:[
+      {period:'Aug 16 – 31, 2026', payDate:'Sep 3, 2026', gross:176000, federal:17600, state:8800, benefits:8800, net:140800},
+      {period:'Aug 1 – 15, 2026', payDate:'Aug 18, 2026', gross:176000, federal:17600, state:8800, benefits:8800, net:140800},
+      {period:'Jul 16 – 31, 2026', payDate:'Aug 3, 2026', gross:172000, federal:17200, state:8600, benefits:8600, net:137600}
+    ]
+  };
+  const payCurrency = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'});
+  const payState = {period:'sep', tab:'timeline', loading:false, failed:false, submitting:false, timer:null, selected:new Set(), editor:null};
+  let payDrawerFocus = null;
+  let payDrawerReturnTab = null;
+  function payMoney(cents){ return payCurrency.format(cents / 100); }
+  function payEscape(value){
+    return String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function payPeriod(){ return payrollData.periods.find(p=>p.id===payState.period); }
+  function payEmployee(id){ return payrollData.employees.find(e=>e.id===id); }
+  function payEditable(){ return payPeriod().status==='Draft' && !payState.submitting && !payState.loading && !payState.failed; }
+  function payAdjustments(period, id){ return period.adjustments.filter(a=>a.employee===id); }
+  function payCard(period,id){ return period.timeCards.find(c=>c.employee===id); }
+  function payRowStatus(period,row){
+    if(payEmployee(row.employee).type==='Hourly' && payCard(period,row.employee).status!=='Approved') return 'timecard';
+    return row.status;
+  }
+  function payRowGross(period,row){
+    if(payEmployee(row.employee).type!=='Hourly') return row.gross;
+    const card = payCard(period,row.employee);
+    if(card.status!=='Approved') return 0;
+    const hours = payCardHours(card.days), rate = payEmployee(row.employee).rate;
+    return Math.round((hours.minutes-hours.overtime+hours.pto)*rate/60 + hours.overtime*rate*3/120);
+  }
+  function payRowTotal(period, row){
+    return payRowGross(period,row) + payAdjustments(period, row.employee).reduce((sum,a)=>sum+a.cents,0);
+  }
+  function payRowNet(period, row){
+    const base = payEmployee(row.employee).type==='Hourly' ? Math.round(payRowGross(period,row)*.8) : row.net;
+    return base + payAdjustments(period, row.employee).reduce((sum,a)=>sum+(a.type==='Reimbursement' ? a.cents : Math.round(a.cents * .8)),0);
+  }
+  function payTotals(period){
+    const included = period.rows.filter(r=>payRowStatus(period,r)==='ready');
+    return {total:included.reduce((sum,r)=>sum+payRowTotal(period,r),0),
+      net:included.reduce((sum,r)=>sum+payRowNet(period,r),0),
+      count:included.length, blocked:period.rows.length-included.length};
+  }
+  function loadPayroll(retry=false){
+    clearTimeout(payState.timer);
+    payState.loading = true;
+    payState.failed = false;
+    document.getElementById('pay-content').hidden = true;
+    document.getElementById('pay-error').hidden = true;
+    document.getElementById('pay-loading').hidden = false;
+    document.getElementById('pay-period').disabled = true;
+    payState.timer = setTimeout(()=>{
+      payState.loading = false;
+      payState.failed = !retry && new URLSearchParams(location.search).get('error')==='payroll';
+      document.getElementById('pay-loading').hidden = true;
+      document.getElementById('pay-error').hidden = !payState.failed;
+      document.getElementById('pay-content').hidden = payState.failed;
+      document.getElementById('pay-period').disabled = payState.submitting;
+      if(!payState.failed) renderPayroll();
+    },1000);
+  }
+  function changePayPeriod(id){
+    if(payState.submitting || payState.loading) return;
+    payState.period = id;
+    payState.selected.clear();
+    payState.editor = null;
+    payDetail = null;
+    payPunchDraft = null;
+    payDrag = null;
+    document.getElementById('pay-search').value = '';
+    document.getElementById('pay-filter').value = 'all';
+    document.getElementById('pay-card-search').value = '';
+    document.getElementById('pay-card-filter').value = 'all';
+    closePayReview(false);
+    renderPayroll();
+  }
+  function setPayTab(tab){
+    payState.tab = tab;
+    ['timeline','cards','run','adjustments','history'].forEach(id=>document.getElementById('pay-'+id).hidden = id!==tab);
+    document.querySelectorAll('[data-pay-tab]').forEach(button=>{
+      button.classList.toggle('active',button.dataset.payTab===tab);
+      button.setAttribute('aria-pressed',String(button.dataset.payTab===tab));
+    });
+  }
+  function renderPayroll(){
+    const period = payPeriod(), totals = payTotals(period);
+    document.getElementById('pay-subtitle').textContent = 'Pay period '+period.label+' · '+period.status;
+    const badge = document.getElementById('pay-status');
+    badge.textContent = period.status;
+    badge.className = 'badge '+(period.status==='Draft' ? 'badge-brass' : 'badge-moss');
+    document.getElementById('pay-period').value = period.id;
+    payrollData.periods.forEach(p=>document.querySelector('#pay-period option[value="'+p.id+'"]').textContent = p.short+' '+p.status);
+    document.getElementById('pay-summary').innerHTML = [
+      [period.status==='Draft' ? 'Total if submitted now' : 'Run total',payMoney(totals.total),'Gross plus adjustments, included employees'],
+      ['Employees included',totals.count+' of '+period.rows.length,'Ready employees only'],
+      ['Blocked',String(totals.blocked),'Skipped from this run'],
+      ['Pay date',period.payDate,'Provider processing date']
+    ].map(([label,value,note],i)=>'<div class="stat-card'+(i===2 && totals.blocked ? ' flag' : '')+'"><div class="stat-label">'+label+'</div><div class="stat-num">'+value+'</div><div class="stat-note">'+note+'</div></div>').join('');
+    document.getElementById('pay-review-button').disabled = !payEditable();
+    document.getElementById('pay-review-button').textContent = period.status==='Draft' ? 'Review & submit' : period.status+' · Read-only';
+    document.getElementById('pay-add-button').disabled = !payEditable();
+    renderPayRows();
+    renderPayAdjustments();
+    renderPayHistory();
+    renderPayTimeline();
+    renderPayCards();
+    renderPayChanges();
+    renderPayDetail();
+    setPayTab(payState.tab);
+  }
+  function renderPayRows(){
+    const period = payPeriod(), query = document.getElementById('pay-search').value.trim().toLowerCase();
+    const filter = document.getElementById('pay-filter').value;
+    const rows = period.rows.filter(r=>{
+      const e = payEmployee(r.employee);
+      return (e.name+' '+e.department).toLowerCase().includes(query) && (filter==='all' || payRowStatus(period,r)===filter);
+    });
+    document.getElementById('pay-empty').hidden = rows.length!==0;
+    document.getElementById('pay-table-wrap').hidden = rows.length===0;
+    document.getElementById('pay-rows').innerHTML = rows.map(row=>{
+      const e = payEmployee(row.employee), adjustments = payAdjustments(period,e.id), rowStatus = payRowStatus(period,row);
+      const status = rowStatus==='ready' ? '<span class="badge badge-moss">Ready</span>' :
+        rowStatus==='timecard' ? '<span class="badge badge-brass">Blocked — time card not approved</span><div class="pay-reason">An approved time card is required.</div><button id="pay-run-card-'+e.id+'" class="btn btn-text btn-sm" onclick="reviewPayCardFromRun(\''+e.id+'\')">Review time card</button>' :
+        rowStatus==='contract' ? '<span class="badge badge-brick">Blocked — contract not signed</span><div class="pay-reason">A signed contract is required.</div><button class="btn btn-text btn-sm" onclick="go(\'a-contracts\')">Go to contract</button>' :
+        '<span class="badge badge-brass">Missing direct deposit</span><div class="pay-reason">Direct deposit details are required.</div><button class="btn btn-text btn-sm" onclick="showToast(\'Direct deposit document requested from '+e.name+'\')">Request document</button>';
+      return '<tr><td><div class="name-cell"><div class="mini-avatar">'+e.name.split(' ').map(n=>n[0]).join('')+'</div>'+e.name+'</div></td><td>'+e.department+'</td><td>'+e.type+'</td><td class="pay-money">'+payMoney(payRowGross(period,row))+'</td><td>'+
+        (adjustments.length ? adjustments.map(a=>'<div>'+payEscape(payAdjustmentLabel(a))+'</div>').join('') : '—')+
+        '</td><td class="pay-money">'+(rowStatus==='ready' ? payMoney(payRowNet(period,row)) : '—')+'</td><td>'+status+'</td></tr>';
+    }).join('');
+  }
+  function clearPaySearch(){
+    document.getElementById('pay-search').value = '';
+    document.getElementById('pay-filter').value = 'all';
+    renderPayRows();
+  }
+  function payAdjustmentLabel(a){ return (a.cents<0 ? '− ' : '+ ')+payMoney(Math.abs(a.cents))+' '+a.note; }
+  function renderPayAdjustments(){
+    document.getElementById('pay-adjustment-list').innerHTML = payPeriod().adjustments.length ?
+      payPeriod().adjustments.map(a=>{
+        const e = payEmployee(a.employee), row = payPeriod().rows.find(r=>r.employee===e.id);
+        return '<div class="task-row"><div><div class="task-label">'+payEscape(payAdjustmentLabel(a))+' — '+e.name[0]+'. '+e.name.split(' ').slice(1).join(' ')+'</div><div class="task-sub">'+a.type+(payRowStatus(payPeriod(),row)!=='ready' ? ' · Employee skipped; not included in run total' : '')+'</div></div></div>';
+      }).join('') : '<div class="empty-state"><h4>No adjustments this period</h4><p>There are no bonuses, deductions or reimbursements for this run.</p></div>';
+  }
+  function renderPayHistory(){
+    document.getElementById('pay-history').innerHTML = '<table><thead><tr><th>Period</th><th>Employees</th><th>Total</th><th>Submitted by</th><th>Status</th><th>Summary</th></tr></thead><tbody>'+
+      payrollData.periods.filter(p=>p.status==='Paid').map(p=>{
+        const totals = payTotals(p);
+        return '<tr><td>'+p.label+'</td><td>'+totals.count+'</td><td>'+payMoney(totals.total)+'</td><td>'+p.submittedBy+'</td><td><span class="badge badge-moss">Paid</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast(\'Demo summary download for '+p.short+'\')">Download summary</button></td></tr>';
+      }).join('')+'</tbody></table>';
+  }
+  function openPayDrawer(title, subtitle, html){
+    const source = document.activeElement;
+    openDrawer(title,subtitle);
+    payDrawerFocus = source;
+    const drawer = document.getElementById('drawer');
+    drawer.classList.add('pay-drawer');
+    let body = document.getElementById('pay-drawer-body');
+    if(!body){
+      body = document.createElement('div');
+      body.id = 'pay-drawer-body';
+      drawer.querySelector('.drawer-body').appendChild(body);
+    }
+    body.innerHTML = html;
+    body.hidden = false;
+    drawer.querySelector('.drawer-close').setAttribute('aria-label','Close drawer');
+    (body.querySelector('input:not(:disabled),select:not(:disabled),button:not(:disabled),[tabindex="0"]') || drawer.querySelector('.drawer-close')).focus();
+  }
+  function openAdjustment(){
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    const period = payPeriod();
+    openPayDrawer('Add adjustment',period.label,
+      '<form id="pay-adjustment-form" data-period="'+period.id+'" onsubmit="savePayAdjustment(event)">'+
+      '<div class="field"><label for="pay-adjust-employee">Employee</label><select id="pay-adjust-employee">'+period.rows.map(r=>'<option value="'+r.employee+'">'+payEmployee(r.employee).name+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label for="pay-adjust-type">Type</label><select id="pay-adjust-type"><option>Bonus</option><option>Deduction</option><option>Reimbursement</option></select></div>'+
+      '<div class="field"><label for="pay-adjust-amount">Amount (USD, positive)</label><input id="pay-adjust-amount" type="number" min="0.01" max="100000" step="0.01" required inputmode="decimal"></div>'+
+      '<div class="field"><label for="pay-adjust-note">Note</label><textarea id="pay-adjust-note" rows="3" maxlength="160" required></textarea></div>'+
+      '<div class="pay-actions"><button type="button" class="btn btn-secondary" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" type="submit">Save adjustment</button></div></form>');
+  }
+  function savePayAdjustment(event){
+    event.preventDefault();
+    if(!payEditable() || event.target.dataset.period!==payState.period){ showToast('This payroll run is read-only or the period has changed','brick'); return; }
+    const raw = document.getElementById('pay-adjust-amount').value;
+    const parts = raw.split('.');
+    const cents = /^\d+(\.\d{1,2})?$/.test(raw) ? Number(parts[0])*100+Number((parts[1] || '').padEnd(2,'0')) : NaN;
+    const employee = document.getElementById('pay-adjust-employee').value;
+    const type = document.getElementById('pay-adjust-type').value;
+    const note = document.getElementById('pay-adjust-note').value.trim();
+    if(!Number.isSafeInteger(cents) || cents<=0 || cents>10000000 || !note ||
+      !payPeriod().rows.some(r=>r.employee===employee) || !['Bonus','Deduction','Reimbursement'].includes(type)){
+      showToast('Enter an employee, type, positive amount with at most two decimals, and a note','brick'); return;
+    }
+    const signedCents = type==='Deduction' ? -cents : cents;
+    const row = payPeriod().rows.find(r=>r.employee===employee);
+    if(payRowTotal(payPeriod(),row)+signedCents<0 || payRowNet(payPeriod(),row)+(type==='Reimbursement' ? signedCents : Math.round(signedCents*.8))<0){
+      showToast('Deduction cannot exceed the employee’s remaining pay','brick'); return;
+    }
+    payPeriod().adjustments.push({employee,type,cents:signedCents,note});
+    closeDrawer();
+    closePayReview(false);
+    renderPayroll();
+    showToast('Adjustment added');
+  }
+  function reviewPayroll(){
+    if(!payEditable()) return;
+    const period = payPeriod(), totals = payTotals(period);
+    document.getElementById('pay-review-details').innerHTML = '<p><strong>'+period.label+'</strong> · Pay date '+period.payDate+'</p>'+
+      '<p>'+totals.count+' employees included · Total '+payMoney(totals.total)+' · Net (est.) '+payMoney(totals.net)+'</p>'+
+      '<p><strong>Employees that will be skipped ('+totals.blocked+')</strong></p><ul>'+
+      period.rows.filter(r=>payRowStatus(period,r)!=='ready').map(r=>'<li>'+payEmployee(r.employee).name+' — '+payBlockedReason(payRowStatus(period,r))+'</li>').join('')+'</ul>';
+    document.getElementById('pay-reviewed').checked = false;
+    updatePaySubmit();
+    document.getElementById('pay-review').hidden = false;
+    document.getElementById('pay-review').focus();
+    document.getElementById('pay-review').scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+  function closePayReview(restoreFocus=true){
+    if(payState.submitting) return;
+    document.getElementById('pay-review').hidden = true;
+    document.getElementById('pay-reviewed').checked = false;
+    if(restoreFocus) document.getElementById('pay-review-button').focus();
+  }
+  function updatePaySubmit(){
+    document.getElementById('pay-submit').disabled = !payEditable() || !document.getElementById('pay-reviewed').checked;
+  }
+  function submitPayroll(){
+    if(!payEditable() || !document.getElementById('pay-reviewed').checked) return;
+    const period = payPeriod(), button = document.getElementById('pay-submit');
+    payState.submitting = true;
+    button.disabled = true;
+    button.innerHTML = '<span class="pay-spinner" aria-hidden="true"></span> Submitting…';
+    document.getElementById('pay-review').setAttribute('aria-busy','true');
+    ['pay-period','pay-reviewed','pay-review-close','pay-review-button','pay-add-button'].forEach(id=>document.getElementById(id).disabled = true);
+    renderPayTimeline();
+    renderPayCards();
+    setTimeout(()=>{
+      period.status = 'Submitted';
+      payState.submitting = false;
+      button.textContent = 'Submit';
+      document.getElementById('pay-review').removeAttribute('aria-busy');
+      ['pay-period','pay-reviewed','pay-review-close'].forEach(id=>document.getElementById(id).disabled = false);
+      closePayReview(false);
+      renderPayroll();
+      document.getElementById('pay-period').focus();
+      showToast('Payroll submitted to provider');
+    },1000);
+  }
+  function maskedPayAmount(cents,label){
+    return '<span>$•,•••.••</span><button type="button" class="reveal pay-reveal" data-cents="'+cents+'" aria-label="Show or hide '+label+'" aria-pressed="false">Show</button>';
+  }
+  function renderMyPay(){
+    const signed = document.getElementById('pay-contract-signed').checked;
+    document.getElementById('my-pay-locked').hidden = signed;
+    document.getElementById('my-pay-unlocked').hidden = !signed;
+    document.getElementById('my-pay-stubs').innerHTML = signed ? payrollData.stubs.map((stub,i)=>
+      '<article class="panel panel-body"><h3>'+stub.period+'</h3><p>Pay date '+stub.payDate+'</p>'+
+      '<div class="pay-value"><span>Gross</span><div>'+maskedPayAmount(stub.gross,'gross for '+stub.period)+'</div></div>'+
+      '<div class="pay-value"><span>Net</span><div>'+maskedPayAmount(stub.net,'net for '+stub.period)+'</div></div>'+
+      '<button class="btn btn-secondary btn-sm" onclick="viewPayStub('+i+')">View stub</button></article>'
+    ).join('') : '';
+  }
+  function viewPayStub(index){
+    if(!document.getElementById('pay-contract-signed').checked){ showToast('Sign your contract to view pay stubs','brick'); return; }
+    const stub = payrollData.stubs[index];
+    openPayDrawer('Taylor Brooks','Pay stub · '+stub.period,
+      '<h3>'+stub.period+'</h3><p class="pay-note">Pay date '+stub.payDate+' · Fictional breakdown</p>'+
+      [['Gross pay',stub.gross],['Federal withholding',stub.federal],['State withholding',stub.state],['Benefits',stub.benefits],['Net pay',stub.net]].map(([label,cents])=>
+        '<div class="pay-value"><span>'+label+'</span><div>'+maskedPayAmount(cents,label)+'</div></div>'
+      ).join('')+'<p class="pay-note">Withholding and benefits are deducted from gross pay. Net pay = gross minus all deductions.</p>');
+  }
+
+  const payTimelineFields = [
+    ['start','Period start'],['end','Period end'],['cards','Time cards due'],
+    ['approvals','Approvals due'],['submit','Submit to provider by'],['pay','Pay date']
+  ];
+  function payBlockedReason(status){
+    return {contract:'contract not signed',deposit:'missing direct deposit',timecard:'time card not approved'}[status];
+  }
+  function payShortDate(iso){
+    return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+  function payDateRange(timeline){
+    return payShortDate(timeline.start)+' – '+payShortDate(timeline.end)+', '+timeline.end.slice(0,4);
+  }
+  function payAddChange(period,text){
+    period.changes.unshift('Jordan Reyes '+text+' · just now');
+    const card = period.timeCards.find(c=>text.includes(payEmployee(c.employee).name));
+    if(card) card.history.push({who:'Jordan Reyes',text,when:new Date().toLocaleString('en-US')});
+  }
+  function renderPayChanges(){
+    const changes = payPeriod().changes;
+    document.getElementById('pay-changes-empty').hidden = changes.length>0;
+    document.getElementById('pay-changes-list').innerHTML = changes.map(text=>'<li>'+payEscape(text)+'</li>').join('');
+  }
+  function renderPayTimeline(){
+    const period = payPeriod(), today = payrollData.demoToday;
+    const unapproved = period.timeCards.some(c=>c.status!=='Approved');
+    const incomplete = {
+      start:false,end:false,cards:period.timeCards.some(c=>c.status==='Missing' || c.status==='Needs changes'),
+      approvals:unapproved,submit:period.status==='Draft',pay:period.status!=='Paid'
+    };
+    const next = payTimelineFields.find(([key])=>incomplete[key] && period.timeline[key]>=today);
+    document.getElementById('pay-timeline-steps').innerHTML = payTimelineFields.map(([key,label])=>{
+      const date = period.timeline[key];
+      const completed = key==='start' || key==='end' ? date<today : !incomplete[key];
+      const state = completed ? ['Done','moss'] : date<today ? ['Overdue','brick'] :
+        date===today || (next && next[0]===key) ? ['Today/next','brass'] : ['Upcoming','neutral'];
+      return '<li><strong>'+label+'</strong><time datetime="'+date+'">'+fmtDate(date)+'</time><span class="badge badge-'+state[1]+'">'+state[0]+'</span></li>';
+    }).join('');
+    document.getElementById('pay-timeline-edit').disabled = !payEditable();
+    const lock = document.getElementById('pay-timeline-lock');
+    lock.hidden = period.status==='Draft';
+    lock.textContent = period.status==='Paid' ? "This period is paid and can't be edited." : "This period is submitted and can't be edited.";
+    const overdue = document.getElementById('pay-overdue');
+    overdue.hidden = !(period.status==='Draft' && period.timeline.approvals<today && unapproved);
+    overdue.innerHTML = 'Approvals were due '+payShortDate(period.timeline.approvals)+'. Unapproved time cards will be skipped. <button class="btn btn-text btn-sm" onclick="setPayTab(\'cards\')">Review time cards</button>';
+  }
+  function openPayTimeline(){
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    const period = payPeriod();
+    openPayDrawer('Edit timeline',period.label,
+      '<form id="pay-timeline-form" data-period="'+period.id+'" novalidate onsubmit="savePayTimeline(event)">'+
+      payTimelineFields.map(([key,label])=>'<div class="field"><label for="pay-date-'+key+'">'+label+'</label><input id="pay-date-'+key+'" type="date" value="'+period.timeline[key]+'" aria-describedby="pay-date-error-'+key+'"><p id="pay-date-error-'+key+'" class="pay-field-error" aria-live="polite"></p></div>').join('')+
+      '<div class="pay-actions"><button type="button" class="btn btn-secondary" onclick="closeDrawer()">Cancel</button><button type="submit" class="btn btn-primary">Save timeline</button></div></form>');
+  }
+  function savePayTimeline(event){
+    event.preventDefault();
+    if(!payEditable() || event.target.dataset.period!==payState.period){ showToast('This payroll run is read-only or the period has changed','brick'); return; }
+    const period = payPeriod(), values = {}, errors = {};
+    payTimelineFields.forEach(([key])=>{
+      const value = document.getElementById('pay-date-'+key).value;
+      values[key] = value;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.slice(0,4)==='0000') errors[key] = 'Enter a valid date.';
+    });
+    payTimelineFields.forEach(([key,label],i)=>{
+      if(i>0 && values[key] && values[payTimelineFields[i-1][0]] && values[key]<values[payTimelineFields[i-1][0]]) errors[key] = label+' must be on or after '+payTimelineFields[i-1][1]+'.';
+    });
+    if(values.pay && values.submit && values.pay<=values.submit) errors.pay = 'Pay date must be after the submit date.';
+    const dates = period.timeCards.flatMap(card=>card.days.map(day=>day.date));
+    if(dates.some(date=>date<values.start)) errors.start = 'Period start must include the existing time card days.';
+    if(dates.some(date=>date>values.end)) errors.end = 'Period end must include the existing time card days.';
+    payTimelineFields.forEach(([key])=>{
+      document.getElementById('pay-date-error-'+key).textContent = errors[key] || '';
+      document.getElementById('pay-date-'+key).setAttribute('aria-invalid',String(Boolean(errors[key])));
+    });
+    if(Object.keys(errors).length){ document.getElementById('pay-date-'+Object.keys(errors)[0]).focus(); return; }
+    payTimelineFields.forEach(([key,label])=>{
+      if(values[key]!==period.timeline[key]) payAddChange(period,'changed '+label+' from '+payShortDate(period.timeline[key])+' to '+payShortDate(values[key]));
+    });
+    period.timeline = values;
+    period.label = payDateRange(values);
+    period.short = payShortDate(values.start)+'–'+payShortDate(values.end);
+    period.payDate = fmtDate(values.pay);
+    closePayReview(false);
+    renderPayroll();
+    closeDrawer();
+    showToast('Timeline updated');
+  }
+  function payTimeMinutes(time){
+    if(!/^\d{2}:\d{2}$/.test(time)) return NaN;
+    const [hours,minutes] = time.split(':').map(Number);
+    return hours<24 && minutes<60 ? hours*60+minutes : NaN;
+  }
+  function payDayMinutes(day){
+    return paySegments(day).filter(segment=>segment.type==='work').reduce((sum,s)=>sum+s.end-s.start,0);
+  }
+  function payCardHours(days){
+    const weeks = new Map();
+    days.forEach(day=>{
+      const date = new Date(day.date+'T00:00:00Z');
+      date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+6)%7));
+      const week = date.toISOString().slice(0,10);
+      weeks.set(week,(weeks.get(week) || 0)+payDayMinutes(day));
+    });
+    return {minutes:[...weeks.values()].reduce((sum,value)=>sum+value,0),pto:days.reduce((sum,day)=>sum+(day.absence ? day.absence.minutes : 0),0),
+      overtime:[...weeks.values()].reduce((sum,value)=>sum+Math.max(0,value-2400),0)};
+  }
+  function payHours(minutes){ return (minutes/60).toFixed(2); }
+  function payCardBadge(status){
+    const tone = status==='Approved' ? 'moss' : status==='Submitted' ? 'brass' : 'brick';
+    return '<span class="badge badge-'+tone+'">'+status+'</span>';
+  }
+  function payVisibleCards(){
+    const query = document.getElementById('pay-card-search').value.trim().toLowerCase();
+    const filter = document.getElementById('pay-card-filter').value;
+    return payPeriod().timeCards.filter(card=>{
+      const e = payEmployee(card.employee);
+      return (e.name+' '+e.department).toLowerCase().includes(query) && (filter==='all' || card.status===filter);
+    });
+  }
+  function renderPayCards(){
+    const cards = payVisibleCards(), editable = payEditable();
+    const selectable = new Set(cards.filter(c=>c.status==='Submitted').map(c=>c.employee));
+    payState.selected.forEach(id=>{ if(!editable || !selectable.has(id)) payState.selected.delete(id); });
+    document.getElementById('pay-card-summary').innerHTML = ['Submitted','Approved','Needs changes','Missing'].map(status=>
+      '<div>'+status+'<strong>'+payPeriod().timeCards.filter(c=>c.status===status).length+'</strong></div>').join('');
+    document.getElementById('pay-card-empty').hidden = cards.length!==0;
+    document.getElementById('pay-card-table-wrap').hidden = cards.length===0;
+    document.getElementById('pay-card-rows').innerHTML = cards.map(card=>{
+      const e = payEmployee(card.employee), hours = payCardHours(card.days);
+      return '<tr><td><input type="checkbox" aria-label="Select '+e.name+'" '+(payState.selected.has(e.id) ? 'checked ' : '')+
+        (!editable || card.status!=='Submitted' ? 'disabled ' : '')+'onchange="selectPayCard(\''+e.id+'\',this.checked)"></td><td><button class="btn btn-text btn-sm" onclick="openPayCard(\''+e.id+'\')">'+e.name+'</button></td><td>'+e.department+
+        '</td><td>'+payHours(hours.minutes)+'</td><td>'+payHours(hours.overtime)+'</td><td>'+payCardBadge(card.status)+'</td><td>'+
+        '<button id="pay-card-review-'+e.id+'" class="btn btn-secondary btn-sm" onclick="openPayCard(\''+e.id+'\')">Review</button> '+
+        (card.status==='Missing' ? '<button class="btn btn-text btn-sm" '+(!editable ? 'disabled ' : '')+'onclick="remindPayCard(\''+e.id+'\')">Send reminder</button>' : '')+
+        (card.status==='Approved' ? '<button class="btn btn-text btn-sm" '+(!editable ? 'disabled ' : '')+'onclick="reopenPayCard(\''+e.id+'\')">Reopen</button>' : '')+'</td></tr>';
+    }).join('');
+    updatePayBulk();
+  }
+  function clearPayCardSearch(){
+    document.getElementById('pay-card-search').value = '';
+    document.getElementById('pay-card-filter').value = 'all';
+    renderPayCards();
+  }
+  function selectPayCard(id,checked){
+    if(!payEditable() || payCard(payPeriod(),id).status!=='Submitted') return;
+    if(checked) payState.selected.add(id); else payState.selected.delete(id);
+    updatePayBulk();
+  }
+  function updatePayBulk(){
+    const button = document.getElementById('pay-card-bulk');
+    button.disabled = !payEditable() || !payState.selected.size;
+    button.textContent = 'Approve selected'+(payState.selected.size ? ' ('+payState.selected.size+')' : '');
+  }
+  function payCardApprovalError(period,card,days){
+    if(!days.some(day=>day.punches.length)) return 'No punches have been submitted.';
+    if(days.some(day=>payPunchError(day.punches,false))) return 'Resolve missing or invalid punches before approving.';
+    const hours = payCardHours(days), rate = payEmployee(card.employee).rate;
+    const gross = Math.round((hours.minutes-hours.overtime+hours.pto)*rate/60+hours.overtime*rate*3/120);
+    const adjustments = payAdjustments(period,card.employee);
+    if(gross+adjustments.reduce((sum,a)=>sum+a.cents,0)<0 ||
+      Math.round(gross*.8)+adjustments.reduce((sum,a)=>sum+(a.type==='Reimbursement' ? a.cents : Math.round(a.cents*.8)),0)<0)
+      return 'Approved pay cannot be less than the existing deductions. Review hours or adjustments.';
+    return '';
+  }
+  function approvePaySelected(){
+    if(!payEditable() || !payState.selected.size) return;
+    const period = payPeriod(), cards = payVisibleCards().filter(c=>payState.selected.has(c.employee) && c.status==='Submitted');
+    const invalid = cards.find(c=>payCardApprovalError(period,c,c.days));
+    if(invalid){ showToast(payEmployee(invalid.employee).name+': '+payCardApprovalError(period,invalid,invalid.days),'brick'); return; }
+    cards.forEach(card=>{
+      const previous = card.status;
+      card.status = 'Approved';
+      payAddChange(period,"approved "+payEmployee(card.employee).name+"'s time card from "+previous+' to Approved — Admin approval');
+    });
+    payState.selected.clear();
+    closePayReview(false);
+    renderPayroll();
+    document.getElementById('pay-card-search').focus();
+    showToast(cards.length+' time cards approved');
+  }
+  function remindPayCard(id){
+    if(!payEditable()){ showToast('This payroll run is read-only','brick'); return; }
+    showToast('Time card reminder sent to '+payEmployee(id).name);
+  }
+  function reopenPayCard(id){
+    const period = payPeriod(), card = payCard(period,id);
+    if(!payEditable() || card.status!=='Approved'){ showToast('This time card cannot be reopened','brick'); return; }
+    card.status = 'Submitted';
+    payAddChange(period,"reopened "+payEmployee(id).name+"'s time card from Approved to Submitted — Admin reopen");
+    closePayReview(false);
+    renderPayroll();
+    payFocus(payDetail && payDetail.employee===id ? 'tc-back' : 'pay-card-review-'+id);
+    showToast('Time card reopened');
+  }
+  function reviewPayCardFromRun(id){
+    clearPayCardSearch();
+    setPayTab('cards');
+    openPayCard(id);
+  }
+  let payDetail = null, payPunchDraft = null, payLastUndo = null, payDrag = null;
+  const payPunchTypes = {in:'Clock-in',break_start:'Break start',break_end:'Break end',out:'Clock-out'};
+  function payTimeString(minutes){
+    return String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
+  }
+  function payDayLabel(day){
+    return new Date(day.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  }
+  function paySegments(day){
+    const segments = [];
+    day.punches.forEach((p,i)=>{
+      const next = day.punches[i+1];
+      if(!next) return;
+      if((p.type==='in' || p.type==='break_end') && (next.type==='break_start' || next.type==='out'))
+        segments.push({type:'work',start:payTimeMinutes(p.time),end:payTimeMinutes(next.time),from:i,to:i+1});
+      if(p.type==='break_start' && next.type==='break_end')
+        segments.push({type:'break',start:payTimeMinutes(p.time),end:payTimeMinutes(next.time),from:i,to:i+1});
+    });
+    return segments;
+  }
+  function payPunchError(punches,allowIncomplete){
+    let state = 'off', previous = -1;
+    for(const punch of punches){
+      const minutes = payTimeMinutes(punch.time);
+      if(!Number.isFinite(minutes)) return 'Enter a valid time (HH:MM).';
+      if(minutes<=previous) return 'Punch times must increase; shifts cannot overlap and out must be after in.';
+      if(!['Kiosk','Web','Phone','Manual'].includes(punch.source)) return 'Select a valid source.';
+      const allowed = state==='off' ? ['in'] : state==='work' ? ['break_start','out'] : ['break_end'];
+      if(!allowed.includes(punch.type)) return 'Use clock-in, break start, break end, clock-out in order; finish a shift before starting another.';
+      state = punch.type==='out' ? 'off' : punch.type==='break_start' ? 'break' : 'work';
+      previous = minutes;
+    }
+    return !allowIncomplete && state!=='off' ? 'Missing '+(state==='break' ? 'break end and clock-out.' : 'clock-out.') : '';
+  }
+  function payDayExceptions(day){
+    const exceptions = [], punches = day.punches;
+    const first = punches.find(p=>p.type==='in'), last = [...punches].reverse().find(p=>p.type==='out');
+    if(day.schedule && first && payTimeMinutes(first.time)>payTimeMinutes(day.schedule.in)+5){
+      const late = payTimeMinutes(first.time)-payTimeMinutes(day.schedule.in);
+      exceptions.push({badge:'Late',text:'clocked in '+first.time+' ('+late+' min late)'});
+    }
+    if(day.schedule && last && payTimeMinutes(last.time)<payTimeMinutes(day.schedule.out)-(day.absence ? day.absence.minutes : 0))
+      exceptions.push({badge:'Left early',text:'left early at '+last.time});
+    if(payPunchError(punches,false) || (day.schedule && !punches.length && !day.absence))
+      exceptions.push({badge:'Missing punch',text:payPunchError(punches,false) || 'scheduled shift has no punches'});
+    paySegments(day).filter(s=>s.type==='break' && s.end-s.start>45).forEach(s=>exceptions.push({badge:'Long break',text:'long break ('+(s.end-s.start)+' min)'}));
+    if(payDayMinutes(day)>600) exceptions.push({badge:'Over 10 hrs',text:'worked over 10 hours'});
+    if(day.edited || punches.some(p=>p.reason)) exceptions.push({badge:'Edited',text:'punches adjusted by an administrator'});
+    return exceptions;
+  }
+  function payDetailCard(){ return payDetail && payCard(payPeriod(),payDetail.employee); }
+  function payCanEditCard(){ const card = payDetailCard(); return payEditable() && card && card.status!=='Approved'; }
+  function payFocus(id){
+    const element = document.getElementById(id) || (payDetail && document.getElementById('tc-back'));
+    if(element) element.focus({preventScroll:true});
+  }
+  function openPayCard(id){
+    payDetail = {employee:id,week:'all',tab:'days',expanded:new Set(),returnFocus:document.activeElement.id || 'pay-card-review-'+id};
+    payPunchDraft = null; payDrag = null;
+    setPayTab('cards');
+    renderPayDetail();
+    payFocus('tc-back');
+    document.getElementById('pay-card-detail').scrollIntoView({block:'start'});
+  }
+  function closePayCard(){
+    const focus = payDetail.returnFocus;
+    payDetail = null; payPunchDraft = null; payDrag = null;
+    renderPayDetail();
+    payFocus(focus);
+  }
+  function payMoveEmployee(offset){
+    const cards = payPeriod().timeCards, index = cards.findIndex(c=>c.employee===payDetail.employee);
+    openPayCard(cards[index+offset].employee);
+  }
+  function payDetailTab(tab){
+    payDetail.tab = tab; payPunchDraft = null; payDrag = null;
+    renderPayDetail(); payFocus('tc-tab-'+tab);
+  }
+  function payDetailWeek(week){
+    payDetail.week = week; payPunchDraft = null; payDrag = null;
+    renderPayDetail(); payFocus('tc-week-'+week);
+  }
+  function payExpandDay(index,scroll){
+    payPunchDraft = null; payDrag = null;
+    if(scroll || !payDetail.expanded.has(index)) payDetail.expanded.add(index);
+    else payDetail.expanded.delete(index);
+    renderPayDetail();
+    payFocus('tc-day-button-'+index);
+    if(scroll) document.getElementById('tc-day-'+index).scrollIntoView({block:'center',behavior:'smooth'});
+  }
+  function payExceptionDay(index){
+    payDetail.week = 'all'; payDetail.tab = 'days';
+    payExpandDay(index,true);
+  }
+  function payBarPosition(minutes){ return Math.max(0,Math.min(100,(minutes-360)/840*100)); }
+  function payBlockStyle(start,end){
+    return 'left:'+payBarPosition(start)+'%;width:'+Math.max(0,payBarPosition(end)-payBarPosition(start))+'%;';
+  }
+  function payRenderBar(day,index,editable){
+    const schedule = day.schedule, segments = paySegments(day);
+    return '<div class="tc-chart"><div class="tc-hours">'+Array.from({length:15},(_,i)=>'<span>'+(i+6===12 ? '12p' : i+6>12 ? (i-6)+'p' : (i+6)+'a')+'</span>').join('')+'</div>'+
+      '<div class="tc-bar" id="tc-bar-'+index+'" aria-label="6 AM to 8 PM timeline">'+
+      (schedule ? '<div class="tc-block tc-scheduled" style="'+payBlockStyle(payTimeMinutes(schedule.in),payTimeMinutes(schedule.out))+'" title="'+payEscape(schedule.source)+'">Scheduled '+schedule.in+'–'+schedule.out+'</div>' : '')+
+      segments.map(s=>'<div class="tc-block tc-'+s.type+'" data-from="'+s.from+'" data-to="'+s.to+'" style="'+payBlockStyle(s.start,s.end)+'" title="'+(s.type==='work' ? 'Worked' : 'Break')+' '+payTimeString(s.start)+'–'+payTimeString(s.end)+'"></div>').join('')+
+      (day.absence ? '<div class="tc-block tc-pto" style="'+payBlockStyle(payTimeMinutes(day.absence.start),payTimeMinutes(day.absence.start)+day.absence.minutes)+'">'+payEscape(day.absence.label)+' — '+payHours(day.absence.minutes)+' hrs</div>' : '')+
+      (!day.punches.length ? '<span class="tc-empty'+(schedule && !day.absence ? ' missing' : '')+'">'+(schedule && !day.absence ? 'No punches' : day.absence ? '' : 'Off')+'</span>' : '')+
+      day.punches.map((p,j)=>'<button id="tc-marker-'+index+'-'+j+'" class="tc-marker" style="left:'+payBarPosition(payTimeMinutes(p.time))+'%" '+(!editable ? 'disabled ' : '')+
+        'aria-label="'+payPunchTypes[p.type]+' '+p.time+' '+p.source+'. Arrow keys adjust five minutes; Enter gives a reason." onpointerdown="payStartDrag(event,'+index+','+j+')" onkeydown="payMarkerKey(event,'+index+','+j+')" onclick="payMarkerClick('+index+','+j+')"><span>'+(p.original ? '<del>'+p.original+'</del> ' : '')+p.time+' '+p.source[0]+'</span></button>').join('')+
+      '</div></div>';
+  }
+  function payBoundaryDays(period,before){
+    const first = new Date(period.timeline.start+'T00:00:00Z');
+    first.setUTCDate(first.getUTCDate()-((first.getUTCDay()+6)%7));
+    const boundary = new Date((before ? period.timeline.start : period.timeline.end)+'T00:00:00Z');
+    const dates = [];
+    if(before){
+      const date = new Date(first);
+      while(date<boundary){ dates.push(date.toISOString().slice(0,10)); date.setUTCDate(date.getUTCDate()+1); }
+    } else {
+      boundary.setUTCDate(boundary.getUTCDate()+1);
+      while(boundary.getUTCDay()!==1){ dates.push(boundary.toISOString().slice(0,10)); boundary.setUTCDate(boundary.getUTCDate()+1); }
+    }
+    return dates.filter(date=>{
+      const offset = Math.round((new Date(date+'T00:00:00Z')-first)/86400000);
+      return payDetail.week==='all' || (payDetail.week==='first' ? offset<7 : offset>=7 && offset<14);
+    }).map(date=>'<article class="tc-day"><div class="tc-row"><span>'+payDayLabel({date})+'</span><span class="pay-note">Off · Outside this pay period</span><span></span></div></article>').join('');
+  }
+  function renderPayDetail(){
+    const root = document.getElementById('pay-card-detail'), list = document.getElementById('pay-cards-list');
+    root.hidden = !payDetail; list.hidden = Boolean(payDetail);
+    if(!payDetail) { root.innerHTML = ''; return; }
+    const period = payPeriod(), card = payDetailCard(), employee = payEmployee(card.employee), editable = payCanEditCard();
+    const hours = payCardHours(card.days), scheduled = card.days.reduce((sum,d)=>sum+(d.schedule ? payTimeMinutes(d.schedule.out)-payTimeMinutes(d.schedule.in) : 0),0);
+    const exceptions = card.days.flatMap((day,i)=>payDayExceptions(day).map(e=>({...e,index:i,day})));
+    const difference = hours.minutes+hours.pto-scheduled, employees = period.timeCards, employeeIndex = employees.indexOf(card);
+    root.innerHTML = '<button id="tc-back" class="btn btn-text" onclick="closePayCard()">← All time cards</button>'+
+      '<div class="pay-heading"><div><h2>'+employee.name+'</h2><p class="pay-note">'+employee.department+' · Hourly · '+payMoney(employee.rate)+'/hr<br>'+period.label+' · '+payCardBadge(card.status)+'</p></div>'+
+      '<div class="pay-actions"><button class="btn btn-secondary" '+(!editable || card.status==='Missing' ? 'disabled ' : '')+'onclick="payDetailAction(\'approve\')">Approve</button>'+
+      '<button class="btn btn-secondary" '+(!editable || card.status==='Missing' ? 'disabled ' : '')+'onclick="payRequestChanges()">Request changes</button>'+
+      '<button class="btn btn-secondary" '+(!payEditable() || card.status!=='Approved' ? 'disabled ' : '')+'onclick="reopenPayCard(\''+card.employee+'\')">Reopen</button>'+
+      '<button class="btn btn-text" aria-label="Previous employee" '+(!employeeIndex ? 'disabled ' : '')+'onclick="payMoveEmployee(-1)">←</button>'+
+      '<button class="btn btn-text" aria-label="Next employee" '+(employeeIndex===employees.length-1 ? 'disabled ' : '')+'onclick="payMoveEmployee(1)">→</button></div></div>'+
+      '<div class="tc-summary" aria-live="polite">'+[
+        ['Scheduled hrs',payHours(scheduled)],['Worked hrs',payHours(hours.minutes)],['Regular',payHours(hours.minutes-hours.overtime)],
+        ['Overtime',payHours(hours.overtime)],['PTO',payHours(hours.pto)],['Difference vs schedule',(difference>=0 ? '+' : '−')+payHours(Math.abs(difference))],['Exceptions',exceptions.length],
+        ['Card gross',payMoney(Math.round((hours.minutes-hours.overtime+hours.pto)*employee.rate/60+hours.overtime*employee.rate*3/120))]
+      ].map(([label,value])=>'<div>'+label+'<strong>'+value+'</strong></div>').join('')+'</div>'+
+      '<p class="pay-note">Whole-card totals · PTO is paid at the base rate, not counted toward overtime. Difference includes PTO; scheduled hours are the full shift span. Missing punches count only bounded work segments and must be resolved before approval. Only approved, ready cards enter payroll totals.</p>'+
+      (!editable ? '<div class="pay-warning">'+(period.status!=='Draft' ? 'This period is '+period.status.toLowerCase()+' — time cards are read-only.' : 'This card is approved — Reopen to make changes.')+'</div>' : '')+
+      (card.status==='Missing' ? '<div class="empty-state"><h4>Time card missing</h4><p>No hours have been submitted. Add fictional punches to prepare this card for review.</p><button class="btn btn-secondary" '+(!payEditable() ? 'disabled ' : '')+'onclick="remindPayCard(\''+card.employee+'\')">Send reminder</button></div>' : '')+
+      (card.note ? '<p class="pay-note">Requested changes: '+payEscape(card.note)+'</p>' : '')+
+      '<div id="tc-request" hidden class="tc-form"><label for="tc-request-note">Note for requested changes</label><textarea id="tc-request-note" maxlength="200" aria-describedby="tc-request-error"></textarea><p class="pay-field-error" id="tc-request-error" aria-live="polite"></p><button class="btn btn-primary" onclick="payDetailAction(\'request\')">Send request</button> <button class="btn btn-secondary" onclick="payCancelRequest()">Cancel</button></div>'+
+      '<p id="tc-action-error" class="pay-field-error" role="alert"></p>'+
+      '<div class="pay-actions"><div class="subtabs">'+[['first','Week of Sep 1'],['second','Week of Sep 8'],['all','Whole period']].map(([key,label])=>'<button id="tc-week-'+key+'" class="subtab'+(payDetail.week===key ? ' active' : '')+'" aria-pressed="'+(payDetail.week===key)+'" onclick="payDetailWeek(\''+key+'\')">'+(period.id==='sep' ? label : key==='all' ? label : key==='first' ? 'First week' : 'Second week')+'</button>').join('')+'</div>'+
+      '<div class="subtabs"><button id="tc-tab-days" class="subtab'+(payDetail.tab==='days' ? ' active' : '')+'" aria-pressed="'+(payDetail.tab==='days')+'" onclick="payDetailTab(\'days\')">Days</button><button id="tc-tab-history" class="subtab'+(payDetail.tab==='history' ? ' active' : '')+'" aria-pressed="'+(payDetail.tab==='history')+'" onclick="payDetailTab(\'history\')">History</button></div></div>'+
+      (payDetail.tab==='history' ? '<div class="panel panel-body"><h3>Card history · oldest first</h3>'+(card.history.length ? '<ol class="tc-history">'+card.history.map(h=>'<li><strong>'+payEscape(h.who)+'</strong> · '+payEscape(h.when)+'<br>'+payEscape(h.text)+'</li>').join('')+'</ol>' : '<p class="pay-note">No changes to this card yet.</p>')+'</div>' :
+      '<p class="pay-note">Outlined = scheduled · Navy = worked · Dashed = unpaid break · Brass = absence/PTO. Sources: K Kiosk · W Web · P Phone · M Manual. Expand a day to edit. Drag a punch edge, or focus a marker and use ←/→, then Enter. Esc cancels. All times are same-day local times.</p>'+
+      '<h3>Exceptions</h3><div class="tc-exceptions">'+(exceptions.length ? exceptions.map(e=>'<button class="btn btn-secondary btn-sm" onclick="payExceptionDay('+e.index+')">'+payDayLabel(e.day)+' — '+payEscape(e.text)+'</button>').join('') : '<p class="pay-note">No exceptions</p>')+'</div>'+
+      payBoundaryDays(period,true)+card.days.map((day,i)=>{
+        const start = new Date(period.timeline.start+'T00:00:00Z');
+        start.setUTCDate(start.getUTCDate()-((start.getUTCDay()+6)%7));
+        const offset = Math.round((new Date(day.date+'T00:00:00Z')-start)/86400000);
+        if(payDetail.week==='first' && offset>=7 || payDetail.week==='second' && (offset<7 || offset>=14)) return '';
+        const expanded = payDetail.expanded.has(i);
+        return '<article class="tc-day" id="tc-day-'+i+'"><div class="tc-row" onclick="payDayRowClick(event,'+i+')">'+
+          '<button id="tc-day-button-'+i+'" class="btn btn-text tc-date" aria-expanded="'+expanded+'" aria-controls="tc-expanded-'+i+'" onclick="payExpandDay('+i+',false)">'+payDayLabel(day)+'<br>'+(expanded ? 'Collapse' : 'Expand')+'</button>'+
+          payRenderBar(day,i,editable)+'<div class="tc-day-total"><strong>'+payHours(payDayMinutes(day))+' hrs</strong><br>'+
+          payDayExceptions(day).map(e=>'<span class="badge badge-'+(e.badge==='Edited' ? 'brass' : 'brick')+'">'+e.badge+'</span>').join('')+'</div>'+
+          '<div class="tc-mobile-punches">'+(day.schedule ? '<span>Scheduled '+day.schedule.in+'–'+day.schedule.out+'</span>' : '')+
+          day.punches.map((p,j)=>'<button id="tc-mobile-'+i+'-'+j+'" class="btn btn-secondary btn-sm" '+(!editable ? 'disabled ' : '')+'onkeydown="payMarkerKey(event,'+i+','+j+')" onclick="payEditPunch('+i+','+j+',\'edit\',this.id)">'+payPunchTypes[p.type]+': '+(p.original ? '<del>'+p.original+'</del> → ' : '')+p.time+' · '+p.source+'</button>').join('')+
+          (!day.punches.length ? '<span class="'+(day.schedule ? 'tc-no-punches' : '')+'">'+(!day.schedule ? 'Off' : 'No punches')+'</span>' : '')+
+          (day.absence ? '<span class="badge badge-brass">'+payEscape(day.absence.label)+' — '+payHours(day.absence.minutes)+' hrs</span>' : '')+'</div></div>'+
+          '<div id="tc-expanded-'+i+'" class="tc-expanded" '+(!expanded ? 'hidden' : '')+'>'+payRenderPunchTable(day,i,editable)+'</div></article>';
+      }).join('')+payBoundaryDays(period,false));
+    if(payPunchDraft) payRenderPunchForm();
+  }
+  function payDayRowClick(event,index){
+    if(!event.target.closest('button,input,textarea,select')) payExpandDay(index,false);
+  }
+  function payRenderPunchTable(day,index,editable){
+    return '<div class="pay-scroll" tabindex="0" role="region" aria-label="'+payDayLabel(day)+' punch table"><table><thead><tr><th>Type</th><th>Time</th><th>Source</th><th>Original</th><th>Edited by</th><th>Reason</th><th>Actions</th></tr></thead><tbody>'+
+      (day.punches.length ? day.punches.map((p,j)=>'<tr><td>'+payPunchTypes[p.type]+'</td><td>'+p.time+'</td><td>'+p.source+'</td><td>'+(p.original ? '<del>'+p.original+'</del> → '+p.time : '—')+'</td><td>'+payEscape(p.editedBy || '—')+'</td><td>'+payEscape(p.reason || '—')+'</td><td>'+
+      (editable ? '<button id="tc-edit-'+index+'-'+j+'" class="btn btn-text btn-sm" onclick="payEditPunch('+index+','+j+',\'edit\',this.id)">Edit</button> <button id="tc-delete-'+index+'-'+j+'" class="btn btn-text btn-sm" onclick="payEditPunch('+index+','+j+',\'delete\',this.id)">Delete</button>' : 'Read-only')+'</td></tr>').join('') : '<tr><td colspan="7">No punches</td></tr>')+
+      '</tbody></table></div>'+
+      (editable ? '<div class="pay-actions"><button id="tc-add-'+index+'" class="btn btn-secondary btn-sm" onclick="payEditPunch('+index+',-1,\'add\',this.id)">Add punch</button>'+
+        (payDayExceptions(day).some(e=>e.badge==='Missing punch') && day.schedule ? '<button id="tc-fill-'+index+'" class="btn btn-secondary btn-sm" onclick="payFillSchedule('+index+',this.id)">Fill from schedule</button>' : '')+'</div>' : '')+
+      '<div id="tc-form-host-'+index+'"></div><div class="field"><label for="tc-note-'+index+'">Admin note · '+payDayLabel(day)+'</label><textarea id="tc-note-'+index+'" rows="2" maxlength="400" '+(!editable ? 'readonly ' : '')+'>'+payEscape(day.note || '')+'</textarea>'+
+      (editable ? '<button id="tc-note-save-'+index+'" class="btn btn-secondary btn-sm" onclick="paySaveDayNote('+index+')">Save note</button>' : '')+'</div>';
+  }
+  function payEditPunch(dayIndex,index,action,returnFocus,time,additions){
+    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
+    const day = payDetailCard().days[dayIndex], punch = day.punches[index];
+    payDetail.expanded.add(dayIndex);
+    payDrag = null;
+    payPunchDraft = {day:dayIndex,index,action,returnFocus,type:punch ? punch.type : 'in',time:time || (punch ? punch.time : '08:00'),source:punch ? punch.source : 'Manual',additions};
+    renderPayDetail(); payFocus(action==='delete' || action==='adjust' ? 'tc-reason' : 'tc-punch-time');
+    document.getElementById('tc-punch-form').scrollIntoView({block:'nearest'});
+  }
+  function payFillSchedule(index,returnFocus){
+    const day = payDetailCard().days[index], last = day.punches[day.punches.length-1];
+    const additions = [];
+    const add = (type,time)=>additions.push({type,time,source:'Manual',original:null,editedBy:null,reason:null});
+    if(!last){ add('in',day.schedule.in); add('out',day.schedule.out); }
+    else if(last.type==='break_start'){
+      add('break_end',payTimeString(payTimeMinutes(last.time)+30)); add('out',day.schedule.out);
+    } else if(last.type==='in' || last.type==='break_end') add('out',day.schedule.out);
+    else { showToast('There is no missing trailing punch to fill','brick'); return; }
+    payEditPunch(index,-1,'fill',returnFocus,additions[additions.length-1].time,additions);
+    payFocus('tc-reason');
+  }
+  function payRenderPunchForm(){
+    const draft = payPunchDraft, host = document.getElementById('tc-form-host-'+draft.day);
+    host.innerHTML = '<form id="tc-punch-form" class="tc-form'+(draft.action==='adjust' ? ' tc-popover' : '')+'" aria-labelledby="tc-form-title" novalidate onsubmit="paySavePunch(event)" onkeydown="if(event.key===\'Escape\'){event.preventDefault();payCancelPunch();}">'+
+      '<h3 id="tc-form-title">'+(draft.action==='delete' ? 'Delete punch' : draft.action==='fill' ? 'Fill from schedule' : draft.action==='add' ? 'Add punch' : 'Adjust punch')+'</h3>'+
+      (draft.action==='fill' ? '<p>'+draft.additions.map(p=>payPunchTypes[p.type]+' '+p.time).join(' · ')+' (Manual)</p>' :
+      draft.action==='adjust' ? '<p>'+payPunchTypes[draft.type]+' · '+draft.source+' · <del>'+payDetailCard().days[draft.day].punches[draft.index].time+'</del> → '+draft.time+'</p>'+
+      '<input id="tc-punch-type" type="hidden" value="'+draft.type+'"><input id="tc-punch-source" type="hidden" value="'+draft.source+'"><label for="tc-punch-time">New time</label><input id="tc-punch-time" type="time" value="'+draft.time+'" aria-describedby="tc-time-error"><p id="tc-time-error" class="pay-field-error" aria-live="polite"></p>' :
+      '<div class="tc-form-grid"><div class="field"><label for="tc-punch-type">Type</label><select id="tc-punch-type" '+(['adjust','delete'].includes(draft.action) ? 'disabled' : '')+'>'+Object.entries(payPunchTypes).map(([type,label])=>'<option value="'+type+'" '+(draft.type===type ? 'selected' : '')+'>'+label+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label for="tc-punch-time">Time</label><input id="tc-punch-time" type="time" value="'+draft.time+'" '+(draft.action==='delete' ? 'readonly' : '')+' aria-describedby="tc-time-error"><p id="tc-time-error" class="pay-field-error" aria-live="polite"></p></div>'+
+      '<div class="field"><label for="tc-punch-source">Source</label><select id="tc-punch-source" '+(['adjust','delete'].includes(draft.action) ? 'disabled' : '')+'>'+['Kiosk','Web','Phone','Manual'].map(source=>'<option '+(source===draft.source ? 'selected' : '')+'>'+source+'</option>').join('')+'</select></div></div>')+
+      '<label for="tc-reason">Reason (required)</label><input id="tc-reason" type="text" maxlength="200" aria-describedby="tc-reason-error"><p id="tc-reason-error" class="pay-field-error" aria-live="polite"></p>'+
+      '<p id="tc-punch-error" class="pay-field-error" role="alert"></p><button type="submit" class="btn btn-primary">'+(draft.action==='delete' ? 'Delete punch' : 'Save')+'</button> <button type="button" class="btn btn-secondary" onclick="payCancelPunch()">Cancel</button></form>';
+  }
+  function payCancelPunch(){
+    const focus = payPunchDraft && payPunchDraft.returnFocus;
+    payPunchDraft = null; payDrag = null;
+    renderPayDetail(); payFocus(focus);
+  }
+  function paySavePunch(event){
+    event.preventDefault();
+    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
+    const draft = payPunchDraft, card = payDetailCard(), day = card.days[draft.day], reasonInput = document.getElementById('tc-reason');
+    const reason = reasonInput.value.trim(), reasonError = reason ? '' : 'Enter a reason for this change.';
+    document.getElementById('tc-reason-error').textContent = reasonError;
+    reasonInput.setAttribute('aria-invalid',String(Boolean(reasonError)));
+    const punches = day.punches.map(p=>({...p})), before = day.punches[draft.index];
+    const type = draft.action==='fill' ? '' : document.getElementById('tc-punch-type').value;
+    const time = draft.action==='fill' ? '' : document.getElementById('tc-punch-time').value;
+    const source = draft.action==='fill' ? 'Manual' : document.getElementById('tc-punch-source').value;
+    let text;
+    if(draft.action==='delete'){
+      punches.splice(draft.index,1); text='deleted '+payPunchTypes[before.type].toLowerCase()+' from '+before.time+' to no punch';
+    } else if(draft.action==='fill'){
+      punches.push(...draft.additions.map(p=>({...p,editedBy:'Jordan Reyes',reason})));
+      text='filled missing punches from no punch to '+draft.additions.map(p=>payPunchTypes[p.type].toLowerCase()+' '+p.time).join(', ');
+    } else {
+      const punch = {type,time,source,original:before ? before.original || (time!==before.time ? before.time : null) : null,editedBy:'Jordan Reyes',reason};
+      if(before) punches[draft.index] = punch; else punches.push(punch);
+      text=before ? 'changed '+payPunchTypes[before.type].toLowerCase()+' from '+before.time+' to '+time+(before.type!==type ? ' ('+payPunchTypes[type]+')' : '')+(before.source!==source ? ' · source '+before.source+' → '+source : '') : 'added '+payPunchTypes[type].toLowerCase()+' from no punch to '+time;
+    }
+    // Inserting a punch is chronological; edits must retain their position to detect overlaps.
+    if(draft.action==='add' || draft.action==='fill') punches.sort((a,b)=>payTimeMinutes(a.time)-payTimeMinutes(b.time));
+    const error = payPunchError(punches,true);
+    const errorElement = document.getElementById('tc-time-error') || document.getElementById('tc-punch-error');
+    errorElement.textContent = error;
+    const timeInput = document.getElementById('tc-punch-time');
+    if(timeInput) timeInput.setAttribute('aria-invalid',String(Boolean(error)));
+    if(reasonError){ reasonInput.focus(); return; }
+    if(error){ (timeInput || reasonInput).focus(); return; }
+    payLastUndo = {period:payPeriod().id,employee:card.employee,day:draft.day,before:JSON.parse(JSON.stringify(day)),status:card.status};
+    day.punches = punches; day.edited = true;
+    if(card.status==='Missing') card.status='Needs changes';
+    payAddChange(payPeriod(),text.replace(/^(changed|deleted|filled|added) /, "$1 "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' ')+' — '+reason);
+    const focus = draft.returnFocus;
+    payPunchDraft = null;
+    closePayReview(false); renderPayroll(); payFocus(focus);
+    payUndoToast('Time card updated');
+  }
+  function payUndoToast(message){
+    showToast(payEscape(message)+' <button onclick="payUndoChange(this)">Undo</button>',undefined,10000);
+    const toast = document.getElementById('toast-stack').lastElementChild;
+    toast.dataset.undo = String(++payUndoSequence);
+    if(payLastUndo) payLastUndo.sequence = payUndoSequence;
+  }
+  let payUndoSequence = 0;
+  function payUndoChange(button){
+    const undo = payLastUndo, period = payPeriod(), card = undo && payCard(period,undo.employee);
+    if(!undo || Number(button.closest('.toast').dataset.undo)!==undo.sequence){ showToast('Only the latest change can be undone','brick'); return; }
+    if(undo.period!==period.id || !payEditable() || !card || card.status==='Approved'){ showToast('Reopen the card in its draft period before undoing','brick'); return; }
+    const current = card.days[undo.day];
+    const describe = day=>day.punches.map(p=>payPunchTypes[p.type]+' '+p.time).join(', ') || 'no punches';
+    payAddChange(period,"undid the last change to "+payEmployee(card.employee).name+"'s "+payDayLabel(current)+' from '+describe(current)+' to '+describe(undo.before)+' — Admin Undo');
+    card.days[undo.day].punches = undo.before.punches;
+    card.days[undo.day].edited = undo.before.edited;
+    if(undo.status==='Missing' && card.status==='Needs changes') card.status = undo.status;
+    payLastUndo = null; button.closest('.toast').remove();
+    closePayReview(false); renderPayroll();
+    payFocus('tc-day-button-'+undo.day);
+    showToast('Last change undone');
+  }
+  function paySaveDayNote(index){
+    if(!payCanEditCard()){ showToast('This time card is read-only','brick'); return; }
+    const card = payDetailCard(), day = card.days[index], note = document.getElementById('tc-note-'+index).value.trim();
+    payAddChange(payPeriod(),"changed "+payEmployee(card.employee).name+"'s "+payDayLabel(day)+' admin note from '+(day.note || '(empty)')+' to '+(note || '(empty)')+' — Admin note');
+    day.note = note; renderPayChanges(); showToast('Day note saved');
+  }
+  function payRequestChanges(){
+    if(!payCanEditCard()) return;
+    payCancelPunch();
+    document.getElementById('tc-request').hidden = false; payFocus('tc-request-note');
+  }
+  function payCancelRequest(){ document.getElementById('tc-request').hidden = true; payFocus('tc-back'); }
+  function payDetailAction(action){
+    const card = payDetailCard(), period = payPeriod();
+    if(!payCanEditCard() || card.status==='Missing'){ showToast('This card cannot be approved or requested yet','brick'); return; }
+    if(payPunchDraft || payDrag){ document.getElementById('tc-action-error').textContent='Save or cancel the pending punch adjustment first.'; return; }
+    if(action==='approve'){
+      const error = payCardApprovalError(period,card,card.days);
+      document.getElementById('tc-action-error').textContent = error;
+      if(error) return;
+      const previous = card.status;
+      card.status='Approved'; payAddChange(period,"approved "+payEmployee(card.employee).name+"'s time card from "+previous+' to Approved — Admin approval');
+    } else {
+      const input = document.getElementById('tc-request-note'), note = input.value.trim();
+      const error = note.length<3 ? 'Enter a note explaining the requested changes (at least 3 characters).' : '';
+      document.getElementById('tc-request-error').textContent = error; input.setAttribute('aria-invalid',String(Boolean(error)));
+      if(error){ input.focus(); return; }
+      const previous = card.status;
+      card.status='Needs changes'; card.note=note;
+      payAddChange(period,"requested changes to "+payEmployee(card.employee).name+"'s time card from "+previous+' to Needs changes — '+note);
+    }
+    payPunchDraft = null; payState.selected.delete(card.employee);
+    closePayReview(false); renderPayroll(); payFocus('tc-back');
+    showToast(action==='approve' ? 'Time card approved' : 'Changes requested');
+  }
+  function payPreviewMarker(dayIndex,index,minutes){
+    const marker = document.getElementById('tc-marker-'+dayIndex+'-'+index), day = payDetailCard().days[dayIndex], bar = document.getElementById('tc-bar-'+dayIndex);
+    marker.style.left = payBarPosition(minutes)+'%';
+    marker.querySelector('span').textContent = payTimeString(minutes)+' '+day.punches[index].source[0];
+    marker.setAttribute('aria-label',payPunchTypes[day.punches[index].type]+' '+payTimeString(minutes)+'. Enter to give a reason; Escape to cancel.');
+    paySegments(day).forEach(s=>{
+      if(s.from===index || s.to===index){
+        const block = bar.querySelector('[data-from="'+s.from+'"][data-to="'+s.to+'"]');
+        block.style.cssText = payBlockStyle(s.from===index ? minutes : s.start,s.to===index ? minutes : s.end);
+      }
+    });
+  }
+  function payStartDrag(event,day,index){
+    if(!payCanEditCard() || event.button!==0) return;
+    if(payPunchDraft){ showToast('Save or cancel the pending adjustment first','brick'); return; }
+    const marker = event.currentTarget, bar = marker.closest('.tc-bar'), bounds = bar.getBoundingClientRect();
+    payDrag = {day,index,marker,minutes:payTimeMinutes(payDetailCard().days[day].punches[index].time),startX:event.clientX,moved:false};
+    marker.setPointerCapture(event.pointerId);
+    marker.onpointermove = move=>{
+      if(!payDrag) return;
+      if(Math.abs(move.clientX-payDrag.startX)>3) payDrag.moved = true;
+      if(!payDrag.moved) return;
+      payDrag.minutes = Math.max(360,Math.min(1200,Math.round((360+(move.clientX-bounds.left)/bounds.width*840)/5)*5));
+      payPreviewMarker(day,index,payDrag.minutes);
+    };
+    marker.onpointerup = ()=>{
+      if(!payDrag) return;
+      const drag = payDrag; payDrag = null;
+      marker.onpointermove = null; marker.onpointerup = null;
+      if(drag.moved){
+        payEditPunch(day,index,'adjust',marker.id,payTimeString(drag.minutes));
+      }
+    };
+    marker.onpointercancel = ()=>{ payDrag=null; renderPayDetail(); payFocus(marker.id); };
+  }
+  function payMarkerClick(day,index){
+    if(payPunchDraft) return;
+    payEditPunch(day,index,'adjust','tc-marker-'+day+'-'+index);
+  }
+  function payMarkerKey(event,day,index){
+    if(!payCanEditCard()) return;
+    if(event.key==='Escape'){
+      event.preventDefault();
+      if(payPunchDraft) payCancelPunch();
+      else { payDrag=null; renderPayDetail(); payFocus(event.currentTarget.id); }
+    } else if(event.key==='ArrowLeft' || event.key==='ArrowRight'){
+      event.preventDefault();
+      if(payPunchDraft){ showToast('Save or cancel the pending adjustment first','brick'); return; }
+      const punch = payDetailCard().days[day].punches[index];
+      if(!payDrag || payDrag.day!==day || payDrag.index!==index){
+        if(payDrag) renderPayDetail();
+        payDrag = {day,index,minutes:payTimeMinutes(punch.time),keyboard:true};
+      }
+      payDrag.minutes = Math.max(0,Math.min(1439,payDrag.minutes+(event.key==='ArrowLeft' ? -5 : 5)));
+      payPreviewMarker(day,index,payDrag.minutes);
+      if(event.currentTarget.id.startsWith('tc-mobile')) event.currentTarget.textContent = payPunchTypes[punch.type]+': '+payTimeString(payDrag.minutes)+' · '+punch.source;
+    } else if(event.key==='Enter'){
+      event.preventDefault();
+      const minutes = payDrag && payDrag.day===day && payDrag.index===index ? payDrag.minutes : payTimeMinutes(payDetailCard().days[day].punches[index].time);
+      payDrag = null; payEditPunch(day,index,'adjust',event.currentTarget.id,payTimeString(minutes));
+    }
+  }
+  document.addEventListener('keydown',event=>{
+    if(event.key!=='Escape' || !payDetail) return;
+    if(payPunchDraft){ event.preventDefault(); payCancelPunch(); }
+    else if(payDrag){ const focus='tc-marker-'+payDrag.day+'-'+payDrag.index; payDrag=null; renderPayDetail(); payFocus(focus); }
+    else if(!document.getElementById('tc-request').hidden) payCancelRequest();
+  });
+  function makePayCardDays(period,id){
+    const days = [];
+    const date = new Date(period.timeline.start+'T00:00:00Z'), end = period.timeline.end;
+    const assignment = [...document.querySelectorAll('#sched-week .shift-block')].find(block=>id==='casey' && block.textContent.includes('C. Lin'));
+    const pattern = (assignment || document.querySelector('#sched-week .shift-block')).querySelector('strong').textContent.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+    if(!pattern) throw new Error('The Scheduling weekday pattern must contain a start and end time.');
+    const startMinutes = Number(pattern[1])*60+Number(pattern[2]);
+    const endMinutes = Number(pattern[3])*60+Number(pattern[4]);
+    const scheduledIn = payTimeString(startMinutes);
+    const scheduledOut = period.status==='Paid' ? '16:30' : payTimeString(endMinutes<=startMinutes ? endMinutes+720 : endMinutes);
+    const source = id==='riley' ? 'Phone' : id==='casey' ? 'Web' : 'Kiosk';
+    const punch = (type,time)=>({type,time,source,original:null,editedBy:null,reason:null});
+    while(date.toISOString().slice(0,10)<=end){
+      const iso = date.toISOString().slice(0,10);
+      const weekday = date.getUTCDay()!==0 && date.getUTCDay()!==6;
+      const day = {date:iso,schedule:weekday ? {in:scheduledIn,out:scheduledOut,source:assignment ? 'Scheduling · C. Lin / fictional weekday repetition' : 'Fictional weekday schedule using the Scheduling pattern'} : null,
+        punches:weekday ? [punch('in',scheduledIn),punch('break_start','12:00'),punch('break_end','12:30'),punch('out',scheduledOut)] : [],absence:null,note:'',edited:false};
+      if(period.id==='sep' && ['sam','casey','riley'].includes(id)){
+        if(iso==='2026-09-08' && id!=='casey'){
+          day.punches[0].time='08:12';
+          if(id==='sam') day.punches[3].time='18:30';
+        }
+        if(iso==='2026-09-03') day.punches[3].time='14:30';
+        if(iso==='2026-09-04' && id!=='casey') day.punches[2].time='13:05';
+        if(iso==='2026-09-07' && id==='sam') day.punches[3].time='19:15';
+        if(iso==='2026-09-09' && id==='sam' || iso==='2026-09-14' && id==='riley') day.punches.pop();
+        if(iso==='2026-09-10'){
+          day.punches=[punch('in','08:00'),punch('out','11:30'),punch('in','13:00'),punch('out','15:30')];
+        }
+        if(iso==='2026-09-11'){
+          day.punches=[punch('in','08:00'),punch('out','11:30')];
+          day.absence={label:'Sick',minutes:240,start:'11:30'};
+        }
+        if(iso==='2026-09-12' && id==='sam'){
+          day.schedule={in:'09:00',out:'16:30',source:'Fictional weekend coverage'};
+          day.punches=[punch('in','09:00'),punch('break_start','12:00'),punch('break_end','12:30'),punch('out','16:30')];
+        }
+      }
+      days.push(day);
+      date.setUTCDate(date.getUTCDate()+1);
+    }
+    return days;
+  }
+  payrollData.periods.forEach(period=>{
+    period.timeCards = period.rows.filter(row=>payEmployee(row.employee).type==='Hourly').map(row=>{
+      const status = period.status==='Paid' ? 'Approved' : payrollData.timeCardStatuses[row.employee];
+      const days = makePayCardDays(period,row.employee);
+      if(status==='Missing') days.forEach(day=>day.punches=[]);
+      return {employee:row.employee,status,days,history:status==='Approved' ? [{who:'Jordan Reyes',text:'approved '+payEmployee(row.employee).name+"'s time card from Submitted to Approved — Initial fictional approval",when:payShortDate(period.timeline.approvals)+' · 10:00 AM (demo)'}] : [],
+        note:status==='Needs changes' ? 'Please confirm the break on Sep 4.' : ''};
+    });
+  });
 
   // init
   go('a-dashboard');
