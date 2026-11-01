@@ -349,7 +349,7 @@
   .modal-body{padding:20px 22px;}
   .modal-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;}
   .modal-body .field{margin-bottom:14px;}
-  .modal-body input[type=text], .modal-body select{
+  .modal-body input[type=text], .modal-body input[type=number], .modal-body select{
     width:100%;font-family:inherit;font-size:13.5px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:#FAFAF7;
   }
   .modal-body input:focus, .modal-body select:focus{outline:none;border-color:var(--ink-faint);}
@@ -611,6 +611,16 @@
     body.pay-demo .breadcrumb{display:none;}
     body.pay-demo .topbar-right{gap:8px;margin-left:auto;}
   }
+  .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .rule-card{border:1px solid var(--line-soft);border-radius:8px;padding:14px 16px;}
+  .rule-card h4{margin:0 0 6px;font-size:13px;font-weight:600;}
+  .rule-card p,.rule-card li{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin:0;}
+  .rule-card ul{margin:0;padding-left:16px;}
+  .rule-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .rule-table th{text-align:left;font-weight:600;color:var(--ink);padding:6px 8px 6px 0;border-bottom:1px solid var(--line-soft);}
+  .rule-table td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);vertical-align:top;}
+  .rule-table tr:last-child td{border-bottom:0;}
+  @media (max-width:760px){.rules-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -781,15 +791,15 @@
 
       <!-- ============ ADMIN: CONTRACTS ============ -->
       <section class="screen" id="a-contracts" data-crumb="Contracts">
-        <div class="page-head"><h1>Contracts</h1><p>A signed contract unlocks payroll for that employee</p></div>
+        <div class="page-head"><h1>Contracts</h1><p>A signed contract unlocks payroll for that employee. The handbook is part of every contract.</p></div>
         <div class="panel">
           <table>
             <thead><tr><th>Name</th><th>Department</th><th>Type</th><th>Status</th><th></th></tr></thead>
             <tbody>
-              <tr><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>Full-year</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Alex Morgan')">View</button></td></tr>
-              <tr><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>Full-year</td><td><span class="badge badge-brass">Sent — awaiting signature</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Reminder sent to Taylor Brooks')">Remind</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">AM</div>Alex Morgan</div></td><td>Judaic Studies</td><td>Full-year · per period (16/wk)</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Alex Morgan')">View</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">TB</div>Taylor Brooks</div></td><td>Elementary</td><td>Full-year · per period (12/wk)</td><td><span class="badge badge-brass">Sent — awaiting signature</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Reminder sent to Taylor Brooks')">Remind</button></td></tr>
               <tr><td><div class="name-cell"><div class="mini-avatar">SW</div>Sam Whitfield</div></td><td>Facilities</td><td>Hourly</td><td><span class="badge badge-brick">Not sent</span></td><td><button class="btn btn-primary btn-sm" onclick="sendContract(this,'Sam Whitfield')">Send contract</button></td></tr>
-              <tr><td><div class="name-cell"><div class="mini-avatar">ME</div>Morgan Ellis</div></td><td>High School</td><td>Full-year</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Morgan Ellis')">View</button></td></tr>
+              <tr><td><div class="name-cell"><div class="mini-avatar">ME</div>Morgan Ellis</div></td><td>High School</td><td>Full-year · per period (12/wk)</td><td><span class="badge badge-moss">Signed</span></td><td><button class="btn btn-text btn-sm" onclick="viewContract('Morgan Ellis')">View</button></td></tr>
             </tbody>
           </table>
         </div>
@@ -873,6 +883,7 @@
               <div id="pay-empty" class="empty-state" hidden><h4>No matches</h4><p>Try a different name or status filter.</p><button class="btn btn-secondary btn-sm" onclick="clearPaySearch()">Clear filters</button></div>
               <div id="pay-run-footer" class="pay-run-footer"><span id="pay-run-footer-text"></span><button id="pay-run-footer-review" class="btn btn-primary btn-sm" onclick="reviewPayroll()">Review &amp; submit</button></div>
             </div>
+            <p class="pay-note">Handbook rules apply: under 15 periods a week is paid only for periods actually taught, PTO is calculated from the time clock and deducted from pay once used up, and in late May and June pay is prorated for any contracted hours not worked.</p>
             <p class="pay-note">Fictional gross amounts and net estimates only. Employees with unsigned contracts, missing direct deposit or unapproved time cards are skipped. Hourly gross is based only on approved hours.</p>
           </div>
           <div id="pay-adjustments" class="panel" hidden>
@@ -909,12 +920,12 @@
               </select>
             </div>
             <div class="field"><label>Type</label>
-              <select id="abs-type"><option>Sick</option><option>Personal</option><option>Unpaid</option></select>
+              <select id="abs-type"><option>Sick</option><option>Personal</option><option>Simcha</option><option>Maternity</option><option>Snow day</option><option>Unpaid</option></select>
             </div>
             <div class="field"><label>Start date</label><input type="date" id="abs-start" value="2026-09-08"></div>
             <div class="field"><label>End date</label><input type="date" id="abs-end" value="2026-09-08"></div>
           </div>
-          <div class="panel-body" style="padding-top:0;"><button class="btn btn-primary btn-sm" onclick="saveAbsence()">Save absence</button></div>
+          <div class="panel-body" style="padding-top:0;"><p class="pay-note" style="margin:0 0 12px;">Sick and personal days are deducted from PTO automatically via the time clock. Simcha, maternity and snow days are marked excused and do not use PTO; only employees eligible under the benefit rules below can receive them.</p><button class="btn btn-primary btn-sm" onclick="saveAbsence()">Save absence</button></div>
         </div>
         <div class="panel">
           <table>
@@ -924,6 +935,50 @@
               <tr><td>Sam Whitfield</td><td><span class="badge badge-brass">Personal</span></td><td>Sep 2 – Sep 3, 2026</td><td>J. Reyes</td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="panel" style="margin-top:20px;">
+          <div class="panel-head"><h3>Handbook rules — High School</h3><span class="badge badge-neutral">From employee handbook</span></div>
+          <div class="panel-body"><div class="rules-grid">
+  <div class="rule-card" style="grid-column:1/-1;"><h4>Benefit eligibility</h4><table class="rule-table"><thead><tr><th>Periods / week</th><th>Pay</th><th>Tuition &amp; parsonage</th><th>PTO</th><th>Yomtov &amp; vacation</th></tr></thead><tbody>
+<tr><td>1–8</td><td>Hourly (paid when present)</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>9–14</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+<tr><td>10–14, 10th year or more</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>15+</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>Paid</td></tr>
+</tbody></table>
+<p class="pay-note" style="margin:10px 0 0;">Under 15 periods: paid only for time actually taught. End of May and June: employees must fully report during contracted hours or pay is prorated. PTO, Simcha and Maternity Leave apply only to eligible employees.</p></div>
+  <div class="rule-card"><h4>PTO allowance</h4><ul>
+    <li>1 week's worth of personal/sick days and lateness (e.g. 3 days/week = 3 days; 12 periods/week = 12 periods)</li>
+    <li>Starts once the teacher starts teaching; delayed starts are not covered</li>
+    <li>Leaves mid-year: reviewed at max 1 day per 2 months worked</li>
+    <li>Does not carry over to the next school year</li>
+    <li>Calculated automatically from the time clock; once used up, absences are deducted from pay</li>
+  </ul></div>
+  <div class="rule-card"><h4>Attendance &amp; docking</h4><ul>
+    <li>Lateness is taken from PTO first, then deducted from pay</li>
+    <li>Missed punch counts as an absence until the principal corrects it</li>
+    <li>Day before/after a vacation or Yom Tov is double-docked</li>
+    <li>Extra personal days: double-docked, or paid only for days worked</li>
+    <li>Simcha, maternity and snow days must be marked excused by the attendance coordinator, or they count as unexcused</li>
+  </ul></div>
+  <div class="rule-card"><h4>Simcha days (paid, not from PTO)</h4>
+  <table class="rule-table"><tbody>
+    <tr><td>Own wedding</td><td>1 week</td></tr>
+    <tr><td>Child's wedding</td><td>3 days (before, day of, after)</td></tr>
+    <tr><td>Grandchild's wedding</td><td>2 days (3 if out of town)</td></tr>
+    <tr><td>Sibling's wedding (yours or husband's)</td><td>2 days</td></tr>
+    <tr><td>Child's Bar/Bas Mitzvah</td><td>1 day</td></tr>
+    <tr><td>Own Lechaim</td><td>Morning teachers 1.5 days · Afternoon teachers 1 day</td></tr>
+    <tr><td>Child's Lechaim</td><td>1 day (day of or morning after)</td></tr>
+    <tr><td>Bris: nephew / grandchild</td><td>2 hours / 1 day (2 if out of town)</td></tr>
+    <tr><td>Shiva</td><td>1 week</td></tr>
+  </tbody></table>
+  <p class="pay-note" style="margin:10px 0 0;">A week = total scheduled hours in the employee's workweek. Paid by calendar days; a canceled class does not push the day off. The teacher must have the principal mark it as a simcha day and confirm.</p></div>
+  <div class="rule-card"><h4>Maternity leave</h4>
+  <table class="rule-table"><thead><tr><th>Year of employment</th><th>Paid</th></tr></thead><tbody>
+    <tr><td>1 or 2</td><td>2 weeks</td></tr><tr><td>3, 4, 5</td><td>3 weeks</td></tr><tr><td>6–9</td><td>4 weeks</td></tr><tr><td>10 or more</td><td>6 weeks</td></tr>
+  </tbody></table>
+  <p class="pay-note" style="margin:10px 0 0;">Paid if she returns within 9 weeks. Starts at birth or on doctor's orders. Does not extend past the school year; summer births apply remaining weeks when school starts; mid-year vacation births start the first school day after.</p></div>
+</div></div>
         </div>
       </section>
 
@@ -1066,6 +1121,10 @@
           <div class="drawer-doc-row"><div><div class="doc-name">Direct deposit</div><div class="doc-sub">Needed to receive payment</div></div><button class="btn btn-primary btn-sm" onclick="markUploaded(this,'Direct deposit')">Upload</button></div>
           <div class="drawer-doc-row"><div><div class="doc-name">Other</div><div class="doc-sub">Optional</div></div><span class="badge badge-neutral">Not required</span></div>
         </div></div>
+        <div class="section-label">Employee handbook</div>
+        <div class="panel"><div class="panel-body" style="padding:6px 20px;">
+          <div class="drawer-doc-row"><div><div class="doc-name">Bnos Menachem Handbook — High School</div><div class="doc-sub">Part of your employment contract. Covers punctuality, benefits, PTO, simcha days and maternity leave.</div></div><button class="btn btn-secondary btn-sm" onclick="go('s-pay');showToast('Benefit rules are listed under My pay')">View rules</button></div>
+        </div></div>
       </section>
 
       <!-- ============ STAFF: MY SCHEDULE ============ -->
@@ -1099,6 +1158,52 @@
           <div class="pto-stat"><div class="n">13</div><div class="l">Used (hrs)</div></div>
           <div class="pto-stat"><div class="n">27</div><div class="l">Balance (hrs)</div></div>
         </div>
+        <p class="pay-note" style="margin-top:12px;">Your PTO allowance is one week's worth of your scheduled hours. It covers sick days, personal days and lateness, resets each school year and does not carry over.</p>
+        <div class="section-label">Your benefits</div>
+        <div class="panel"><div class="panel-body">
+          <p class="pay-note" style="margin:0 0 12px;">Demo: Taylor Brooks · 12 periods per week · per period / salaried · eligible for tuition, parsonage and PTO.</p>
+          <div class="rules-grid">
+  <div class="rule-card" style="grid-column:1/-1;"><h4>Benefit eligibility</h4><table class="rule-table"><thead><tr><th>Periods / week</th><th>Pay</th><th>Tuition &amp; parsonage</th><th>PTO</th><th>Yomtov &amp; vacation</th></tr></thead><tbody>
+<tr><td>1–8</td><td>Hourly (paid when present)</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>9–14</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+<tr><td>10–14, 10th year or more</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>15+</td><td>Per period / salaried</td><td>Yes</td><td>Yes</td><td>Paid</td></tr>
+</tbody></table>
+<p class="pay-note" style="margin:10px 0 0;">Under 15 periods: paid only for time actually taught. End of May and June: employees must fully report during contracted hours or pay is prorated. PTO, Simcha and Maternity Leave apply only to eligible employees.</p></div>
+  <div class="rule-card"><h4>PTO allowance</h4><ul>
+    <li>1 week's worth of personal/sick days and lateness (e.g. 3 days/week = 3 days; 12 periods/week = 12 periods)</li>
+    <li>Starts once the teacher starts teaching; delayed starts are not covered</li>
+    <li>Leaves mid-year: reviewed at max 1 day per 2 months worked</li>
+    <li>Does not carry over to the next school year</li>
+    <li>Calculated automatically from the time clock; once used up, absences are deducted from pay</li>
+  </ul></div>
+  <div class="rule-card"><h4>Attendance &amp; docking</h4><ul>
+    <li>Lateness is taken from PTO first, then deducted from pay</li>
+    <li>Missed punch counts as an absence until the principal corrects it</li>
+    <li>Day before/after a vacation or Yom Tov is double-docked</li>
+    <li>Extra personal days: double-docked, or paid only for days worked</li>
+    <li>Simcha, maternity and snow days must be marked excused by the attendance coordinator, or they count as unexcused</li>
+  </ul></div>
+  <div class="rule-card"><h4>Simcha days (paid, not from PTO)</h4>
+  <table class="rule-table"><tbody>
+    <tr><td>Own wedding</td><td>1 week</td></tr>
+    <tr><td>Child's wedding</td><td>3 days (before, day of, after)</td></tr>
+    <tr><td>Grandchild's wedding</td><td>2 days (3 if out of town)</td></tr>
+    <tr><td>Sibling's wedding (yours or husband's)</td><td>2 days</td></tr>
+    <tr><td>Child's Bar/Bas Mitzvah</td><td>1 day</td></tr>
+    <tr><td>Own Lechaim</td><td>Morning teachers 1.5 days · Afternoon teachers 1 day</td></tr>
+    <tr><td>Child's Lechaim</td><td>1 day (day of or morning after)</td></tr>
+    <tr><td>Bris: nephew / grandchild</td><td>2 hours / 1 day (2 if out of town)</td></tr>
+    <tr><td>Shiva</td><td>1 week</td></tr>
+  </tbody></table>
+  <p class="pay-note" style="margin:10px 0 0;">A week = total scheduled hours in the employee's workweek. Paid by calendar days; a canceled class does not push the day off. The teacher must have the principal mark it as a simcha day and confirm.</p></div>
+  <div class="rule-card"><h4>Maternity leave</h4>
+  <table class="rule-table"><thead><tr><th>Year of employment</th><th>Paid</th></tr></thead><tbody>
+    <tr><td>1 or 2</td><td>2 weeks</td></tr><tr><td>3, 4, 5</td><td>3 weeks</td></tr><tr><td>6–9</td><td>4 weeks</td></tr><tr><td>10 or more</td><td>6 weeks</td></tr>
+  </tbody></table>
+  <p class="pay-note" style="margin:10px 0 0;">Paid if she returns within 9 weeks. Starts at birth or on doctor's orders. Does not extend past the school year; summer births apply remaining weeks when school starts; mid-year vacation births start the first school day after.</p></div>
+</div>
+        </div></div>
       </section>
 
     </div>
@@ -1118,6 +1223,7 @@
   <div class="drawer-tabs">
     <div class="subtab active" data-sub="drawer" data-target="drawer-info">Info</div>
     <div class="subtab" data-sub="drawer" data-target="drawer-documents">Documents</div>
+    <div class="subtab" data-sub="drawer" data-target="drawer-benefits">Benefits</div>
     <div class="subtab" data-sub="drawer" data-target="drawer-contract">Contract</div>
   </div>
   <div class="drawer-body">
@@ -1133,6 +1239,15 @@
       <div class="drawer-doc-row"><div><div class="doc-name">W‑4</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
       <div class="drawer-doc-row"><div><div class="doc-name">I‑9</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
       <div class="drawer-doc-row"><div><div class="doc-name">Direct deposit</div><div class="doc-sub">Submitted</div></div><span class="badge badge-moss">Complete</span></div>
+    </div>
+    <div id="drawer-benefits" class="sub-panel" style="display:none;">
+      <div class="field" style="margin-bottom:14px;"><label>Periods per week</label><div class="value" id="ben-periods">—</div></div>
+      <div class="field" style="margin-bottom:14px;"><label>Years at Bnos Menachem</label><div class="value" id="ben-years">—</div></div>
+      <div class="field" style="margin-bottom:14px;"><label>Pay basis</label><div class="value" id="ben-basis">—</div></div>
+      <div class="section-label">Eligibility</div>
+      <div id="ben-list"></div>
+      <div class="section-label">PTO allowance</div>
+      <p class="pay-note" style="margin:0;" id="ben-pto">—</p>
     </div>
     <div id="drawer-contract" class="sub-panel" style="display:none;">
       <div class="field" style="margin-bottom:14px;"><label>Type</label><div class="value">Full-year</div></div>
@@ -1154,7 +1269,12 @@
         </select>
       </div>
       <div class="field"><label>Position</label><input type="text" id="new-emp-position" placeholder="e.g. Teacher"></div>
-      <div class="field" style="margin-bottom:0;"><label>Email</label><input type="text" id="new-emp-email" placeholder="e.g. jrivera@example.org"></div>
+      <div class="field"><label>Email</label><input type="text" id="new-emp-email" placeholder="e.g. jrivera@example.org"></div>
+      <div class="form-grid" style="margin-bottom:12px;">
+        <div class="field" style="margin-bottom:0;"><label>Periods per week</label><input type="number" min="0" id="new-emp-periods" placeholder="e.g. 12" oninput="updateNewEmpBenefits()"></div>
+        <div class="field" style="margin-bottom:0;"><label>Years at Bnos Menachem</label><input type="number" min="0" id="new-emp-years" placeholder="e.g. 0" oninput="updateNewEmpBenefits()"></div>
+      </div>
+      <p class="pay-note" id="new-emp-benefits" style="margin:0;">Enter periods per week to see benefit eligibility.</p>
     </div>
     <div class="modal-foot">
       <button class="btn btn-secondary btn-sm" onclick="closeAddEmployee()">Cancel</button>
@@ -1214,6 +1334,44 @@
     });
   });
 
+  // ---------- handbook benefit rules ----------
+  const benefitData = {
+    'Alex Morgan':{periods:16,years:5}, 'Jordan Reyes':{periods:20,years:11}, 'Taylor Brooks':{periods:12,years:2},
+    'Sam Whitfield':{periods:6,years:1}, 'Casey Lin':{periods:8,years:3}, 'Morgan Ellis':{periods:12,years:10}
+  };
+  function benefitRules(periods, years){
+    const p = parseInt(periods,10)||0, y = parseInt(years,10)||0;
+    let basis, tuition, pto, yomtov;
+    if(p<=0){ return null; }
+    if(p<=8){ basis='Hourly — paid only when present to teach'; tuition=false; pto=false; yomtov=false; }
+    else if(p<15){ basis='Per period / salaried (paid only for periods actually taught)'; tuition=true; pto=true; yomtov=(y>=10 && p>=10); }
+    else { basis='Per period / salaried'; tuition=true; pto=true; yomtov=true; }
+    return {basis, tuition, pto, yomtov, yomtovNote: p>=15 ? 'Paid for yomtov and vacation days' : (yomtov ? 'Eligible (10th year or more, 10+ periods)' : 'Not eligible'), simchaMaternity: pto};
+  }
+  function benefitRow(label, ok, note){
+    return '<div class="drawer-doc-row"><div><div class="doc-name">'+label+'</div>'+(note?'<div class="doc-sub">'+note+'</div>':'')+'</div><span class="badge '+(ok?'badge-moss':'badge-neutral')+'">'+(ok?'Eligible':'Not eligible')+'</span></div>';
+  }
+  function renderBenefits(name){
+    const d = benefitData[name];
+    const r = d && benefitRules(d.periods, d.years);
+    document.getElementById('ben-periods').textContent = d ? d.periods : '—';
+    document.getElementById('ben-years').textContent = d ? d.years : '—';
+    document.getElementById('ben-basis').textContent = r ? r.basis : 'Not set';
+    document.getElementById('ben-list').innerHTML = r ?
+      benefitRow('Tuition & parsonage', r.tuition) +
+      benefitRow('Paid time off (PTO)', r.pto, 'Sick, personal days and lateness') +
+      benefitRow('Simcha days & maternity leave', r.simchaMaternity, 'Only for employees eligible for PTO') +
+      benefitRow('Yomtov & vacation days', r.yomtov, r.yomtovNote) : '<p class="pay-note" style="margin:0;">Add periods per week to see eligibility.</p>';
+    document.getElementById('ben-pto').textContent = r && r.pto ?
+      'One week of scheduled time: '+d.periods+' periods this school year. Resets each year and does not carry over.' :
+      'Not eligible for PTO. Absences are not paid.';
+  }
+  function updateNewEmpBenefits(){
+    const r = benefitRules(document.getElementById('new-emp-periods').value, document.getElementById('new-emp-years').value);
+    const el = document.getElementById('new-emp-benefits');
+    el.innerHTML = r ? '<strong>'+r.basis+'.</strong> Tuition &amp; parsonage: '+(r.tuition?'yes':'no')+' · PTO: '+(r.pto?'yes':'no')+' · Yomtov &amp; vacation: '+(r.yomtov?'yes':'no') : 'Enter periods per week to see benefit eligibility.';
+  }
+
   function openDrawer(name, roleLine){
     document.getElementById('drawer').classList.remove('pay-drawer','wide-pay-drawer');
     const payBody = document.getElementById('pay-drawer-body');
@@ -1222,6 +1380,7 @@
     document.getElementById('drawer-role').textContent = roleLine;
     const initials = name.split(' ').map(n=>n[0]).join('');
     document.getElementById('drawer-avatar').textContent = initials;
+    renderBenefits(name);
     document.getElementById('drawer').classList.add('open');
     document.getElementById('drawer-overlay').classList.add('open');
   }
@@ -1330,6 +1489,8 @@
     const tr = document.createElement('tr');
     tr.className = 'clickable';
     tr.dataset.name = name;
+    const periods = document.getElementById('new-emp-periods').value, years = document.getElementById('new-emp-years').value;
+    if(periods) benefitData[name] = {periods:parseInt(periods,10), years:parseInt(years,10)||0};
     tr.onclick = ()=>openDrawer(name, dept);
     tr.innerHTML = '<td><div class="name-cell"><div class="mini-avatar">'+initials+'</div>'+name+'</div></td><td>'+dept+'</td><td>'+position+'</td><td>'+email+'</td><td><span class="badge badge-brick">Missing</span></td>';
     document.getElementById('employees-tbody').appendChild(tr);
@@ -1339,6 +1500,9 @@
     document.getElementById('new-emp-name').value = '';
     document.getElementById('new-emp-position').value = '';
     document.getElementById('new-emp-email').value = '';
+    document.getElementById('new-emp-periods').value = '';
+    document.getElementById('new-emp-years').value = '';
+    updateNewEmpBenefits();
     showToast(name + ' added to Employees');
   }
 
@@ -1385,7 +1549,7 @@
     const end = document.getElementById('abs-end').value;
     if(!emp){ showToast('Select an employee first', 'brick'); return; }
     const dateLabel = (start && end && start!==end) ? (fmtDate(start)+' \u2013 '+fmtDate(end)) : fmtDate(start || new Date().toISOString().slice(0,10));
-    const badgeClass = type==='Sick' ? 'badge-brick' : (type==='Personal' ? 'badge-brass' : 'badge-neutral');
+    const badgeClass = type==='Sick' ? 'badge-brick' : (type==='Personal' ? 'badge-brass' : (type==='Unpaid' ? 'badge-neutral' : 'badge-moss'));
     const tbody = document.getElementById('absences-tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = '<td>'+emp+'</td><td><span class="badge '+badgeClass+'">'+type+'</span></td><td>'+dateLabel+'</td><td>You</td>';
