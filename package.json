@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:setup": "bash scripts/setup-db.sh"
   },
   "keywords": [],
   "author": "",
