@@ -17,9 +17,20 @@ export type BenefitRules = {
 export function benefitRules({ periodsPerWeek: p, yearsAtSchool: y }: Employment): BenefitRules | null {
   if (!(p > 0)) return null;
   if (p <= 8) {
-    return { basis: 'HOURLY', tuitionAndParsonage: false, pto: false, simchaAndMaternity: false, yomtovAndVacation: 'NO' };
+    return {
+      basis: 'HOURLY',
+      tuitionAndParsonage: false,
+      pto: false,
+      simchaAndMaternity: false,
+      yomtovAndVacation: 'NO',
+    };
   }
-  const base = { basis: 'PER_PERIOD' as const, tuitionAndParsonage: true, pto: true, simchaAndMaternity: true };
+  const base = {
+    basis: 'PER_PERIOD' as const,
+    tuitionAndParsonage: true,
+    pto: true,
+    simchaAndMaternity: true,
+  };
   if (p >= 15) return { ...base, yomtovAndVacation: 'PAID' };
   // 9–14 periods: yomtov/vacation only from the 10th year with at least 10 periods
   return { ...base, yomtovAndVacation: y >= 10 && p >= 10 ? 'ELIGIBLE' : 'NO' };

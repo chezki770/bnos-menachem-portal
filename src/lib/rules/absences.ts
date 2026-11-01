@@ -60,7 +60,9 @@ export function evaluateAbsence(input: AbsenceInput): AbsenceResult {
 
   const ptoLeft = Math.max(0, ptoAllowanceDays(employee) - input.ptoUsedDays);
   const notes: string[] = [];
-  let paid = 0, pto = 0, docked = 0;
+  let paid = 0,
+    pto = 0,
+    docked = 0;
 
   switch (type) {
     case 'SNOW_DAY':
@@ -68,7 +70,8 @@ export function evaluateAbsence(input: AbsenceInput): AbsenceResult {
       notes.push('Excused snow day — not deducted');
       break;
     case 'SIMCHA': {
-      if (!rules.simchaAndMaternity) return { ok: false, error: 'Not eligible for simcha days (needs 9+ periods a week)' };
+      if (!rules.simchaAndMaternity)
+        return { ok: false, error: 'Not eligible for simcha days (needs 9+ periods a week)' };
       if (!input.occasion) return { ok: false, error: 'Choose the simcha occasion' };
       const raw = SIMCHA_OCCASIONS[input.occasion];
       const allowance = raw === 'week' ? employee.daysPerWeek : raw;
@@ -81,13 +84,17 @@ export function evaluateAbsence(input: AbsenceInput): AbsenceResult {
       break;
     }
     case 'MATERNITY': {
-      if (!rules.simchaAndMaternity) return { ok: false, error: 'Not eligible for maternity leave (needs 9+ periods a week)' };
+      if (!rules.simchaAndMaternity)
+        return { ok: false, error: 'Not eligible for maternity leave (needs 9+ periods a week)' };
       const total = maternityPaidWeeks(employee.yearsAtSchool) * employee.daysPerWeek;
       const remaining = Math.max(0, total - (input.maternityPaidUsedDays ?? 0));
       paid = Math.min(days, remaining);
       docked = days - paid;
-      notes.push(`${maternityPaidWeeks(employee.yearsAtSchool)} paid week(s); ${remaining} of ${total} days remaining. Pay requires returning within 9 weeks`);
-      if ((input.calendarSpanDays ?? 0) > 63) notes.push('Leave is longer than 9 weeks — paid portion is at risk');
+      notes.push(
+        `${maternityPaidWeeks(employee.yearsAtSchool)} paid week(s); ${remaining} of ${total} days remaining. Pay requires returning within 9 weeks`,
+      );
+      if ((input.calendarSpanDays ?? 0) > 63)
+        notes.push('Leave is longer than 9 weeks — paid portion is at risk');
       break;
     }
     case 'SICK':
