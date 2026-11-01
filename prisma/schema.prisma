@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum AbsenceType {
+  SICK
+  PERSONAL
+  SIMCHA
+  MATERNITY
+  SNOW_DAY
+  UNPAID
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum ContractStatus {
+  NOT_SENT
+  SENT
+  SIGNED
+}
+
+enum PayPeriodStatus {
+  DRAFT
+  SUBMITTED
+  PAID
+}
+
+model SchoolYear {
+  id        String   @id @default(cuid())
+  label     String   @unique // "2026-2027"
+  startsOn  DateTime
+  endsOn    DateTime
+  employees Employee[]
+  periods   PayPeriod[]
+}
+
+model Employee {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  role          Role     @default(STAFF)
+  department    String
+  position      String?
+  hiredOn       DateTime?
+  // Inputs to the handbook rules (see src/lib/rules)
+  periodsPerWeek Int     @default(0)
+  yearsAtSchool  Int     @default(0)
+  daysPerWeek    Int     @default(5)
+  hourlyRateCents Int?
+  schoolYearId  String
+  schoolYear    SchoolYear @relation(fields: [schoolYearId], references: [id])
+  contract      Contract?
+  documents     Document[]
+  absences      Absence[]
+  requests      TimeOffRequest[]
+  adjustments   PayAdjustment[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Contract {
+  id          String         @id @default(cuid())
+  employeeId  String         @unique
+  employee    Employee       @relation(fields: [employeeId], references: [id])
+  status      ContractStatus @default(NOT_SENT)
+  sentAt      DateTime?
+  signedAt    DateTime?
+  handbookVersion String?
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  kind       String   // W4, I9, ID, IT2104, DIRECT_DEPOSIT, OTHER
+  storageKey String?  // object-storage key; never store sensitive files in the DB
+  uploadedAt DateTime @default(now())
+
+  @@unique([employeeId, kind])
+}
+
+model Absence {
+  id         String      @id @default(cuid())
+  employeeId String
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+  type       AbsenceType
+  occasion   String?
+  startsOn   DateTime    @db.Date
+  endsOn     DateTime    @db.Date
+  schoolDays Int
+  adjacentToVacation Boolean @default(false)
+  // Result of the rules engine, stored so history never changes when rules change
+  paidDays   Float
+  ptoDays    Float
+  dockedDays Float
+  postedById String?
+  requestId  String?     @unique
+  createdAt  DateTime    @default(now())
+
+  @@index([employeeId, startsOn])
+}
+
+model TimeOffRequest {
+  id         String        @id @default(cuid())
+  employeeId String
+  employee   Employee      @relation(fields: [employeeId], references: [id])
+  type       AbsenceType
+  occasion   String?
+  startsOn   DateTime      @db.Date
+  endsOn     DateTime      @db.Date
+  note       String?
+  status     RequestStatus @default(PENDING)
+  decidedById String?
+  decidedAt  DateTime?
+  createdAt  DateTime      @default(now())
+}
+
+model PayPeriod {
+  id           String          @id @default(cuid())
+  schoolYearId String
+  schoolYear   SchoolYear      @relation(fields: [schoolYearId], references: [id])
+  startsOn     DateTime        @db.Date
+  endsOn       DateTime        @db.Date
+  status       PayPeriodStatus @default(DRAFT)
+  adjustments  PayAdjustment[]
+}
+
+model PayAdjustment {
+  id          String    @id @default(cuid())
+  payPeriodId String
+  payPeriod   PayPeriod @relation(fields: [payPeriodId], references: [id])
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  kind        String    // BONUS, DEDUCTION, REIMBURSEMENT
+  cents       Int
+  note        String
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
