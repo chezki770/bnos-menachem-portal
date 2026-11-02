@@ -15,6 +15,7 @@ npm install
 cp .env.example .env
 npm run db:up          # Postgres in Docker
 npm run db:migrate     # creates the tables from prisma/schema.prisma
+npm run db:seed        # demo people (local only): jreyes@example.org (admin), tbrooks@example.org (staff)
 npm run dev            # http://localhost:3000
 npm test               # handbook rules tests
 ```
