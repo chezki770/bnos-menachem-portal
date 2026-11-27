@@ -1,0 +1,7 @@
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy portal:3000
+	request_body {
+		max_size 12MB
+	}
+}

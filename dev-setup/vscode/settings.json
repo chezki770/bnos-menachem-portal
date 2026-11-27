@@ -7,6 +7,5 @@
   "files.eol": "\n",
   "files.exclude": { "**/.next": true },
   "search.exclude": { "**/node_modules": true, "**/.next": true, "package-lock.json": true },
-  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
   "vitest.enable": true
 }

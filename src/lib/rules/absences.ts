@@ -120,3 +120,14 @@ export function evaluateAbsence(input: AbsenceInput): AbsenceResult {
   }
   return { ok: true, paidDays: paid, ptoDays: pto, dockedDays: docked, notes };
 }
+
+/** PTO and paid maternity days already used, from the absences posted in one school year. */
+export function absenceUsageTotals(rows: { type: AbsenceType; ptoDays: number; paidDays: number }[]): {
+  ptoUsed: number;
+  maternityPaidUsed: number;
+} {
+  return {
+    ptoUsed: rows.reduce((s, a) => s + a.ptoDays, 0),
+    maternityPaidUsed: rows.filter((a) => a.type === 'MATERNITY').reduce((s, a) => s + a.paidDays, 0),
+  };
+}

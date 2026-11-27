@@ -2,7 +2,7 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "Prisma.prisma",
+    "mechatroner.rainbow-csv",
     "vitest.explorer",
     "EditorConfig.EditorConfig",
     "ms-azuretools.vscode-docker"

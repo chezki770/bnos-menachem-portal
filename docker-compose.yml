@@ -1,11 +1,39 @@
+# One-server deployment:
+#   cp .env.example .env   # fill in DATA_ENCRYPTION_KEY, AUTH_SECRET, APP_URL, DOMAIN, email settings
+#   docker compose up -d --build
+#   docker compose run --rm tools npm run create-admin -- "Full Name" you@school.org
 services:
-  db:
-    image: postgres:16
+  portal:
+    build: { context: ., target: runtime }
+    restart: unless-stopped
+    env_file: .env
     environment:
-      POSTGRES_USER: bnos
-      POSTGRES_PASSWORD: bnos
-      POSTGRES_DB: bnos
-    ports: ['5432:5432']
-    volumes: ['pgdata:/var/lib/postgresql/data']
+      DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+    expose: ['3000']
+    # ports: ['3000:3000']   # uncomment to reach it directly without Caddy
+
+  # HTTPS in front of the portal with automatic certificates. Set DOMAIN in .env (e.g. portal.your-school.org)
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    ports: ['80:80', '443:443']
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [portal]
+
+  tools:
+    build: { context: ., target: tools }
+    profiles: ['tools']
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+
 volumes:
-  pgdata:
+  caddy_data:

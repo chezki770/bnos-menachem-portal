@@ -1,0 +1,107 @@
+/** RFC 4180 CSV parsing and writing. No dependencies, so the data files stay plain and predictable. */
+
+/** Parse CSV text into rows of cells. Handles quotes, escaped quotes, CRLF/LF and a leading BOM. */
+export function parseCsv(text: string): string[][] {
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = '';
+  let quoted = false;
+  let i = 0;
+  while (i < text.length) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') {
+          cell += '"';
+          i += 2;
+          continue;
+        }
+        quoted = false;
+        i++;
+        continue;
+      }
+      cell += ch;
+      i++;
+      continue;
+    }
+    if (ch === '"' && cell === '') {
+      quoted = true;
+      i++;
+    } else if (ch === ',') {
+      row.push(cell);
+      cell = '';
+      i++;
+    } else if (ch === '\n' || ch === '\r') {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+      i += ch === '\r' && text[i + 1] === '\n' ? 2 : 1;
+    } else {
+      cell += ch;
+      i++;
+    }
+  }
+  if (quoted) throw new Error('CSV has an unclosed quote');
+  if (cell !== '' || row.length > 0) {
+    row.push(cell);
+    rows.push(row);
+  }
+  // Drop fully blank lines (e.g. a trailing newline or empty rows from spreadsheet apps).
+  return rows.filter((r) => !(r.length === 1 && r[0] === ''));
+}
+
+function quote(cell: string): string {
+  return /[",\r\n]|^\s|\s$/.test(cell) ? `"${cell.replace(/"/g, '""')}"` : cell;
+}
+
+export function stringifyCsv(rows: string[][]): string {
+  return rows.map((r) => r.map(quote).join(',')).join('\n') + '\n';
+}
+
+/** Parse CSV with a header row into records keyed by column name. */
+export function parseCsvRecords(text: string): { header: string[]; records: Record<string, string>[] } {
+  const [header = [], ...rest] = parseCsv(text);
+  const cleanHeader = header.map((h) => h.trim());
+  const seen = new Set<string>();
+  for (const h of cleanHeader) {
+    if (h && seen.has(h)) throw new Error(`Column "${h}" appears twice in the header row`);
+    seen.add(h);
+  }
+  // Extra non-empty cells usually mean an unquoted comma; refuse rather than silently drop data.
+  rest.forEach((cells, i) => {
+    if (cells.length > cleanHeader.length && cells.slice(cleanHeader.length).some((c) => c.trim() !== ''))
+      throw new Error(
+        `Line ${i + 2} has ${cells.length} values but the header has ${cleanHeader.length} columns (is a comma missing quotes?)`,
+      );
+  });
+  const records = rest.map((cells) => {
+    const rec: Record<string, string> = {};
+    cleanHeader.forEach((h, idx) => (rec[h] = cells[idx] ?? ''));
+    return rec;
+  });
+  return { header: cleanHeader, records };
+}
+
+const FORMULA_START = /^[=+\-@\t\r]/;
+
+/**
+ * Spreadsheet apps run cells starting with = + - @ as formulas. For files people download and open,
+ * prefix such cells with an apostrophe (unless it's a plain number like -5). A value that already
+ * starts with an apostrophe gets one too, so the escape is always reversible.
+ */
+export function spreadsheetSafe(cell: string): string {
+  if (cell.startsWith("'")) return `'${cell}`;
+  if (FORMULA_START.test(cell) && !/^-?\d+(\.\d+)?$/.test(cell)) return `'${cell}`;
+  return cell;
+}
+
+/**
+ * Undo spreadsheetSafe when a downloaded file is imported again. Only the exporter's escapes are
+ * removed (an apostrophe followed by a formula character or another apostrophe); other text is kept.
+ */
+export function fromSpreadsheet(cell: string): string {
+  if (cell.startsWith("'") && (cell[1] === "'" || FORMULA_START.test(cell.slice(1)))) return cell.slice(1);
+  return cell;
+}
