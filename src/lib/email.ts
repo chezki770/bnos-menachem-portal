@@ -1,12 +1,15 @@
 /**
  * Transactional email through Resend (https://resend.com) when RESEND_API_KEY and EMAIL_FROM are set.
- * Without them (local development) the message is printed to the server log instead.
+ * Without them, development prints the message to the server log. Production never logs the body:
+ * messages carry one-time password links, and anyone who can read the logs could use them.
  */
 export async function sendEmail(msg: { to: string; subject: string; text: string }): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
   if (!key || !from) {
-    console.info(`[email:dev] to=${msg.to} subject="${msg.subject}"\n${msg.text}`);
+    if (process.env.NODE_ENV === 'production')
+      console.warn(`[email] not sent (RESEND_API_KEY / EMAIL_FROM not set): "${msg.subject}"`);
+    else console.info(`[email:dev] to=${msg.to} subject="${msg.subject}"\n${msg.text}`);
     return false;
   }
   try {

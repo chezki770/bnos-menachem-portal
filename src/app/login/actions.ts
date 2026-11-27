@@ -88,8 +88,12 @@ export async function setPassword(_prev: FormState, form: FormData): Promise<For
   const t = await consumeToken(parsed.data.token);
   if (!t) return { error: 'This link has expired or was already used. Ask the office for a new one.' };
   const hash = await hashPassword(parsed.data.password);
+  // Whole seconds, because session tokens record their issue time in seconds: the session started
+  // just below stays valid, every older one (on any device) is signed out.
+  const validFrom = new Date(Math.floor(Date.now() / 1000) * 1000).toISOString();
   const user = await employees.update(t.employeeId, {
     passwordHash: hash,
+    sessionsValidFrom: validFrom,
     updatedAt: new Date().toISOString(),
   });
   if (!user || !user.active) return { error: 'This account is not active.' };

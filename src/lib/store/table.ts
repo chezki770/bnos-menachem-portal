@@ -28,6 +28,14 @@ async function withLock<R>(file: string, fn: () => Promise<R>): Promise<R> {
   return run;
 }
 
+/**
+ * Run fn exclusively for a key (in this process). Used to serialise multi-table operations, e.g. all
+ * changes to one pay period, so a check and the write that depends on it can't interleave.
+ */
+export function withKeyLock<R>(key: string, fn: () => Promise<R>): Promise<R> {
+  return withLock(`key:${key}`, fn);
+}
+
 export class DataFileError extends Error {}
 
 type WithId = { id: string };

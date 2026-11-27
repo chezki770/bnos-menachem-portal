@@ -89,7 +89,7 @@ export default async function StaffHome() {
             {contract?.status === 'SIGNED'
               ? `PTO balance: ${data.pto.left} of ${data.pto.allowance} days.`
               : contract?.status === 'SENT'
-                ? 'Sign your contract to unlock pay and adjustment history.'
+                ? "Sign this year's contract to see this pay period's breakdown."
                 : 'Your contract has not been sent yet.'}
           </p>
           <Link

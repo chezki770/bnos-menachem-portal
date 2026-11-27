@@ -79,7 +79,7 @@ Run it nightly from cron and copy `backups/` off the server. **Keep `DATA_ENCRYP
 
 ### Email
 
-Set `RESEND_API_KEY` and `EMAIL_FROM` (a sender on a domain you verified in Resend). The portal sends invites, password resets, contracts, time-off requests and decisions, and time card notes. Without these settings, emails are printed to the server log, and the invite button shows the link so you can send it yourself.
+Set `RESEND_API_KEY` and `EMAIL_FROM` (a sender on a domain you verified in Resend). The portal sends invites, password resets, contracts, time-off requests and decisions, and time card notes. Without these settings no email is sent. In development the messages are printed to the server log; in production only a one-line "not sent" warning is logged (never the message, since it may contain a password link). The invite button always shows the link so the office can send it another way, but "Forgot password" won't work until email is set up.
 
 ## Code map
 

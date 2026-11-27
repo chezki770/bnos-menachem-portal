@@ -57,6 +57,7 @@ async function main() {
       emergencyPhone: null,
       createdAt: now,
       updatedAt: now,
+      sessionsValidFrom: null,
     });
     console.log(`Created admin ${name} <${lower}>.`);
   }

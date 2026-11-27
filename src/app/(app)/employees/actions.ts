@@ -40,6 +40,7 @@ export async function createEmployee(_prev: ActionState, fd: FormData): Promise<
       emergencyPhone: null,
       createdAt: ts,
       updatedAt: ts,
+      sessionsValidFrom: null,
     };
     rows.push(row);
     return row;
@@ -93,9 +94,14 @@ export async function sendInvite(_prev: ActionState, fd: FormData): Promise<Acti
 }
 
 /** Returns one sensitive field in plain text and records the read. Admins, or the employee themself. */
-export async function revealField(employeeId: string, field: SensitiveField): Promise<string | null> {
+const revealInput = z.object({ employeeId: z.string().min(1).max(100), field: z.enum(SENSITIVE_FIELDS) });
+
+export async function revealField(employeeIdArg: string, fieldArg: SensitiveField): Promise<string | null> {
   const user = await assertUser();
-  if (!SENSITIVE_FIELDS.includes(field)) return null;
+  // Server actions can be called directly with any arguments, so validate them like any other input.
+  const parsed = revealInput.safeParse({ employeeId: employeeIdArg, field: fieldArg });
+  if (!parsed.success) return null;
+  const { employeeId, field } = parsed.data;
   const emp = await employees.get(employeeId);
   if (!emp) return null;
   if (user.id !== emp.id && !(user.role === 'ADMIN' && canManageEmployee(user, emp))) return null;

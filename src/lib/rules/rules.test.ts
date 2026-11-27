@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateAbsence, schoolDays } from './absences';
+import { absenceUsageTotals, evaluateAbsence, schoolDays } from './absences';
 import { benefitRules, maternityPaidWeeks, ptoAllowanceDays } from './benefits';
 
 const emp = (periodsPerWeek: number, yearsAtSchool = 1, daysPerWeek = 5) => ({
@@ -116,5 +116,18 @@ describe('absences', () => {
     expect(schoolDays('2026-09-08', '2026-09-16')).toBe(7);
     expect(schoolDays('2026-09-12', '2026-09-13')).toBe(0);
     expect(schoolDays('2026-09-16', '2026-09-08')).toBe(-1);
+  });
+});
+
+describe('absence usage', () => {
+  it('adds up PTO days, and paid days of maternity leave only', () => {
+    expect(
+      absenceUsageTotals([
+        { type: 'SICK', ptoDays: 1, paidDays: 0 },
+        { type: 'PERSONAL', ptoDays: 0.5, paidDays: 0 },
+        { type: 'MATERNITY', ptoDays: 0, paidDays: 8 },
+        { type: 'SIMCHA', ptoDays: 1, paidDays: 3 },
+      ]),
+    ).toEqual({ ptoUsed: 2.5, maternityPaidUsed: 8 });
   });
 });

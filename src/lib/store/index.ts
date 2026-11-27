@@ -59,6 +59,8 @@ export const employees = new Table('employees', {
   emergencyPhone: col.secret(),
   createdAt: col.datetime(),
   updatedAt: col.datetime(),
+  // Sessions signed in before this time are refused (set when the password changes). Never exported.
+  sessionsValidFrom: { ...col.datetimeOpt(), internal: true },
 });
 
 export const contracts = new Table('contracts', {

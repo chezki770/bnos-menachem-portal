@@ -92,6 +92,32 @@ export function adjustmentsTotalCents(adjs: { kind: AdjustmentKind; cents: numbe
   return adjs.reduce((sum, a) => sum + (a.kind === 'DEDUCTION' ? -a.cents : a.cents), 0);
 }
 
+export type LineTotals = {
+  bonusCents: number;
+  reimbursementCents: number;
+  deductionCents: number;
+  adjustmentsCents: number;
+  totalCents: number;
+};
+
+/** A payroll line's adjustment breakdown and total before tax: gross − docked + adjustments. */
+export function payrollLineTotals(input: {
+  grossCents: number;
+  dockedCents: number;
+  adjustments: { kind: AdjustmentKind; cents: number }[];
+}): LineTotals {
+  const kind = (k: AdjustmentKind) =>
+    input.adjustments.filter((a) => a.kind === k).reduce((s, a) => s + a.cents, 0);
+  const adjustmentsCents = adjustmentsTotalCents(input.adjustments);
+  return {
+    bonusCents: kind('BONUS'),
+    reimbursementCents: kind('REIMBURSEMENT'),
+    deductionCents: kind('DEDUCTION'),
+    adjustmentsCents,
+    totalCents: input.grossCents - input.dockedCents + adjustmentsCents,
+  };
+}
+
 export type PayrollStatus =
   'READY' | 'BLOCKED_CONTRACT' | 'MISSING_DIRECT_DEPOSIT' | 'BLOCKED_TIME_CARD' | 'MISSING_PAY_RATE';
 

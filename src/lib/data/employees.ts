@@ -1,4 +1,5 @@
 import type { SessionUser } from '@/lib/auth/current-user';
+import { absenceUsageTotals } from '@/lib/rules/absences';
 import { benefitRules, maternityPaidWeeks, ptoAllowanceDays, type Employment } from '@/lib/rules/benefits';
 import { absences, contracts, employees, type Employee } from '@/lib/store';
 import { currentSchoolYear } from './years';
@@ -37,11 +38,7 @@ export async function currentContract(employeeId: string) {
 /** PTO and maternity usage for the school year, read from posted absences. */
 export async function absenceUsage(employeeId: string, schoolYearId: string) {
   const rows = await absences.where((a) => a.employeeId === employeeId && a.schoolYearId === schoolYearId);
-  return {
-    ptoUsed: rows.reduce((s, a) => s + a.ptoDays, 0),
-    maternityPaidUsed: rows.filter((a) => a.type === 'MATERNITY').reduce((s, a) => s + a.paidDays, 0),
-    rows,
-  };
+  return { ...absenceUsageTotals(rows), rows };
 }
 
 /** One employee with handbook-derived benefits and PTO usage for the current school year. */

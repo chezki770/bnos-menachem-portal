@@ -12,6 +12,8 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   if (!token) return null;
   const emp = await employees.get(token.id);
   if (!emp || !emp.active) return null;
+  // A password change ends every session signed in before it.
+  if (emp.sessionsValidFrom && token.issuedAt * 1000 < Date.parse(emp.sessionsValidFrom)) return null;
   return toSessionUser(emp);
 }
 

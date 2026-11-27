@@ -1,8 +1,8 @@
 import {
-  adjustmentsTotalCents,
   dockedCents,
   dockedDaysInRange,
   hourlyGrossCents,
+  payrollLineTotals,
   payrollStatus,
   round2,
   salariedPeriodGrossCents,
@@ -17,10 +17,12 @@ import {
   payPeriods,
   payrollLines,
   schoolYears,
+  timeCards,
   type Adjustment,
   type Employee,
   type PayPeriod,
 } from '@/lib/store';
+import { withKeyLock } from '@/lib/store/table';
 import { documentsByEmployee } from './documents';
 import { isHourly } from './employees';
 import { timeCardSummary } from './time';
@@ -45,8 +47,11 @@ export type RunLine = {
   deductionCents: number;
 };
 
-const sumKind = (adjs: Adjustment[], kind: Adjustment['kind']) =>
-  adjs.filter((a) => a.kind === kind).reduce((s, a) => s + a.cents, 0);
+
+/** Serialise everything that changes a pay period's inputs or status (see payroll actions). */
+export function withPeriodLock<R>(periodId: string, fn: () => Promise<R>): Promise<R> {
+  return withKeyLock(`pay-period:${periodId}`, fn);
+}
 
 export async function periodsForYear(schoolYearId: string): Promise<PayPeriod[]> {
   return (await payPeriods.where((p) => p.schoolYearId === schoolYearId)).sort((a, b) =>
@@ -55,7 +60,10 @@ export async function periodsForYear(schoolYearId: string): Promise<PayPeriod[]>
 }
 
 /** Builds the run for a pay period from current data (draft), or from the stored snapshot once submitted. */
-export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
+export async function buildRun(
+  period: PayPeriod,
+  opts: { employeeIds?: string[] } = {},
+): Promise<RunLine[]> {
   const year = await schoolYears.get(period.schoolYearId);
   const periodCount = (await periodsForYear(period.schoolYearId)).length;
   const docs = await documentsByEmployee();
@@ -67,7 +75,11 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
   );
   const snapshot =
     period.status === 'DRAFT' ? null : await payrollLines.where((l) => l.payPeriodId === period.id);
+  // Submitted runs read the frozen lines; only drafts need the (costlier) time card calculation.
+  const periodCards = snapshot ? await timeCards.where((c) => c.payPeriodId === period.id) : [];
+  const only = opts.employeeIds ? new Set(opts.employeeIds) : null;
   const emps = (await employees.all())
+    .filter((e) => !only || only.has(e.id))
     .filter((e) => e.active || snapshot?.some((l) => l.employeeId === e.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -76,19 +88,14 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
     const adjs = allAdj.filter((a) => a.employeeId === emp.id);
     const saved = snapshot?.find((l) => l.employeeId === emp.id);
     const hourly = isHourly(emp);
-    const tc = hourly ? await timeCardSummary(emp.id, period) : null;
-    const timeCardStatus = hourly ? tc!.status : 'n/a';
-    const signed = yearContracts.some((c) => c.employeeId === emp.id && c.status === 'SIGNED');
-    const status = payrollStatus({
-      contractSigned: signed,
-      hasDirectDeposit: docs.get(emp.id)?.has('DIRECT_DEPOSIT') ?? false,
-      hourly,
-      timeCardApproved: !!tc?.approvalValid,
-      hasPayRate: hourly ? emp.hourlyRateCents != null : emp.annualSalaryCents != null,
-    });
 
     if (snapshot) {
       if (!saved) continue; // was skipped in the submitted run
+      // Only for older snapshots saved before the breakdown columns existed.
+      const live = payrollLineTotals({ grossCents: 0, dockedCents: 0, adjustments: adjs });
+      const timeCardStatus = hourly
+        ? (periodCards.find((c) => c.employeeId === emp.id)?.status ?? 'MISSING')
+        : 'n/a';
       lines.push({
         employee: emp,
         basis: saved.basis,
@@ -104,12 +111,23 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
         adjustments: adjs,
         // Older snapshots without these columns fall back to current values.
         hourlyRateCents: saved.basis === 'HOURLY' ? (saved.hourlyRateCents ?? emp.hourlyRateCents) : null,
-        bonusCents: saved.bonusCents ?? sumKind(adjs, 'BONUS'),
-        reimbursementCents: saved.reimbursementCents ?? sumKind(adjs, 'REIMBURSEMENT'),
-        deductionCents: saved.deductionCents ?? sumKind(adjs, 'DEDUCTION'),
+        bonusCents: saved.bonusCents ?? live.bonusCents,
+        reimbursementCents: saved.reimbursementCents ?? live.reimbursementCents,
+        deductionCents: saved.deductionCents ?? live.deductionCents,
       });
       continue;
     }
+
+    const tc = hourly ? await timeCardSummary(emp.id, period) : null;
+    const timeCardStatus = hourly ? tc!.status : 'n/a';
+    const signed = yearContracts.some((c) => c.employeeId === emp.id && c.status === 'SIGNED');
+    const status = payrollStatus({
+      contractSigned: signed,
+      hasDirectDeposit: docs.get(emp.id)?.has('DIRECT_DEPOSIT') ?? false,
+      hourly,
+      timeCardApproved: !!tc?.approvalValid,
+      hasPayRate: hourly ? emp.hourlyRateCents != null : emp.annualSalaryCents != null,
+    });
 
     const docked = round2(
       periodAbsences
@@ -128,7 +146,7 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
         docked,
       );
     }
-    const adjCents = adjustmentsTotalCents(adjs);
+    const totals = payrollLineTotals({ grossCents: gross, dockedCents: dockCents, adjustments: adjs });
     lines.push({
       employee: emp,
       basis: hourly ? 'HOURLY' : 'SALARIED',
@@ -137,15 +155,15 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
       dockedDays: hourly ? 0 : docked,
       grossCents: gross,
       dockedCents: dockCents,
-      adjustmentsCents: adjCents,
-      totalCents: gross - dockCents + adjCents,
+      adjustmentsCents: totals.adjustmentsCents,
+      totalCents: totals.totalCents,
       status,
       timeCardStatus,
       adjustments: adjs,
       hourlyRateCents: hourly ? emp.hourlyRateCents : null,
-      bonusCents: sumKind(adjs, 'BONUS'),
-      reimbursementCents: sumKind(adjs, 'REIMBURSEMENT'),
-      deductionCents: sumKind(adjs, 'DEDUCTION'),
+      bonusCents: totals.bonusCents,
+      reimbursementCents: totals.reimbursementCents,
+      deductionCents: totals.deductionCents,
     });
   }
   return lines;

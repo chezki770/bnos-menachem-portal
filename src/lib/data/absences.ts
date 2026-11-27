@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { audit } from '@/lib/audit';
 import {
+  absenceUsageTotals,
   evaluateAbsence,
   schoolDays,
   SIMCHA_OCCASIONS,
@@ -80,10 +81,7 @@ export async function postAbsence(
     if (mine.some((a) => a.startsOn <= input.endsOn && input.startsOn <= a.endsOn))
       return { ok: false, error: 'An absence is already posted for some of those dates' };
     const thisYear = mine.filter((a) => a.schoolYearId === year.id);
-    const result = evaluateWith(employee, input, {
-      ptoUsed: thisYear.reduce((s, a) => s + a.ptoDays, 0),
-      maternityPaidUsed: thisYear.filter((a) => a.type === 'MATERNITY').reduce((s, a) => s + a.paidDays, 0),
-    });
+    const result = evaluateWith(employee, input, absenceUsageTotals(thisYear));
     if (!result.ok) return { ok: false, error: result.error };
     const id = crypto.randomUUID();
     rows.push({

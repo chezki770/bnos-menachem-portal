@@ -163,6 +163,7 @@ async function main() {
       emergencyPhone: null,
       createdAt: now(),
       updatedAt: now(),
+      sessionsValidFrom: null,
     });
     ids[p.name] = e.id;
     await db.contracts.insert({

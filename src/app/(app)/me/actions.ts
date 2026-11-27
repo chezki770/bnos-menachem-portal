@@ -7,6 +7,7 @@ import { audit } from '@/lib/audit';
 import { assertUser } from '@/lib/auth/current-user';
 import { absenceInput } from '@/lib/data/absences';
 import { isHourly } from '@/lib/data/employees';
+import { withPeriodLock } from '@/lib/data/payroll';
 import { openEntry, timeCardSummary } from '@/lib/data/time';
 import { appUrl, sendEmail } from '@/lib/email';
 import { selfInfoForm } from '@/lib/forms/employee';
@@ -125,25 +126,35 @@ export async function clockIn() {
   const user = await assertUser();
   const emp = await employees.get(user.id);
   if (!emp || !isHourly(emp)) back('/me/schedule', 'The time clock is for hourly staff', 'error');
-  if (await openEntry(user.id)) back('/me/schedule', "You're already clocked in", 'error');
-  await timeEntries.insert({
-    employeeId: user.id,
-    clockIn: new Date().toISOString(),
-    clockOut: null,
-    source: 'CLOCK',
-    note: null,
-    editedById: null,
+  // Check and insert under the time_entries lock, so two taps (or two devices) can't open two punches.
+  const id = await timeEntries.mutate((rows) => {
+    if (rows.some((e) => e.employeeId === user.id && !e.clockOut)) return null;
+    const newId = crypto.randomUUID();
+    rows.push({
+      id: newId,
+      employeeId: user.id,
+      clockIn: new Date().toISOString(),
+      clockOut: null,
+      source: 'CLOCK',
+      note: null,
+      editedById: null,
+    });
+    return newId;
   });
-  await audit(user.id, 'CLOCK_IN', 'TimeEntry', null);
+  if (!id) back('/me/schedule', "You're already clocked in", 'error');
+  await audit(user.id, 'CLOCK_IN', 'TimeEntry', id);
   back('/me/schedule', 'Clocked in');
 }
 
 export async function clockOut() {
   const user = await assertUser();
-  const open = await openEntry(user.id);
-  if (!open) back('/me/schedule', "You're not clocked in", 'error');
-  await timeEntries.update(open.id, { clockOut: new Date().toISOString() });
-  await audit(user.id, 'CLOCK_OUT', 'TimeEntry', open.id);
+  const closed = await timeEntries.mutate((rows) => {
+    const open = rows.find((e) => e.employeeId === user.id && !e.clockOut);
+    if (open) open.clockOut = new Date().toISOString();
+    return open?.id ?? null;
+  });
+  if (!closed) back('/me/schedule', "You're not clocked in", 'error');
+  await audit(user.id, 'CLOCK_OUT', 'TimeEntry', closed);
   back('/me/schedule', 'Clocked out');
 }
 
@@ -151,40 +162,43 @@ export async function clockOut() {
 export async function submitTimeCard(fd: FormData) {
   const user = await assertUser();
   const periodId = z.string().min(1).parse(fd.get('payPeriodId'));
-  const period = await payPeriods.get(periodId);
-  if (!period || period.status !== 'DRAFT') back('/me/schedule', 'That pay period is closed', 'error');
-  if (await openEntry(user.id)) back('/me/schedule', 'Clock out before submitting your time card', 'error');
-  // An approved card can be re-submitted only if its hours changed since approval.
-  const current = await timeCardSummary(user.id, period);
-  const res = await timeCards.mutate((rows) => {
-    const card = rows.find((c) => c.employeeId === user.id && c.payPeriodId === periodId);
-    if (card?.status === 'APPROVED' && current.approvalValid) return 'approved';
-    const now = new Date().toISOString();
-    if (card)
-      Object.assign(card, {
-        status: 'SUBMITTED',
-        submittedAt: now,
-        decidedById: null,
-        decidedAt: null,
-        approvedRegularHours: null,
-        approvedOvertimeHours: null,
-      });
-    else
-      rows.push({
-        id: crypto.randomUUID(),
-        employeeId: user.id,
-        payPeriodId: periodId,
-        status: 'SUBMITTED',
-        submittedAt: now,
-        decidedById: null,
-        decidedAt: null,
-        note: null,
-        approvedRegularHours: null,
-        approvedOvertimeHours: null,
-      });
-    return 'ok';
+  // Same per-period lock as the office's payroll actions, so a submit can't race "Submit run".
+  return withPeriodLock(periodId, async () => {
+    const period = await payPeriods.get(periodId);
+    if (!period || period.status !== 'DRAFT') back('/me/schedule', 'That pay period is closed', 'error');
+    if (await openEntry(user.id)) back('/me/schedule', 'Clock out before submitting your time card', 'error');
+    // An approved card can be re-submitted only if its hours changed since approval.
+    const current = await timeCardSummary(user.id, period);
+    const res = await timeCards.mutate((rows) => {
+      const card = rows.find((c) => c.employeeId === user.id && c.payPeriodId === periodId);
+      if (card?.status === 'APPROVED' && current.approvalValid) return 'approved';
+      const now = new Date().toISOString();
+      if (card)
+        Object.assign(card, {
+          status: 'SUBMITTED',
+          submittedAt: now,
+          decidedById: null,
+          decidedAt: null,
+          approvedRegularHours: null,
+          approvedOvertimeHours: null,
+        });
+      else
+        rows.push({
+          id: crypto.randomUUID(),
+          employeeId: user.id,
+          payPeriodId: periodId,
+          status: 'SUBMITTED',
+          submittedAt: now,
+          decidedById: null,
+          decidedAt: null,
+          note: null,
+          approvedRegularHours: null,
+          approvedOvertimeHours: null,
+        });
+      return 'ok';
+    });
+    if (res === 'approved') back('/me/schedule', 'That time card is already approved', 'error');
+    await audit(user.id, 'TIME_CARD_SUBMITTED', 'TimeCard', periodId);
+    back(`/me/schedule?period=${periodId}`, 'Time card submitted for approval');
   });
-  if (res === 'approved') back('/me/schedule', 'That time card is already approved', 'error');
-  await audit(user.id, 'TIME_CARD_SUBMITTED', 'TimeCard', periodId);
-  back(`/me/schedule?period=${periodId}`, 'Time card submitted for approval');
 }

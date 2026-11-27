@@ -6,6 +6,7 @@ export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 /** What the signed cookie carries. Role and status are re-checked against employees.csv on every request. */
 export type SessionToken = { id: string; role: Role; name: string };
+export type VerifiedSession = SessionToken & { issuedAt: number };
 
 function key(): Uint8Array {
   const secret = process.env.AUTH_SECRET;
@@ -28,13 +29,14 @@ export async function signSession(
 }
 
 /** Returns the session, or null for a missing, tampered or expired token. */
-export async function verifySession(token: string | undefined): Promise<SessionToken | null> {
+export async function verifySession(token: string | undefined): Promise<VerifiedSession | null> {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, key(), { algorithms: ['HS256'] });
     const role = payload.role as Role;
     if (!payload.sub || !ROLES.includes(role) || typeof payload.name !== 'string') return null;
-    return { id: payload.sub, role, name: payload.name };
+    if (typeof payload.iat !== 'number') return null;
+    return { id: payload.sub, role, name: payload.name, issuedAt: payload.iat };
   } catch {
     return null;
   }

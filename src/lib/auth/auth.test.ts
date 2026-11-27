@@ -10,7 +10,10 @@ describe('session tokens', () => {
   const user = { id: 'abc', role: 'STAFF' as const, name: 'Taylor Brooks' };
 
   it('round-trips a signed session', async () => {
-    expect(await verifySession(await signSession(user))).toEqual(user);
+    const before = Math.floor(Date.now() / 1000);
+    const s = await verifySession(await signSession(user));
+    expect(s).toMatchObject(user);
+    expect(s!.issuedAt).toBeGreaterThanOrEqual(before);
   });
   it('rejects missing, garbage and tampered tokens', async () => {
     expect(await verifySession(undefined)).toBeNull();

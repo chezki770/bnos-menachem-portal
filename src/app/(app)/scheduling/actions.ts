@@ -41,11 +41,16 @@ function canEditDept(user: SessionUser, dept: string) {
 
 /** Why this employee can't take the shift, or null. */
 async function conflict(
+  user: SessionUser,
   s: Pick<Shift, 'id' | 'date' | 'startTime' | 'endTime' | 'employeeId'>,
 ): Promise<string | null> {
   if (!s.employeeId) return null;
   const emp = await employees.get(s.employeeId);
   if (!emp || !emp.active) return 'That employee is not active';
+  // Department heads schedule only their own department's staff (the UI lists only them, and the
+  // server enforces it for direct posts too).
+  if (user.role !== 'ADMIN' && emp.department !== user.department)
+    return `${emp.name} isn't in your department`;
   const overlap = await shifts.find(
     (x) =>
       x.id !== s.id &&
@@ -87,7 +92,7 @@ export async function saveShift(fd: FormData) {
     const existing = await shifts.get(id);
     if (!existing || !canEditDept(user, existing.department)) back(returnTo, 'Shift not found', 'error');
   }
-  const why = await conflict({ id: id ?? '', ...data });
+  const why = await conflict(user, { id: id ?? '', ...data });
   if (why) back(returnTo, why, 'error');
   const before = id ? await shifts.get(id) : undefined;
   const saved = id ? await shifts.update(id, data) : await shifts.insert({ ...data, createdById: user.id });
@@ -112,7 +117,7 @@ export async function fillShift(fd: FormData) {
   if (!parsed.success) back(returnTo, firstError(parsed.error), 'error');
   const s = await shifts.get(parsed.data.id);
   if (!s || !canEditDept(user, s.department)) back(returnTo, 'Shift not found', 'error');
-  const why = await conflict({ ...s, employeeId: parsed.data.employeeId });
+  const why = await conflict(user, { ...s, employeeId: parsed.data.employeeId });
   if (why) back(returnTo, why, 'error');
   const saved = await shifts.update(s.id, { employeeId: parsed.data.employeeId, reason: null });
   await audit(user.id, 'SHIFT_FILLED', 'Shift', s.id);
@@ -189,7 +194,7 @@ export async function applyTemplate(fd: FormData) {
         s.employeeId === t.employeeId,
     );
     if (dup) continue;
-    const why = await conflict(draft);
+    const why = await conflict(user, draft);
     if (why) opened++;
     await shifts.insert({
       date: draft.date,

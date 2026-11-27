@@ -4,6 +4,7 @@ import {
   dockedCents,
   dockedDaysInRange,
   hourlyGrossCents,
+  payrollLineTotals,
   payrollStatus,
   salariedPeriodGrossCents,
   semiMonthlyPeriods,
@@ -125,5 +126,31 @@ describe('docking across pay periods', () => {
   it('is zero outside the absence or when nothing was docked', () => {
     expect(dockedDaysInRange(unpaid, '2026-10-01', '2026-10-15')).toBe(0);
     expect(dockedDaysInRange({ ...unpaid, dockedDays: 0 }, '2026-09-01', '2026-09-30')).toBe(0);
+  });
+});
+
+describe('line totals', () => {
+  it('total = gross − docked + adjustments, with the breakdown by kind', () => {
+    expect(
+      payrollLineTotals({
+        grossCents: 200_000,
+        dockedCents: 10_000,
+        adjustments: [
+          { kind: 'BONUS', cents: 5_000 },
+          { kind: 'BONUS', cents: 1_000 },
+          { kind: 'REIMBURSEMENT', cents: 2_500 },
+          { kind: 'DEDUCTION', cents: 3_000 },
+        ],
+      }),
+    ).toEqual({
+      bonusCents: 6_000,
+      reimbursementCents: 2_500,
+      deductionCents: 3_000,
+      adjustmentsCents: 5_500,
+      totalCents: 195_500,
+    });
+  });
+  it('no adjustments', () => {
+    expect(payrollLineTotals({ grossCents: 1000, dockedCents: 0, adjustments: [] }).totalCents).toBe(1000);
   });
 });
