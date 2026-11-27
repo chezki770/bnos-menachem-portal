@@ -12,6 +12,57 @@ export function localDate(iso: string): string {
   return todayIso(new Date(iso));
 }
 
+/** How far ahead of UTC a time zone is at a given instant, in ms (negative west of Greenwich). */
+function tzOffsetMs(instant: number, tz: string): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(new Date(instant));
+  const n = (t: string) => Number(parts.find((p) => p.type === t)!.value);
+  const asUtc = Date.UTC(n('year'), n('month') - 1, n('day'), n('hour'), n('minute'), n('second'));
+  return asUtc - Math.floor(instant / 1000) * 1000;
+}
+
+/** A wall-clock date and time in the school's time zone ("2026-09-08", "08:00") → UTC ISO timestamp. */
+export function zonedToUtcIso(date: string, time: string, tz = SCHOOL_TZ): string {
+  const guess = Date.parse(`${date}T${time}:00Z`);
+  let t = guess - tzOffsetMs(guess, tz);
+  t = guess - tzOffsetMs(t, tz); // second pass settles daylight-saving changes
+  return new Date(t).toISOString();
+}
+
+/**
+ * Hours of a punch on each school-local calendar day. A Sunday 23:00 – Monday 01:00 punch is one hour
+ * on each day, so it lands in the right overtime week and pay period.
+ */
+export function hoursByLocalDay(
+  clockInIso: string,
+  clockOutIso: string,
+  tz = SCHOOL_TZ,
+): { date: string; hours: number }[] {
+  const end = Date.parse(clockOutIso);
+  let cursor = Date.parse(clockInIso);
+  const out: { date: string; hours: number }[] = [];
+  while (cursor < end) {
+    const date = todayIsoIn(new Date(cursor), tz);
+    const nextMidnight = Date.parse(zonedToUtcIso(addDays(date, 1), '00:00', tz));
+    const stop = Math.min(end, nextMidnight > cursor ? nextMidnight : end);
+    out.push({ date, hours: (stop - cursor) / 3600_000 });
+    cursor = stop;
+  }
+  return out;
+}
+
+function todayIsoIn(now: Date, tz: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(now);
+}
+
 /** ISO timestamp n days ago. */
 export function daysAgoIso(n: number): string {
   return new Date(Date.now() - n * 864e5).toISOString();

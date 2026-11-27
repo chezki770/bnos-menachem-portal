@@ -6,7 +6,7 @@ import { employeeMap } from '@/lib/data/employees';
 import { buildRun, periodsForYear } from '@/lib/data/payroll';
 import { REPORTS, type ReportName } from '@/lib/data/reports';
 import { currentSchoolYear } from '@/lib/data/years';
-import { fmtDate, shortName, todayIso } from '@/lib/format';
+import { fmtDate, money, shortName, todayIso } from '@/lib/format';
 import { reportRuns } from '@/lib/store';
 
 export default async function ReportsPage() {
@@ -38,15 +38,23 @@ export default async function ReportsPage() {
           {trend.length === 0 ? (
             <p className="muted">No pay periods yet.</p>
           ) : (
-            <div className="chart-row" role="img" aria-label="Payroll totals by pay period">
+            <div className="chart-row" role="list" aria-label="Payroll totals by pay period">
               {trend.map(({ p, total }) => (
-                <div className="chart-bar" key={p.id}>
-                  <div className="val">{k(total)}</div>
+                <div
+                  className="chart-bar"
+                  key={p.id}
+                  role="listitem"
+                  aria-label={`${fmtDate(p.startsOn)}${p.status === 'DRAFT' ? ' (draft)' : ''}: ${money(total)} before tax`}
+                >
+                  <div className="val" aria-hidden="true">
+                    {k(total)}
+                  </div>
                   <div
+                    aria-hidden="true"
                     className={`fill${p.status === 'DRAFT' ? ' flag' : ''}`}
                     style={{ height: `${Math.max(2, (total / max) * 100)}%` }}
                   />
-                  <div className="lbl">
+                  <div className="lbl" aria-hidden="true">
                     {fmtDate(p.startsOn, { year: false })}
                     {p.status === 'DRAFT' ? ' (draft)' : ''}
                   </div>

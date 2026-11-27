@@ -44,6 +44,10 @@ export const col = {
     ) as unknown as z.ZodType<number>,
     format: str,
   }),
+  numOpt: (): Col<number | null> => ({
+    schema: opt(z.coerce.number({ error: 'must be a number' }).finite({ error: 'must be a number' })),
+    format: str,
+  }),
   bool: (): Col<boolean> => ({
     schema: z.preprocess(
       (v) => (typeof v === 'string' ? ['true', '1', 'yes', 'y'].includes(v.trim().toLowerCase()) : v),

@@ -282,6 +282,8 @@ async function main() {
       decidedById: null,
       decidedAt: null,
       note: null,
+      approvedRegularHours: null,
+      approvedOvertimeHours: null,
     });
 
   // Absences, evaluated by the handbook rules like the portal does.
@@ -351,6 +353,10 @@ async function main() {
         dockedCents: l.dockedCents,
         adjustmentsCents: l.adjustmentsCents,
         totalCents: l.totalCents,
+        hourlyRateCents: l.hourlyRateCents,
+        bonusCents: l.bonusCents,
+        reimbursementCents: l.reimbursementCents,
+        deductionCents: l.deductionCents,
       });
     await db.payPeriods.update(p.id, {
       status: 'PAID',

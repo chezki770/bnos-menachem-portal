@@ -67,6 +67,25 @@ export function dockedCents(annualSalaryCents: number, yearWorkdays: number, doc
   return Math.round((annualSalaryCents / yearWorkdays) * dockedDays);
 }
 
+/**
+ * The part of an absence's docked days that falls in a date range (a pay period). An absence that
+ * spans two periods is docked in each in proportion to its school days there; the stored total
+ * (including any double-docking) is what gets split, so the periods always add up to it.
+ */
+export function dockedDaysInRange(
+  a: { startsOn: string; endsOn: string; schoolDays: number; dockedDays: number },
+  fromIso: string,
+  toIso: string,
+): number {
+  if (a.dockedDays <= 0) return 0;
+  const start = a.startsOn > fromIso ? a.startsOn : fromIso;
+  const end = a.endsOn < toIso ? a.endsOn : toIso;
+  if (end < start) return 0;
+  const total = a.schoolDays > 0 ? a.schoolDays : schoolDays(a.startsOn, a.endsOn);
+  if (total <= 0) return 0;
+  return round2((a.dockedDays * Math.max(0, schoolDays(start, end))) / total);
+}
+
 export type AdjustmentKind = 'BONUS' | 'DEDUCTION' | 'REIMBURSEMENT';
 
 export function adjustmentsTotalCents(adjs: { kind: AdjustmentKind; cents: number }[]): number {

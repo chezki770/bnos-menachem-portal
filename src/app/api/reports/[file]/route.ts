@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ file: s
   const user = await getSessionUser();
   if (!user || user.role !== 'ADMIN') return new NextResponse('Admins only', { status: 403 });
   const name = (await params).file.replace(/\.csv$/, '') as ReportName;
-  if (!(name in REPORTS)) return new NextResponse('Unknown report', { status: 404 });
+  if (!Object.hasOwn(REPORTS, name)) return new NextResponse('Unknown report', { status: 404 });
   const r = await buildReport(name);
   await reportRuns.append({
     report: name,

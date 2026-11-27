@@ -23,8 +23,32 @@ export default async function MySchedulePage({
   const mine = await shiftsBetween(days[0], days[4], (s) => s.employeeId === user.id);
   const hourly = isHourly(emp);
   const today = todayIso();
-  const period = hourly ? await payPeriods.find((p) => p.startsOn <= today && today <= p.endsOn) : undefined;
+  // Time cards: today's period by default, but every still-open (draft) period stays reachable, so a
+  // card returned for changes after the period ended can still be fixed and re-submitted.
+  const started = hourly
+    ? (await payPeriods.where((p) => p.startsOn <= today)).sort((a, b) =>
+        b.startsOn.localeCompare(a.startsOn),
+      )
+    : [];
+  const current = started.find((p) => p.endsOn >= today) ?? started[0];
+  const choices = [
+    ...new Map(
+      [...started.filter((p) => p.status === 'DRAFT'), ...started.slice(0, 6)].map((p) => [p.id, p]),
+    ).values(),
+  ].sort((a, b) => b.startsOn.localeCompare(a.startsOn));
+  const period = choices.find((p) => p.id === sp.period) ?? current;
   const tc = period ? await timeCardSummary(user.id, period) : null;
+  const needsAttention: { id: string; label: string; status: string }[] = [];
+  for (const p of choices.filter((x) => x.status === 'DRAFT' && x.id !== period?.id && x.endsOn < today)) {
+    const s = await timeCardSummary(user.id, p);
+    if (['NEEDS_CHANGES', 'CHANGED'].includes(s.status) || (s.status === 'MISSING' && s.total > 0))
+      needsAttention.push({ id: p.id, label: fmtRange(p.startsOn, p.endsOn), status: s.status });
+  }
+  const statusText: Record<string, string> = {
+    NEEDS_CHANGES: 'the office asked for changes',
+    CHANGED: 'hours changed after approval — re-submit',
+    MISSING: 'not submitted yet',
+  };
   const open = hourly ? await openEntry(user.id) : undefined;
 
   return (
@@ -87,11 +111,50 @@ export default async function MySchedulePage({
           })}
         </div>
       </div>
+      {needsAttention.length > 0 && (
+        <div className="alert alert-warn">
+          Earlier time cards need you:{' '}
+          {needsAttention.map((n, i) => (
+            <span key={n.id}>
+              {i > 0 && '; '}
+              <Link className="link" href={`/me/schedule?period=${n.id}`}>
+                {n.label}
+              </Link>{' '}
+              ({statusText[n.status]})
+            </span>
+          ))}
+        </div>
+      )}
       {hourly && period && tc && (
         <div className="panel">
           <div className="panel-head">
             <h3>Time card · {fmtRange(period.startsOn, period.endsOn)}</h3>
-            <TimeCardBadge status={tc.card?.status ?? 'MISSING'} />
+            <div className="hstack">
+              {choices.length > 1 && (
+                <form className="hstack">
+                  {sp.week && <input type="hidden" name="week" value={sp.week} />}
+                  <select
+                    className="pay-select"
+                    name="period"
+                    defaultValue={period.id}
+                    aria-label="Pay period"
+                  >
+                    {choices.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {fmtRange(p.startsOn, p.endsOn)}
+                        {p.id === current?.id
+                          ? ' (current)'
+                          : p.status !== 'DRAFT'
+                            ? ` · ${p.status.toLowerCase()}`
+                            : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <button className="btn btn-secondary btn-sm">View</button>
+                </form>
+              )}
+              <TimeCardBadge status={tc.status} />
+            </div>
           </div>
           <div className="panel-body">
             <div className="pay-card-summary">
@@ -132,7 +195,7 @@ export default async function MySchedulePage({
               Overtime is hours over 40 per Monday–Sunday week, paid at 1.5×. If a punch is wrong, tell the
               office before submitting.
             </p>
-            {tc.card?.status !== 'APPROVED' && period.status === 'DRAFT' && (
+            {!tc.approvalValid && period.status === 'DRAFT' && (
               <form action={submitTimeCard}>
                 <input type="hidden" name="payPeriodId" value={period.id} />
                 <SubmitButton pendingText="Submitting…">

@@ -1,8 +1,10 @@
 import {
   adjustmentsTotalCents,
   dockedCents,
+  dockedDaysInRange,
   hourlyGrossCents,
   payrollStatus,
+  round2,
   salariedPeriodGrossCents,
   workdaysInYear,
   type PayrollStatus,
@@ -34,9 +36,17 @@ export type RunLine = {
   adjustmentsCents: number;
   totalCents: number;
   status: PayrollStatus;
-  timeCardStatus: string; // MISSING | SUBMITTED | APPROVED | NEEDS_CHANGES | n/a
+  timeCardStatus: string; // MISSING | SUBMITTED | APPROVED | NEEDS_CHANGES | CHANGED | n/a
+  /** Live adjustment rows (for listing). Exports use the amounts below, which are frozen once submitted. */
   adjustments: Adjustment[];
+  hourlyRateCents: number | null;
+  bonusCents: number;
+  reimbursementCents: number;
+  deductionCents: number;
 };
+
+const sumKind = (adjs: Adjustment[], kind: Adjustment['kind']) =>
+  adjs.filter((a) => a.kind === kind).reduce((s, a) => s + a.cents, 0);
 
 export async function periodsForYear(schoolYearId: string): Promise<PayPeriod[]> {
   return (await payPeriods.where((p) => p.schoolYearId === schoolYearId)).sort((a, b) =>
@@ -51,8 +61,9 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
   const docs = await documentsByEmployee();
   const allAdj = await adjustments.where((a) => a.payPeriodId === period.id);
   const yearContracts = await contracts.where((c) => c.schoolYearId === period.schoolYearId);
+  // Absences that overlap the period, including ones that started in an earlier period.
   const periodAbsences = await absences.where(
-    (a) => a.startsOn >= period.startsOn && a.startsOn <= period.endsOn,
+    (a) => a.startsOn <= period.endsOn && a.endsOn >= period.startsOn,
   );
   const snapshot =
     period.status === 'DRAFT' ? null : await payrollLines.where((l) => l.payPeriodId === period.id);
@@ -66,13 +77,13 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
     const saved = snapshot?.find((l) => l.employeeId === emp.id);
     const hourly = isHourly(emp);
     const tc = hourly ? await timeCardSummary(emp.id, period) : null;
-    const timeCardStatus = hourly ? (tc?.card?.status ?? 'MISSING') : 'n/a';
+    const timeCardStatus = hourly ? tc!.status : 'n/a';
     const signed = yearContracts.some((c) => c.employeeId === emp.id && c.status === 'SIGNED');
     const status = payrollStatus({
       contractSigned: signed,
       hasDirectDeposit: docs.get(emp.id)?.has('DIRECT_DEPOSIT') ?? false,
       hourly,
-      timeCardApproved: timeCardStatus === 'APPROVED',
+      timeCardApproved: !!tc?.approvalValid,
       hasPayRate: hourly ? emp.hourlyRateCents != null : emp.annualSalaryCents != null,
     });
 
@@ -91,13 +102,20 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
         status: 'READY',
         timeCardStatus,
         adjustments: adjs,
+        // Older snapshots without these columns fall back to current values.
+        hourlyRateCents: saved.basis === 'HOURLY' ? (saved.hourlyRateCents ?? emp.hourlyRateCents) : null,
+        bonusCents: saved.bonusCents ?? sumKind(adjs, 'BONUS'),
+        reimbursementCents: saved.reimbursementCents ?? sumKind(adjs, 'REIMBURSEMENT'),
+        deductionCents: saved.deductionCents ?? sumKind(adjs, 'DEDUCTION'),
       });
       continue;
     }
 
-    const docked = periodAbsences
-      .filter((a) => a.employeeId === emp.id)
-      .reduce((s, a) => s + a.dockedDays, 0);
+    const docked = round2(
+      periodAbsences
+        .filter((a) => a.employeeId === emp.id)
+        .reduce((s, a) => s + dockedDaysInRange(a, period.startsOn, period.endsOn), 0),
+    );
     let gross = 0;
     let dockCents = 0;
     if (hourly) {
@@ -124,6 +142,10 @@ export async function buildRun(period: PayPeriod): Promise<RunLine[]> {
       status,
       timeCardStatus,
       adjustments: adjs,
+      hourlyRateCents: hourly ? emp.hourlyRateCents : null,
+      bonusCents: sumKind(adjs, 'BONUS'),
+      reimbursementCents: sumKind(adjs, 'REIMBURSEMENT'),
+      deductionCents: sumKind(adjs, 'DEDUCTION'),
     });
   }
   return lines;
@@ -152,8 +174,6 @@ export function providerExport(period: PayPeriod, lines: RunLine[]): string[][] 
     'total_before_tax',
   ];
   const d = (c: number) => (c / 100).toFixed(2);
-  const sum = (l: RunLine, k: string) =>
-    l.adjustments.filter((a) => a.kind === k).reduce((s, a) => s + a.cents, 0);
   return [
     header,
     ...lines
@@ -167,15 +187,15 @@ export function providerExport(period: PayPeriod, lines: RunLine[]): string[][] 
         period.endsOn,
         period.payDate,
         l.basis,
-        l.basis === 'HOURLY' ? d(l.employee.hourlyRateCents ?? 0) : '',
+        l.basis === 'HOURLY' ? d(l.hourlyRateCents ?? 0) : '',
         String(l.regularHours),
         String(l.overtimeHours),
         d(l.grossCents),
         String(l.dockedDays),
         d(l.dockedCents),
-        d(sum(l, 'BONUS')),
-        d(sum(l, 'REIMBURSEMENT')),
-        d(sum(l, 'DEDUCTION')),
+        d(l.bonusCents),
+        d(l.reimbursementCents),
+        d(l.deductionCents),
         d(l.totalCents),
       ]),
   ];

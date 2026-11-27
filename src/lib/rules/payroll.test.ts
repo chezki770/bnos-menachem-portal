@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   adjustmentsTotalCents,
   dockedCents,
+  dockedDaysInRange,
   hourlyGrossCents,
   payrollStatus,
   salariedPeriodGrossCents,
@@ -104,5 +105,25 @@ describe('pay periods', () => {
   it('handles February and a mid-month start', () => {
     const p = semiMonthlyPeriods('2027-02-20', '2027-02-28');
     expect(p).toEqual([{ startsOn: '2027-02-16', endsOn: '2027-02-28', payDate: '2027-03-03' }]);
+  });
+});
+
+describe('docking across pay periods', () => {
+  // Mon Sep 14 – Fri Sep 18, 2026: 2 school days in Sep 1–15, 3 in Sep 16–30
+  const unpaid = { startsOn: '2026-09-14', endsOn: '2026-09-18', schoolDays: 5, dockedDays: 5 };
+  it('splits the docked days by school days in each period', () => {
+    expect(dockedDaysInRange(unpaid, '2026-09-01', '2026-09-15')).toBe(2);
+    expect(dockedDaysInRange(unpaid, '2026-09-16', '2026-09-30')).toBe(3);
+  });
+  it('splits double-docking the same way, and the parts add up', () => {
+    const doubled = { ...unpaid, dockedDays: 10 };
+    expect(
+      dockedDaysInRange(doubled, '2026-09-01', '2026-09-15') +
+        dockedDaysInRange(doubled, '2026-09-16', '2026-09-30'),
+    ).toBe(10);
+  });
+  it('is zero outside the absence or when nothing was docked', () => {
+    expect(dockedDaysInRange(unpaid, '2026-10-01', '2026-10-15')).toBe(0);
+    expect(dockedDaysInRange({ ...unpaid, dockedDays: 0 }, '2026-09-01', '2026-09-30')).toBe(0);
   });
 });

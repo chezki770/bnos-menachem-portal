@@ -7,7 +7,7 @@ import { audit } from '@/lib/audit';
 import { assertUser } from '@/lib/auth/current-user';
 import { absenceInput } from '@/lib/data/absences';
 import { isHourly } from '@/lib/data/employees';
-import { openEntry } from '@/lib/data/time';
+import { openEntry, timeCardSummary } from '@/lib/data/time';
 import { appUrl, sendEmail } from '@/lib/email';
 import { selfInfoForm } from '@/lib/forms/employee';
 import { ABSENCE_LABEL, fmtRange, todayIso } from '@/lib/format';
@@ -154,12 +154,21 @@ export async function submitTimeCard(fd: FormData) {
   const period = await payPeriods.get(periodId);
   if (!period || period.status !== 'DRAFT') back('/me/schedule', 'That pay period is closed', 'error');
   if (await openEntry(user.id)) back('/me/schedule', 'Clock out before submitting your time card', 'error');
+  // An approved card can be re-submitted only if its hours changed since approval.
+  const current = await timeCardSummary(user.id, period);
   const res = await timeCards.mutate((rows) => {
     const card = rows.find((c) => c.employeeId === user.id && c.payPeriodId === periodId);
-    if (card?.status === 'APPROVED') return 'approved';
+    if (card?.status === 'APPROVED' && current.approvalValid) return 'approved';
     const now = new Date().toISOString();
     if (card)
-      Object.assign(card, { status: 'SUBMITTED', submittedAt: now, decidedById: null, decidedAt: null });
+      Object.assign(card, {
+        status: 'SUBMITTED',
+        submittedAt: now,
+        decidedById: null,
+        decidedAt: null,
+        approvedRegularHours: null,
+        approvedOvertimeHours: null,
+      });
     else
       rows.push({
         id: crypto.randomUUID(),
@@ -170,10 +179,12 @@ export async function submitTimeCard(fd: FormData) {
         decidedById: null,
         decidedAt: null,
         note: null,
+        approvedRegularHours: null,
+        approvedOvertimeHours: null,
       });
     return 'ok';
   });
   if (res === 'approved') back('/me/schedule', 'That time card is already approved', 'error');
   await audit(user.id, 'TIME_CARD_SUBMITTED', 'TimeCard', periodId);
-  back('/me/schedule', 'Time card submitted for approval');
+  back(`/me/schedule?period=${periodId}`, 'Time card submitted for approval');
 }

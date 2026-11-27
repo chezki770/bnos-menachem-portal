@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { col } from './columns';
 import { decryptBuffer, decryptText, encryptBuffer, encryptText } from './crypto';
-import { fromSpreadsheet, parseCsv, spreadsheetSafe, stringifyCsv } from './csv';
+import { fromSpreadsheet, parseCsv, parseCsvRecords, spreadsheetSafe, stringifyCsv } from './csv';
 import { Table } from './table';
 
 let dir: string;
@@ -30,6 +30,11 @@ describe('csv', () => {
       ['1', '2'],
       ['3', ''],
     ]);
+  });
+  it('rejects duplicate headers and rows with extra values', () => {
+    expect(() => parseCsvRecords('id,name,id\n1,a,2\n')).toThrow(/appears twice/);
+    expect(() => parseCsvRecords('id,note\n1,hello, world\n')).toThrow(/Line 2 has 3 values/);
+    expect(parseCsvRecords('id,note\n1,ok,,\n').records).toEqual([{ id: '1', note: 'ok' }]);
   });
   it('rejects an unclosed quote', () => {
     expect(() => parseCsv('a\n"oops')).toThrow(/unclosed/);

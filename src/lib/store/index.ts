@@ -174,6 +174,9 @@ export const timeCards = new Table('time_cards', {
   decidedById: col.textOpt(),
   decidedAt: col.datetimeOpt(),
   note: col.textOpt(),
+  // Hours as they were when approved. If the punches change afterwards the card needs approving again.
+  approvedRegularHours: col.numOpt(),
+  approvedOvertimeHours: col.numOpt(),
 });
 
 export const payPeriods = new Table('pay_periods', {
@@ -211,6 +214,12 @@ export const payrollLines = new Table('payroll_lines', {
   dockedCents: col.int(),
   adjustmentsCents: col.int(),
   totalCents: col.int(),
+  // Inputs as they were at submission, so re-exporting an old run never mixes in later changes.
+  // Blank on lines submitted before these columns existed.
+  hourlyRateCents: col.intOpt(),
+  bonusCents: col.intOpt(),
+  reimbursementCents: col.intOpt(),
+  deductionCents: col.intOpt(),
 });
 
 export const tokens = new Table('tokens', {

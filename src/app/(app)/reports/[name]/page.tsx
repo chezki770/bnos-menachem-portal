@@ -11,7 +11,7 @@ import { reportRuns } from '@/lib/store';
 export default async function ReportPage({ params }: { params: Promise<{ name: string }> }) {
   const user = await requireAdmin();
   const name = (await params).name as ReportName;
-  if (!(name in REPORTS)) notFound();
+  if (!Object.hasOwn(REPORTS, name)) notFound();
   const r = await buildReport(name);
   await reportRuns.append({
     report: name,

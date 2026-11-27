@@ -64,6 +64,18 @@ export function stringifyCsv(rows: string[][]): string {
 export function parseCsvRecords(text: string): { header: string[]; records: Record<string, string>[] } {
   const [header = [], ...rest] = parseCsv(text);
   const cleanHeader = header.map((h) => h.trim());
+  const seen = new Set<string>();
+  for (const h of cleanHeader) {
+    if (h && seen.has(h)) throw new Error(`Column "${h}" appears twice in the header row`);
+    seen.add(h);
+  }
+  // Extra non-empty cells usually mean an unquoted comma; refuse rather than silently drop data.
+  rest.forEach((cells, i) => {
+    if (cells.length > cleanHeader.length && cells.slice(cleanHeader.length).some((c) => c.trim() !== ''))
+      throw new Error(
+        `Line ${i + 2} has ${cells.length} values but the header has ${cleanHeader.length} columns (is a comma missing quotes?)`,
+      );
+  });
   const records = rest.map((cells) => {
     const rec: Record<string, string> = {};
     cleanHeader.forEach((h, idx) => (rec[h] = cells[idx] ?? ''));

@@ -10,8 +10,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ table: s
   const user = await getSessionUser();
   if (!user || user.role !== 'ADMIN') return new NextResponse('Admins only', { status: 403 });
   const name = (await params).table as TableName;
+  if (!Object.hasOwn(TABLES, name)) return new NextResponse('Unknown table', { status: 404 });
   const table = TABLES[name];
-  if (!table) return new NextResponse('Unknown table', { status: 404 });
   const sensitive = new URL(req.url).searchParams.get('sensitive') === '1';
   const rows = await table.all();
   await audit(user.id, sensitive ? 'EXPORT_SENSITIVE' : 'EXPORT', 'Table', name, `${rows.length} rows`);

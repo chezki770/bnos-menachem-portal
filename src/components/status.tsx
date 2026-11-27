@@ -17,6 +17,7 @@ const CARD = {
   SUBMITTED: ['brass', 'Submitted'],
   APPROVED: ['moss', 'Approved'],
   NEEDS_CHANGES: ['brick', 'Needs changes'],
+  CHANGED: ['brick', 'Changed since approval'],
 } as const;
 export function TimeCardBadge({ status }: { status: string }) {
   const [tone, label] = CARD[status as keyof typeof CARD] ?? (['neutral', status] as const);

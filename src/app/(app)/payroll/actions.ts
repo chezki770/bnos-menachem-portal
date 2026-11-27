@@ -6,8 +6,9 @@ import { back, firstError, formObject } from '@/lib/actions';
 import { audit } from '@/lib/audit';
 import { assertAdmin } from '@/lib/auth/current-user';
 import { buildRun } from '@/lib/data/payroll';
+import { timeCardSummary } from '@/lib/data/time';
 import { appUrl, sendEmail } from '@/lib/email';
-import { fmtRange, parseMoney, SCHOOL_TZ } from '@/lib/format';
+import { fmtRange, parseMoney, zonedToUtcIso } from '@/lib/format';
 import {
   ADJUSTMENT_KINDS,
   adjustments,
@@ -43,10 +44,25 @@ export async function decideTimeCard(fd: FormData) {
   const period = await draftPeriod(d.payPeriodId, 'cards');
   if (d.decision === 'NEEDS_CHANGES' && !d.note)
     back(url(period.id, 'cards', `&emp=${d.employeeId}`), 'Say what needs to change', 'error');
+  // Approval records the hours being approved; if punches change later the card needs approving again.
+  const tc = await timeCardSummary(d.employeeId, period);
+  if (d.decision === 'APPROVED' && tc.hasOpenEntry)
+    back(
+      url(period.id, 'cards', `&emp=${d.employeeId}`),
+      'There is an open punch (no clock-out). Fix it before approving.',
+      'error',
+    );
   const now = new Date().toISOString();
   await timeCards.mutate((rows) => {
     const card = rows.find((c) => c.employeeId === d.employeeId && c.payPeriodId === period.id);
-    const patch = { status: d.decision, decidedById: actor.id, decidedAt: now, note: d.note || null };
+    const patch = {
+      status: d.decision,
+      decidedById: actor.id,
+      decidedAt: now,
+      note: d.note || null,
+      approvedRegularHours: d.decision === 'APPROVED' ? tc.regular : null,
+      approvedOvertimeHours: d.decision === 'APPROVED' ? tc.overtime : null,
+    };
     if (card) Object.assign(card, patch);
     else
       rows.push({
@@ -64,7 +80,7 @@ export async function decideTimeCard(fd: FormData) {
       await sendEmail({
         to: emp.email,
         subject: 'Your time card needs changes',
-        text: `The office asked for changes to your time card for ${fmtRange(period.startsOn, period.endsOn)}:\n\n${d.note}\n\n${appUrl('/me/schedule')}`,
+        text: `The office asked for changes to your time card for ${fmtRange(period.startsOn, period.endsOn)}:\n\n${d.note}\n\n${appUrl(`/me/schedule?period=${period.id}`)}`,
       });
   }
   revalidatePath('/payroll');
@@ -75,17 +91,36 @@ export async function approveAllSubmitted(fd: FormData) {
   const actor = await assertAdmin();
   const period = await draftPeriod(z.string().parse(fd.get('payPeriodId')), 'cards');
   const now = new Date().toISOString();
+  // Work out each submitted card's hours first (reads only), then approve them in one write.
+  const submitted = await timeCards.where((c) => c.payPeriodId === period.id && c.status === 'SUBMITTED');
+  const hours = new Map<string, { regular: number; overtime: number }>();
+  for (const c of submitted) {
+    const tc = await timeCardSummary(c.employeeId, period);
+    if (!tc.hasOpenEntry) hours.set(c.id, { regular: tc.regular, overtime: tc.overtime });
+  }
   const n = await timeCards.mutate((rows) => {
     let count = 0;
-    for (const c of rows)
-      if (c.payPeriodId === period.id && c.status === 'SUBMITTED') {
-        Object.assign(c, { status: 'APPROVED', decidedById: actor.id, decidedAt: now });
+    for (const c of rows) {
+      const h = hours.get(c.id);
+      if (h && c.status === 'SUBMITTED') {
+        Object.assign(c, {
+          status: 'APPROVED',
+          decidedById: actor.id,
+          decidedAt: now,
+          approvedRegularHours: h.regular,
+          approvedOvertimeHours: h.overtime,
+        });
         count++;
       }
+    }
     return count;
   });
+  const skipped = submitted.length - n;
   await audit(actor.id, 'TIME_CARDS_APPROVED', 'PayPeriod', period.id, String(n));
-  back(url(period.id, 'cards'), `${n} time card(s) approved`);
+  back(
+    url(period.id, 'cards'),
+    `${n} time card(s) approved${skipped ? `; ${skipped} skipped because of an open punch` : ''}`,
+  );
 }
 
 /** Admin adds or fixes a punch. Times are entered in the school's time zone. */
@@ -107,7 +142,7 @@ export async function saveTimeEntry(fd: FormData) {
   if (!parsed.success) back(backTo, firstError(parsed.error), 'error');
   const d = parsed.data;
   await draftPeriod(d.payPeriodId, 'cards');
-  const toIso = (time: string) => zonedIso(d.date, time);
+  const toIso = (time: string) => zonedToUtcIso(d.date, time);
   const row = {
     employeeId: d.employeeId,
     clockIn: toIso(d.in),
@@ -137,14 +172,6 @@ export async function deleteTimeEntry(fd: FormData) {
   await timeEntries.remove(id);
   await audit(actor.id, 'TIME_ENTRY_DELETED', 'TimeEntry', id);
   back(url(periodId, 'cards', `&emp=${employeeId}`), 'Time entry removed');
-}
-
-/** "2026-09-08" + "08:00" in the school's time zone → UTC ISO string. */
-function zonedIso(date: string, time: string): string {
-  const guess = new Date(`${date}T${time}:00Z`);
-  const local = new Date(guess.toLocaleString('en-US', { timeZone: SCHOOL_TZ }));
-  const utc = new Date(guess.toLocaleString('en-US', { timeZone: 'UTC' }));
-  return new Date(guess.getTime() + (utc.getTime() - local.getTime())).toISOString();
 }
 
 export async function addAdjustment(fd: FormData) {
@@ -216,6 +243,10 @@ export async function submitRun(fd: FormData) {
         dockedCents: l.dockedCents,
         adjustmentsCents: l.adjustmentsCents,
         totalCents: l.totalCents,
+        hourlyRateCents: l.hourlyRateCents,
+        bonusCents: l.bonusCents,
+        reimbursementCents: l.reimbursementCents,
+        deductionCents: l.deductionCents,
       });
   });
   await payPeriods.update(period.id, {

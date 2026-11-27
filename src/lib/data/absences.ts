@@ -28,13 +28,13 @@ export const absenceInput = z
   .refine((v) => v.endsOn >= v.startsOn, { message: 'End date is before start date', path: ['endsOn'] });
 export type AbsenceInput = z.infer<typeof absenceInput>;
 
-/** What the handbook rules give for this absence, using usage already posted this school year. */
-export async function evaluateFor(
+type Usage = { ptoUsed: number; maternityPaidUsed: number };
+
+function evaluateWith(
   employee: Employee,
   input: Omit<AbsenceInput, 'employeeId'>,
-  schoolYearId: string,
-): Promise<AbsenceResult & { days: number }> {
-  const usage = await absenceUsage(employee.id, schoolYearId);
+  usage: Usage,
+): AbsenceResult & { days: number } {
   const days = schoolDays(input.startsOn, input.endsOn);
   const span = (Date.parse(input.endsOn) - Date.parse(input.startsOn)) / 864e5;
   const result = evaluateAbsence({
@@ -50,7 +50,20 @@ export async function evaluateFor(
   return { ...result, days };
 }
 
-/** Evaluate and store an absence. The rule result is saved with it so history never changes. */
+/** What the handbook rules give for this absence, using usage already posted this school year. */
+export async function evaluateFor(
+  employee: Employee,
+  input: Omit<AbsenceInput, 'employeeId'>,
+  schoolYearId: string,
+): Promise<AbsenceResult & { days: number }> {
+  return evaluateWith(employee, input, await absenceUsage(employee.id, schoolYearId));
+}
+
+/**
+ * Evaluate and store an absence. The overlap check, PTO/maternity usage and the insert all happen
+ * under the absences file lock, so two posts at once can't both use the last PTO day or overlap.
+ * The rule result is saved with the absence so history never changes.
+ */
 export async function postAbsence(
   actorId: string,
   input: AbsenceInput,
@@ -59,35 +72,38 @@ export async function postAbsence(
   const employee = await employees.get(input.employeeId);
   if (!employee) return { ok: false, error: 'Employee not found' };
   const year = await requireSchoolYear();
-  const overlap = await absences.find(
-    (a) => a.employeeId === employee.id && a.startsOn <= input.endsOn && input.startsOn <= a.endsOn,
-  );
-  if (overlap) return { ok: false, error: 'An absence is already posted for some of those dates' };
-  const result = await evaluateFor(employee, input, year.id);
-  if (!result.ok) return { ok: false, error: result.error };
-  const row = await absences.insert({
-    employeeId: employee.id,
-    schoolYearId: year.id,
-    type: input.type,
-    occasion: input.type === 'SIMCHA' ? (input.occasion ?? null) : null,
-    startsOn: input.startsOn,
-    endsOn: input.endsOn,
-    schoolDays: result.days,
-    adjacentToVacation: input.adjacentToVacation,
-    paidDays: result.paidDays,
-    ptoDays: result.ptoDays,
-    dockedDays: result.dockedDays,
-    notes: result.notes.join('; ') || null,
-    postedById: actorId,
-    requestId,
-    createdAt: new Date().toISOString(),
+  const res = await absences.mutate((rows): { ok: true; id: string } | { ok: false; error: string } => {
+    const mine = rows.filter((a) => a.employeeId === employee.id);
+    if (mine.some((a) => a.startsOn <= input.endsOn && input.startsOn <= a.endsOn))
+      return { ok: false, error: 'An absence is already posted for some of those dates' };
+    const thisYear = mine.filter((a) => a.schoolYearId === year.id);
+    const result = evaluateWith(employee, input, {
+      ptoUsed: thisYear.reduce((s, a) => s + a.ptoDays, 0),
+      maternityPaidUsed: thisYear.filter((a) => a.type === 'MATERNITY').reduce((s, a) => s + a.paidDays, 0),
+    });
+    if (!result.ok) return { ok: false, error: result.error };
+    const id = crypto.randomUUID();
+    rows.push({
+      id,
+      employeeId: employee.id,
+      schoolYearId: year.id,
+      type: input.type,
+      occasion: input.type === 'SIMCHA' ? (input.occasion ?? null) : null,
+      startsOn: input.startsOn,
+      endsOn: input.endsOn,
+      schoolDays: result.days,
+      adjacentToVacation: input.adjacentToVacation,
+      paidDays: result.paidDays,
+      ptoDays: result.ptoDays,
+      dockedDays: result.dockedDays,
+      notes: result.notes.join('; ') || null,
+      postedById: actorId,
+      requestId,
+      createdAt: new Date().toISOString(),
+    });
+    return { ok: true, id };
   });
-  await audit(
-    actorId,
-    'ABSENCE_POSTED',
-    'Absence',
-    row.id,
-    `${employee.name}: ${input.type} ${input.startsOn}–${input.endsOn}`,
-  );
-  return { ok: true, id: row.id };
+  if (!res.ok) return res;
+  await audit(actorId, 'ABSENCE_POSTED', 'Absence', res.id, `${employee.name}: ${input.type} ${input.startsOn}–${input.endsOn}`);
+  return res;
 }

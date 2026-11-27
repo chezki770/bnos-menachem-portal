@@ -116,7 +116,15 @@ export async function importOptions(
               ? 'endsOn is before startsOn'
               : null,
       };
-    case 'adjustments':
+    case 'adjustments': {
+      // Submitted/paid runs are frozen: rows in those periods can be re-imported unchanged, but not
+      // added, edited or moved into them.
+      const closed = new Set((await db.payPeriods.all()).filter((p) => p.status !== 'DRAFT').map((p) => p.id));
+      const before = new Map((await db.adjustments.all()).map((a) => [a.id, a]));
+      const same = (r: Row) => {
+        const prior = before.get(r.id);
+        return !!prior && JSON.stringify(prior) === JSON.stringify(r);
+      };
       return {
         mode,
         defaults: { createdById: actorId, createdAt: now },
@@ -126,8 +134,11 @@ export async function importOptions(
             ? `payPeriodId ${String(r.payPeriodId)} doesn't exist`
             : (r.cents as number) <= 0
               ? 'cents must be positive'
-              : null),
+              : !same(r) && (closed.has(String(r.payPeriodId)) || closed.has(String(before.get(r.id)?.payPeriodId)))
+                ? 'That pay period is already submitted; reopen it on the Payroll page to change its adjustments'
+                : null),
       };
+    }
     default:
       return { mode };
   }
@@ -218,6 +229,12 @@ export async function referencesToRemoved(table: db.TableName, removed: Row[]): 
       await check(await db.payrollLines.all(), 'payPeriodId', 'submitted payroll line(s)');
       await check(await db.timeCards.all(), 'payPeriodId', 'time card(s)');
       break;
+    case 'adjustments': {
+      const closed = new Set((await db.payPeriods.all()).filter((p) => p.status !== 'DRAFT').map((p) => p.id));
+      const n = removed.filter((r) => closed.has(String(r.payPeriodId))).length;
+      if (n) problems.push(`Can't remove ${n} adjustment(s) from pay periods that are already submitted`);
+      break;
+    }
     case 'departments': {
       const names = new Set(removed.map((r) => String(r.name)));
       await check(await db.employees.all(), 'department', 'employee(s)', names);

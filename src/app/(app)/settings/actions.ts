@@ -5,7 +5,7 @@ import { back, firstError, formObject } from '@/lib/actions';
 import { audit } from '@/lib/audit';
 import { assertAdmin } from '@/lib/auth/current-user';
 import { semiMonthlyPeriods } from '@/lib/rules/payroll';
-import { departments, employees, payPeriods, schoolYears, shifts } from '@/lib/store';
+import { departments, employees, payPeriods, schoolYears, shifts, shiftTemplates } from '@/lib/store';
 
 const S = '/settings';
 
@@ -89,8 +89,9 @@ export async function deleteDepartment(fd: FormData) {
   if (!d) back(S, 'Department not found', 'error');
   const used =
     (await employees.find((e) => e.department === d.name)) ||
-    (await shifts.find((s) => s.department === d.name));
-  if (used) back(S, `${d.name} still has employees or shifts`, 'error');
+    (await shifts.find((s) => s.department === d.name)) ||
+    (await shiftTemplates.find((t) => t.department === d.name));
+  if (used) back(S, `${d.name} still has employees, shifts or shift templates`, 'error');
   await departments.remove(id);
   await audit(actor.id, 'DEPARTMENT_DELETED', 'Department', id, d.name);
   back(S, `Removed ${d.name}`);
