@@ -67,6 +67,8 @@ docker compose run --rm tools npm run create-admin -- "Full Name" you@school.org
 
 Caddy (in `docker-compose.yml`) provides HTTPS automatically for `DOMAIN`. The portal's data is the host folder `./data`.
 
+Start the portal with `docker compose`, not `docker run --env-file .env`. Plain `docker run` keeps the quote marks around values in `.env`, so the secrets come out wrong and nobody can sign in.
+
 ### Backups
 
 ```bash

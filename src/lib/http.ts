@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { appUrl } from './email';
 
 /** Reject cross-site form posts to route handlers (server actions do this check themselves). */
@@ -14,9 +13,17 @@ export function sameOrigin(req: Request): boolean {
   }
 }
 
+/**
+ * 303 redirect to a portal path. The Location header is relative on purpose: behind Docker/Caddy,
+ * req.url carries the container's bind address (http://0.0.0.0:3000), not the address the browser used.
+ */
+export function redirectTo(path: string): Response {
+  return new Response(null, { status: 303, headers: { Location: path } });
+}
+
 /** 303 redirect back to a portal page with a message. */
-export function redirectBack(req: Request, path: string, msg: string, kind: 'ok' | 'error' = 'ok') {
-  const url = new URL(path, req.url);
+export function redirectBack(path: string, msg: string, kind: 'ok' | 'error' = 'ok'): Response {
+  const url = new URL(path, 'http://portal.invalid');
   url.searchParams.set(kind, msg);
-  return NextResponse.redirect(url, 303);
+  return redirectTo(`${url.pathname}${url.search}`);
 }

@@ -28,9 +28,6 @@ coverage/
 *.sqlite
 *.sqlite3
 *.db
-pgdata/
-# prisma migrations ARE committed; local client output is not
-/src/generated/
 
 # uploads and local data (real HR documents must never be committed)
 uploads/
