@@ -20,7 +20,17 @@ export function firstError(err: z.ZodError): string {
   return i ? `${i.path.length ? `${String(i.path[0])}: ` : ''}${i.message}` : 'Invalid input';
 }
 
-/** Only allow redirects to paths inside the portal. */
+/**
+ * Only allow redirects to paths inside the portal. Browsers treat "\" like "/", so "/\evil.example"
+ * would be a protocol-relative link to another site; backslashes and control characters are refused.
+ */
 export function safePath(p: unknown, fallback: string): string {
-  return typeof p === 'string' && p.startsWith('/') && !p.startsWith('//') ? p : fallback;
+  if (typeof p !== 'string' || !p.startsWith('/') || p.startsWith('//')) return fallback;
+  if (/[\\\u0000-\u001f\u007f]/.test(p)) return fallback;
+  const base = 'http://portal.invalid';
+  try {
+    return new URL(p, base).origin === base ? p : fallback;
+  } catch {
+    return fallback;
+  }
 }

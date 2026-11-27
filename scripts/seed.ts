@@ -179,6 +179,11 @@ async function main() {
       periodsPerWeek: p.periodsPerWeek,
       annualSalaryCents: p.annualSalaryCents,
       hourlyRateCents: p.hourlyRateCents,
+      employeeName: p.name,
+      position: p.position,
+      department: p.department,
+      daysPerWeek: p.daysPerWeek,
+      yearsAtSchool: p.yearsAtSchool,
     });
     const kinds =
       p.docs === 'all'

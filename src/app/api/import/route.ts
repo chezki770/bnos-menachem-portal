@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { audit } from '@/lib/audit';
 import { getSessionUser } from '@/lib/auth/current-user';
-import { planImport } from '@/lib/data/csv-io';
-import { fillAbsenceResults, importOptions } from '@/lib/data/import-config';
+import { planImport, type ImportPlan } from '@/lib/data/csv-io';
+import { fillAbsenceResults, importOptions, referencesToRemoved } from '@/lib/data/import-config';
 import { sameOrigin } from '@/lib/http';
 import { IMPORTABLE, TABLES, type TableName } from '@/lib/store';
+
+type Row = Record<string, unknown> & { id: string };
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const fields = z.object({
@@ -37,19 +39,38 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Type REPLACE to confirm replacing the whole table' }, { status: 400 });
 
   const table = TABLES[name];
-  const existing = (await table.all()) as never[];
-  const plan = planImport(
-    table as never,
-    await file.text(),
-    existing,
-    await importOptions(name, user.id, mode),
-  );
-  if (!plan.errors.length && name === 'absences') {
-    const err = await fillAbsenceResults(plan.rows);
-    if (err) plan.errors.push({ line: 0, message: err });
+  const text = await file.text();
+  const options = await importOptions(name, user.id, mode);
+
+  /** Everything that decides whether the import is allowed, given the table's current rows. */
+  const evaluate = async (existing: Row[]): Promise<ImportPlan> => {
+    const plan = planImport(table as never, text, existing, options);
+    if (!plan.errors.length && name === 'absences') {
+      const err = await fillAbsenceResults(plan.rows);
+      if (err) plan.errors.push({ line: 0, message: err });
+    }
+    if (name === 'employees' && !plan.errors.length && !plan.rows.some((r) => r.role === 'ADMIN' && r.active))
+      plan.errors.push({ line: 0, message: 'The import would leave no active admin' });
+    if (!plan.errors.length && mode === 'replace') {
+      const kept = new Set(plan.rows.map((r) => r.id));
+      const removed = existing.filter((r) => !kept.has(r.id));
+      for (const message of await referencesToRemoved(name, removed)) plan.errors.push({ line: 0, message });
+    }
+    return plan;
+  };
+
+  let plan: ImportPlan;
+  if (apply === '1') {
+    // Validate and write under the table's lock, against the rows as they are right now, so a change
+    // made by someone else between "Check file" and "Import" is never overwritten by a stale plan.
+    plan = await table.mutate(async (rows) => {
+      const p = await evaluate(rows as unknown as Row[]);
+      if (!p.errors.length) rows.splice(0, rows.length, ...(p.rows as never[]));
+      return p;
+    });
+  } else {
+    plan = await evaluate((await table.all()) as unknown as Row[]);
   }
-  if (name === 'employees' && !plan.errors.length && !plan.rows.some((r) => r.role === 'ADMIN' && r.active))
-    plan.errors.push({ line: 0, message: 'The import would leave no active admin' });
 
   const summary = {
     inserted: plan.inserted,
@@ -60,7 +81,6 @@ export async function POST(req: Request) {
     errorCount: plan.errors.length,
   };
   if (apply === '1' && !plan.errors.length) {
-    await table.replaceAll(plan.rows as never);
     await audit(
       user.id,
       'DATA_IMPORTED',

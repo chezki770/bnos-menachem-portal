@@ -174,3 +174,57 @@ export async function fillAbsenceResults(rows: Row[]): Promise<string | null> {
   }
   return null;
 }
+
+/**
+ * Replace mode deletes rows that aren't in the file. Refuse when other tables still point at them
+ * (e.g. removing an employee who has contracts or payroll history), instead of leaving orphans.
+ */
+export async function referencesToRemoved(table: db.TableName, removed: Row[]): Promise<string[]> {
+  if (!removed.length) return [];
+  const ids = new Set(removed.map((r) => r.id));
+  const label = (r: Row) => String(r.name ?? r.label ?? r.email ?? r.id);
+  const problems: string[] = [];
+  const check = async (rows: Record<string, unknown>[], key: string, what: string, match: Set<string> = ids) => {
+    const hits = new Map<string, number>();
+    for (const r of rows) {
+      const v = r[key];
+      if (typeof v === 'string' && match.has(v)) hits.set(v, (hits.get(v) ?? 0) + 1);
+    }
+    for (const [v, n] of hits) {
+      const row = removed.find((r) => r.id === v || r.name === v);
+      problems.push(`Can't remove ${row ? label(row) : v}: ${n} ${what} still refer to it`);
+    }
+  };
+  switch (table) {
+    case 'employees':
+      await check(await db.contracts.all(), 'employeeId', 'contract(s)');
+      await check(await db.documents.all(), 'employeeId', 'document(s)');
+      await check(await db.absences.all(), 'employeeId', 'absence(s)');
+      await check(await db.timeOffRequests.all(), 'employeeId', 'time-off request(s)');
+      await check(await db.timeEntries.all(), 'employeeId', 'time clock entr(ies)');
+      await check(await db.timeCards.all(), 'employeeId', 'time card(s)');
+      await check(await db.adjustments.all(), 'employeeId', 'pay adjustment(s)');
+      await check(await db.payrollLines.all(), 'employeeId', 'submitted payroll line(s)');
+      await check(await db.shifts.all(), 'employeeId', 'shift(s)');
+      await check(await db.shiftTemplates.all(), 'employeeId', 'shift template row(s)');
+      break;
+    case 'school_years':
+      await check(await db.payPeriods.all(), 'schoolYearId', 'pay period(s)');
+      await check(await db.contracts.all(), 'schoolYearId', 'contract(s)');
+      await check(await db.absences.all(), 'schoolYearId', 'absence(s)');
+      break;
+    case 'pay_periods':
+      await check(await db.adjustments.all(), 'payPeriodId', 'pay adjustment(s)');
+      await check(await db.payrollLines.all(), 'payPeriodId', 'submitted payroll line(s)');
+      await check(await db.timeCards.all(), 'payPeriodId', 'time card(s)');
+      break;
+    case 'departments': {
+      const names = new Set(removed.map((r) => String(r.name)));
+      await check(await db.employees.all(), 'department', 'employee(s)', names);
+      await check(await db.shifts.all(), 'department', 'shift(s)', names);
+      await check(await db.shiftTemplates.all(), 'department', 'shift template row(s)', names);
+      break;
+    }
+  }
+  return problems.slice(0, 20);
+}

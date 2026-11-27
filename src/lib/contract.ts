@@ -2,12 +2,25 @@ import { benefitRules, ptoAllowanceDays } from '@/lib/rules/benefits';
 import type { Contract, Employee, SchoolYear } from '@/lib/store';
 import { fmtDate, money } from './format';
 
-/** The contract text, built from the terms saved on the contract row (not today's employee data). */
-export function contractSections(c: Contract, emp: Employee, year: SchoolYear | undefined) {
-  const emp4rules = {
+/** The terms a contract was sent with. Older rows without the snapshot columns use the employee record. */
+export function contractTerms(c: Contract, emp: Employee) {
+  return {
+    name: c.employeeName ?? emp.name,
+    position: c.position ?? emp.position,
+    department: c.department ?? emp.department,
     periodsPerWeek: c.periodsPerWeek,
-    yearsAtSchool: emp.yearsAtSchool,
-    daysPerWeek: emp.daysPerWeek,
+    daysPerWeek: c.daysPerWeek ?? emp.daysPerWeek,
+    yearsAtSchool: c.yearsAtSchool ?? emp.yearsAtSchool,
+  };
+}
+
+/** The contract text, built only from the terms saved on the contract row, so a signed contract never changes. */
+export function contractSections(c: Contract, emp: Employee, year: SchoolYear | undefined) {
+  const t = contractTerms(c, emp);
+  const emp4rules = {
+    periodsPerWeek: t.periodsPerWeek,
+    yearsAtSchool: t.yearsAtSchool,
+    daysPerWeek: t.daysPerWeek,
   };
   const rules = benefitRules(emp4rules);
   const pay =
@@ -17,11 +30,11 @@ export function contractSections(c: Contract, emp: Employee, year: SchoolYear | 
   return [
     {
       title: 'Parties and term',
-      body: `This agreement is between Bnos Menachem ("the School") and ${emp.name} ("the Employee") for the ${year?.label ?? ''} school year${year ? `, ${fmtDate(year.startsOn)} to ${fmtDate(year.endsOn)}` : ''}.`,
+      body: `This agreement is between Bnos Menachem ("the School") and ${t.name} ("the Employee") for the ${year?.label ?? ''} school year${year ? `, ${fmtDate(year.startsOn)} to ${fmtDate(year.endsOn)}` : ''}.`,
     },
     {
       title: 'Position',
-      body: `${emp.position ?? 'Staff member'}, ${emp.department} department, ${c.periodsPerWeek} periods per week over ${emp.daysPerWeek} days.`,
+      body: `${t.position ?? 'Staff member'}, ${t.department} department, ${t.periodsPerWeek} periods per week over ${t.daysPerWeek} days.`,
     },
     { title: 'Compensation', body: pay },
     {

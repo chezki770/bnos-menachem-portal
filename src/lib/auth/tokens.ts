@@ -9,9 +9,8 @@ export async function createToken(employeeId: string, kind: 'INVITE' | 'RESET'):
   const raw = randomBytes(32).toString('base64url');
   const now = new Date();
   await tokens.mutate((rows) => {
-    // Older unused links of the same kind stop working.
-    for (const t of rows)
-      if (t.employeeId === employeeId && t.kind === kind && !t.usedAt) t.usedAt = now.toISOString();
+    // Both kinds can set the password, so every older unused link for this person stops working.
+    for (const t of rows) if (t.employeeId === employeeId && !t.usedAt) t.usedAt = now.toISOString();
     rows.push({
       id: crypto.randomUUID(),
       employeeId,
@@ -40,7 +39,9 @@ export async function consumeToken(raw: string): Promise<{ employeeId: string } 
   return tokens.mutate((rows) => {
     const t = rows.find((r) => r.tokenHash === hash);
     if (!t || t.usedAt || Date.parse(t.expiresAt) < Date.now()) return null;
-    t.usedAt = new Date().toISOString();
+    // Using one link ends all of that person's other open links, whatever their kind.
+    const now = new Date().toISOString();
+    for (const r of rows) if (r.employeeId === t.employeeId && !r.usedAt) r.usedAt = now;
     return { employeeId: t.employeeId };
   });
 }

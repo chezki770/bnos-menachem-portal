@@ -39,6 +39,11 @@ export async function sendContract(fd: FormData) {
       periodsPerWeek: emp.periodsPerWeek,
       annualSalaryCents: hourly ? null : emp.annualSalaryCents,
       hourlyRateCents: hourly ? emp.hourlyRateCents : null,
+      employeeName: emp.name,
+      position: emp.position,
+      department: emp.department,
+      daysPerWeek: emp.daysPerWeek,
+      yearsAtSchool: emp.yearsAtSchool,
     };
     if (existing) Object.assign(existing, terms);
     else

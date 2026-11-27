@@ -41,6 +41,22 @@ export async function decideRequest(fd: FormData) {
   if (req.status !== 'PENDING') back('/absences', 'That request was already decided', 'error');
   if (emp.id === actor.id) back('/absences', "You can't approve your own request", 'error');
 
+  // Claim the PENDING → decided transition under the request table's lock first, so a concurrent
+  // cancellation or another manager's decision can't succeed alongside this one.
+  const decidedAt = new Date().toISOString();
+  const claimed = await timeOffRequests.mutate((rows) => {
+    const r = rows.find((x) => x.id === req.id);
+    if (!r || r.status !== 'PENDING') return false;
+    Object.assign(r, {
+      status: parsed.data.decision,
+      decidedById: actor.id,
+      decidedAt,
+      decisionNote: parsed.data.note || null,
+    });
+    return true;
+  });
+  if (!claimed) back('/absences', 'That request was already decided or cancelled', 'error');
+
   if (parsed.data.decision === 'APPROVED') {
     const res = await postAbsence(
       actor.id,
@@ -54,14 +70,17 @@ export async function decideRequest(fd: FormData) {
       },
       req.id,
     );
-    if (!res.ok) back('/absences', `Couldn't approve: ${res.error}`, 'error');
+    if (!res.ok) {
+      // Posting failed (e.g. overlapping absence): put the request back to PENDING, but only if
+      // it's still the decision we just made.
+      await timeOffRequests.mutate((rows) => {
+        const r = rows.find((x) => x.id === req.id);
+        if (r && r.status === 'APPROVED' && r.decidedAt === decidedAt && r.decidedById === actor.id)
+          Object.assign(r, { status: 'PENDING', decidedById: null, decidedAt: null, decisionNote: null });
+      });
+      back('/absences', `Couldn't approve: ${res.error}`, 'error');
+    }
   }
-  await timeOffRequests.update(req.id, {
-    status: parsed.data.decision,
-    decidedById: actor.id,
-    decidedAt: new Date().toISOString(),
-    decisionNote: parsed.data.note || null,
-  });
   await audit(actor.id, `REQUEST_${parsed.data.decision}`, 'TimeOffRequest', req.id, emp.name);
   await sendEmail({
     to: emp.email,

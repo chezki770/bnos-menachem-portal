@@ -77,6 +77,13 @@ export const contracts = new Table('contracts', {
   periodsPerWeek: col.int(),
   annualSalaryCents: col.intOpt(),
   hourlyRateCents: col.intOpt(),
+  // Added later; blank on contracts sent before these columns existed (the text then falls back to
+  // the employee record for these four).
+  employeeName: col.textOpt(),
+  position: col.textOpt(),
+  department: col.textOpt(),
+  daysPerWeek: col.intOpt(),
+  yearsAtSchool: col.intOpt(),
 });
 
 export const documents = new Table('documents', {
