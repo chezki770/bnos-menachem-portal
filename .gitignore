@@ -35,6 +35,8 @@ pgdata/
 # uploads and local data (real HR documents must never be committed)
 uploads/
 storage/
+/data/
+/backups/
 *.csv
 !**/fixtures/*.csv
 

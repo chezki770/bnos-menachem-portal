@@ -15,12 +15,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://bnos:bnos@localhost:5432/bnos
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-        env:
-          DATABASE_URL: postgresql://bnos:bnos@localhost:5432/bnos

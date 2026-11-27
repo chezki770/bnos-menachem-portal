@@ -1,28 +1,23 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { evaluateAbsence, schoolDays, SIMCHA_OCCASIONS } from '@/lib/rules/absences';
+import { canManageEmployee, getSessionUser } from '@/lib/auth/current-user';
+import { absenceInput, evaluateFor } from '@/lib/data/absences';
+import { currentSchoolYear } from '@/lib/data/years';
+import { employees } from '@/lib/store';
 
-const body = z.object({
-  employee: z.object({
-    periodsPerWeek: z.number().int().min(0).max(60),
-    yearsAtSchool: z.number().int().min(0).max(60),
-    daysPerWeek: z.number().int().min(1).max(6),
-  }),
-  type: z.enum(['SICK', 'PERSONAL', 'SIMCHA', 'MATERNITY', 'SNOW_DAY', 'UNPAID']),
-  occasion: z.enum(Object.keys(SIMCHA_OCCASIONS) as [keyof typeof SIMCHA_OCCASIONS]).optional(),
-  startsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  endsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  adjacentToVacation: z.boolean().optional(),
-  ptoUsedDays: z.number().min(0).default(0),
-  maternityPaidUsedDays: z.number().min(0).default(0),
-});
-
-/** Preview what the handbook rules would do. Stateless for now; later it reads usage from the database. */
+/** What the handbook rules would do for an absence, using the PTO already used this school year. Nothing is saved. */
 export async function POST(req: Request) {
-  const parsed = body.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ ok: false, error: 'Invalid request' }, { status: 400 });
-  const { startsOn, endsOn, ...rest } = parsed.data;
-  const days = schoolDays(startsOn, endsOn);
-  const span = (Date.parse(endsOn) - Date.parse(startsOn)) / 864e5;
-  return NextResponse.json(evaluateAbsence({ ...rest, days, calendarSpanDays: span }));
+  const user = await getSessionUser();
+  if (!user) return NextResponse.json({ ok: false, error: 'Not signed in' }, { status: 401 });
+  const parsed = absenceInput.safeParse(await req.json().catch(() => null));
+  if (!parsed.success)
+    return NextResponse.json(
+      { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid request' },
+      { status: 400 },
+    );
+  const emp = await employees.get(parsed.data.employeeId);
+  if (!emp || !(emp.id === user.id || canManageEmployee(user, emp)))
+    return NextResponse.json({ ok: false, error: 'Employee not found' }, { status: 404 });
+  const year = await currentSchoolYear();
+  if (!year) return NextResponse.json({ ok: false, error: 'No school year set up' }, { status: 400 });
+  return NextResponse.json(await evaluateFor(emp, parsed.data, year.id));
 }

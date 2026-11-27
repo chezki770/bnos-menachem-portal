@@ -1,9 +1,11 @@
 import { jwtVerify, SignJWT } from 'jose';
+import { ROLES, type Role } from '@/lib/store';
 
 export const SESSION_COOKIE = 'bnos_session';
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
 
-export type SessionUser = { id: string; role: 'ADMIN' | 'STAFF'; name: string };
+/** What the signed cookie carries. Role and status are re-checked against employees.csv on every request. */
+export type SessionToken = { id: string; role: Role; name: string };
 
 function key(): Uint8Array {
   const secret = process.env.AUTH_SECRET;
@@ -14,7 +16,7 @@ function key(): Uint8Array {
 }
 
 export async function signSession(
-  user: SessionUser,
+  user: SessionToken,
   maxAgeSeconds = SESSION_MAX_AGE_SECONDS,
 ): Promise<string> {
   return new SignJWT({ role: user.role, name: user.name })
@@ -25,14 +27,13 @@ export async function signSession(
     .sign(key());
 }
 
-/** Returns the session user, or null for a missing, tampered or expired token. */
-export async function verifySession(token: string | undefined): Promise<SessionUser | null> {
+/** Returns the session, or null for a missing, tampered or expired token. */
+export async function verifySession(token: string | undefined): Promise<SessionToken | null> {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, key(), { algorithms: ['HS256'] });
-    const role = payload.role;
-    if (!payload.sub || (role !== 'ADMIN' && role !== 'STAFF') || typeof payload.name !== 'string')
-      return null;
+    const role = payload.role as Role;
+    if (!payload.sub || !ROLES.includes(role) || typeof payload.name !== 'string') return null;
     return { id: payload.sub, role, name: payload.name };
   } catch {
     return null;

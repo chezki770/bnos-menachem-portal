@@ -3,5 +3,5 @@ import { requireUser } from '@/lib/auth/current-user';
 
 export default async function Home() {
   const user = await requireUser();
-  redirect(user.role === 'ADMIN' ? '/employees' : '/me');
+  redirect(user.role === 'STAFF' ? '/home' : '/dashboard');
 }
