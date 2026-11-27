@@ -11,8 +11,16 @@ export function weekDays(monday: string): string[] {
   return [0, 1, 2, 3, 4].map((i) => addDays(monday, i));
 }
 
+/** True only for a real calendar date in YYYY-MM-DD form (2026-02-30 and 2026-99-99 are not). */
+export function isRealDate(value: string | undefined): value is string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(`${value}T12:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+
+/** The ?week= value as a Monday; anything that isn't a real date falls back to this week. */
 export function parseWeek(param: string | undefined): string {
-  return mondayOf(param && /^\d{4}-\d{2}-\d{2}$/.test(param) ? param : todayIso());
+  return mondayOf(isRealDate(param) ? param : todayIso());
 }
 
 export async function shiftsBetween(from: string, to: string, pred: (s: Shift) => boolean = () => true) {

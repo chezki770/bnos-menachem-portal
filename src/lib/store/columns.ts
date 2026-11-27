@@ -49,9 +49,17 @@ export const col = {
     format: str,
   }),
   bool: (): Col<boolean> => ({
+    // Only recognised spellings convert; anything else (a typo like "tru") fails validation instead
+    // of silently becoming false. A blank cell means false.
     schema: z.preprocess(
-      (v) => (typeof v === 'string' ? ['true', '1', 'yes', 'y'].includes(v.trim().toLowerCase()) : v),
-      z.boolean(),
+      (v) => {
+        if (typeof v !== 'string') return v;
+        const s = v.trim().toLowerCase();
+        if (['true', '1', 'yes', 'y'].includes(s)) return true;
+        if (['false', '0', 'no', 'n', ''].includes(s)) return false;
+        return v;
+      },
+      z.boolean({ error: 'must be true or false' }),
     ) as unknown as z.ZodType<boolean>,
     format: (v) => (v ? 'true' : 'false'),
   }),

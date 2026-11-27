@@ -45,6 +45,10 @@ describe('csv', () => {
     expect(fromSpreadsheet(spreadsheetSafe('@SUM(A1)'))).toBe('@SUM(A1)');
     expect(fromSpreadsheet("'quoted")).toBe("'quoted");
   });
+  it('round-trips every value through export and import unchanged', () => {
+    for (const v of ["'=Ann", "'quoted", "''double", '=1+1', '-5', '-x', '@me', 'plain', "'", ''])
+      expect(fromSpreadsheet(spreadsheetSafe(v))).toBe(v);
+  });
 });
 
 describe('crypto', () => {

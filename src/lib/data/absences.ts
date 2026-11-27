@@ -9,7 +9,7 @@ import {
 } from '@/lib/rules/absences';
 import { ABSENCE_TYPES, absences, employees, type Employee } from '@/lib/store';
 import { absenceUsage, employment } from './employees';
-import { requireSchoolYear } from './years';
+import { schoolYearForDates } from './years';
 
 const isoDate = z.iso.date();
 
@@ -71,7 +71,10 @@ export async function postAbsence(
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   const employee = await employees.get(input.employeeId);
   if (!employee) return { ok: false, error: 'Employee not found' };
-  const year = await requireSchoolYear();
+  // PTO and maternity usage are per school year: use the year the dates fall in, not today's.
+  const resolved = await schoolYearForDates(input.startsOn, input.endsOn);
+  if (!resolved.ok) return resolved;
+  const year = resolved.year;
   const res = await absences.mutate((rows): { ok: true; id: string } | { ok: false; error: string } => {
     const mine = rows.filter((a) => a.employeeId === employee.id);
     if (mine.some((a) => a.startsOn <= input.endsOn && input.startsOn <= a.endsOn))

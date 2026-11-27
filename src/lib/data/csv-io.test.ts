@@ -67,6 +67,11 @@ describe('import', () => {
     expect(p.errors[0].message).toContain('periods');
     expect(p.rows.find((r) => r.id === 'a')?.periods).toBe(10);
   });
+  it('rejects a misspelled boolean instead of reading it as false', () => {
+    const p = plan('email,active\nann@x.org,tru\n');
+    expect(p.errors[0].message).toMatch(/active.*true or false/);
+    expect(p.rows.find((r) => r.id === 'a')?.active).toBe(true);
+  });
   it('rejects unknown and internal columns', () => {
     expect(plan('email,hash\nann@x.org,x\n').errors[0].message).toMatch(/Unknown column\(s\): hash/);
   });

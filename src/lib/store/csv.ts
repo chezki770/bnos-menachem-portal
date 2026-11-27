@@ -88,14 +88,20 @@ const FORMULA_START = /^[=+\-@\t\r]/;
 
 /**
  * Spreadsheet apps run cells starting with = + - @ as formulas. For files people download and open,
- * prefix such cells with an apostrophe (unless it's a plain number like -5).
+ * prefix such cells with an apostrophe (unless it's a plain number like -5). A value that already
+ * starts with an apostrophe gets one too, so the escape is always reversible.
  */
 export function spreadsheetSafe(cell: string): string {
+  if (cell.startsWith("'")) return `'${cell}`;
   if (FORMULA_START.test(cell) && !/^-?\d+(\.\d+)?$/.test(cell)) return `'${cell}`;
   return cell;
 }
 
-/** Undo spreadsheetSafe when a downloaded file is imported again. */
+/**
+ * Undo spreadsheetSafe when a downloaded file is imported again. Only the exporter's escapes are
+ * removed (an apostrophe followed by a formula character or another apostrophe); other text is kept.
+ */
 export function fromSpreadsheet(cell: string): string {
-  return cell.startsWith("'") && FORMULA_START.test(cell.slice(1)) ? cell.slice(1) : cell;
+  if (cell.startsWith("'") && (cell[1] === "'" || FORMULA_START.test(cell.slice(1)))) return cell.slice(1);
+  return cell;
 }
